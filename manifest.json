@@ -1,0 +1,57 @@
+{
+  "manifest_version": 3,
+  "name": "AI Text Tools - Summarizer, Rephraser & Translator",
+  "version": "1.0.0",
+  "description": "AI-powered text summarization, rephrasing, translation, and keyword highlighting using Gemini API. Select text to get instant AI assistance.",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting",
+    "tabs"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "dist/service-worker.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["dist/content-script.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "commands": {
+    "highlight-keywords": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+H",
+        "mac": "Command+Shift+H"
+      },
+      "description": "Highlight key words and sentences on page"
+    }
+  },
+  "action": {
+    "default_title": "AI Text Tools",
+    "default_popup": "src/popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "options_page": "src/options/options.html",
+  "web_accessible_resources": [
+    {
+      "resources": ["styles/*"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "name": "chrome-ai-text-tools",
+  "version": "1.0.0",
+  "description": "AI-powered text summarization, rephrasing, translation, and keyword highlighting using Gemini API",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "@types/chrome": "^0.0.270",
+    "rollup": "^4.22.0",
+    "@rollup/plugin-typescript": "^12.1.0",
+    "@rollup/plugin-node-resolve": "^15.3.0",
+    "@rollup/plugin-commonjs": "^26.0.1",
+    "@rollup/plugin-replace": "^5.0.7",
+    "tslib": "^2.8.0"
+  }
+}
