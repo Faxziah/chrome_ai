@@ -154,6 +154,11 @@ a:hover {
   font-size: 14px;
   font-weight: 500;
   transition: background-color 0.2s;
+  height: 36px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn:hover {
@@ -166,6 +171,8 @@ a:hover {
 
 .btn-danger {
   background-color: #dc3545;
+  height: 36px;
+  line-height: 1;
 }
 
 .btn-danger:hover {
@@ -174,10 +181,24 @@ a:hover {
 
 .btn-secondary {
   background-color: #6c757d;
+  height: 36px;
+  line-height: 1;
 }
 
 .btn-secondary:hover {
   background-color: #5a6268;
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: #4285f4;
+  border: 1px solid #4285f4;
+  height: 36px;
+  line-height: 1;
+}
+
+.btn-outline:hover {
+  background-color: rgba(66, 133, 244, 0.08);
 }
 
 .status-message {
@@ -228,6 +249,8 @@ a:hover {
 .btn-small {
   padding: 5px 10px;
   font-size: 12px;
+  height: 28px;
+  line-height: 1;
 }
 
 .empty-state {

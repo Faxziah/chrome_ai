@@ -6,7 +6,8 @@ export class StorageService {
     API_KEY: 'gemini_api_key',
     HISTORY: 'chat_history',
     FAVORITES: 'favorites',
-    API_CONFIG: 'api_config'
+    API_CONFIG: 'api_config',
+    LANGUAGE: 'interface_language'
   } as const;
 
   public static readonly HISTORY_LIMIT = 20;
@@ -241,6 +242,28 @@ export class StorageService {
     }
   }
 
+  async getLanguage(): Promise<string | null> {
+    try {
+      const result = await chrome.storage.local.get(StorageService.STORAGE_KEYS.LANGUAGE);
+      return result[StorageService.STORAGE_KEYS.LANGUAGE] || 'ru';
+    } catch (error) {
+      console.error('Error getting language:', error);
+      return 'ru';
+    }
+  }
+
+  async setLanguage(language: string): Promise<boolean> {
+    try {
+      await chrome.storage.local.set({
+        [StorageService.STORAGE_KEYS.LANGUAGE]: language
+      });
+      return true;
+    } catch (error) {
+      console.error('Error setting language:', error);
+      return false;
+    }
+  }
+
   async clearAllData(): Promise<boolean> {
     try {
       await chrome.storage.local.clear();
@@ -253,5 +276,16 @@ export class StorageService {
 
   private generateId(): string {
     return Date.now().toString(36) + Math.random().toString(36).substring(2);
+  }
+
+  public generateSourceId(type: string, prompt: string, response: string): string {
+    const content = `${type}|${prompt}|${response}`;
+    let hash = 0;
+    for (let i = 0; i < content.length; i++) {
+      const char = content.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash;
+    }
+    return Math.abs(hash).toString(36);
   }
 }

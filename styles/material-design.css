@@ -123,7 +123,8 @@ body {
   transition: all var(--md-transition-fast);
   position: relative;
   overflow: hidden;
-  min-height: 36px;
+  height: 36px;
+  line-height: 1;
   text-decoration: none;
   outline: none;
 }
@@ -169,18 +170,33 @@ body {
   background-color: transparent;
   color: var(--md-primary);
   border: 1px solid var(--md-primary);
+  height: 36px;
+  line-height: 1;
 }
 
 .md-button--secondary:hover {
   background-color: rgba(25, 118, 210, 0.08);
 }
 
+/* Outline Button */
+.md-button--outline {
+  background-color: transparent;
+  color: var(--md-primary);
+  border: 1px solid var(--md-primary);
+  height: 36px;
+  line-height: 1;
+}
 
+.md-button--outline:hover {
+  background-color: rgba(25, 118, 210, 0.08);
+}
 
 /* Danger Button */
 .md-button--danger {
   background-color: var(--md-error);
   color: white;
+  height: 36px;
+  line-height: 1;
 }
 
 .md-button--danger:hover {

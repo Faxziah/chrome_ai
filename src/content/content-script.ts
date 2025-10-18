@@ -2,8 +2,24 @@ import { PopupUI } from './popup-ui';
 import { PopupIntegration } from './popup-integration';
 import { getSelectedText, getSelectionRect, isValidSelection } from './selection-utils';
 import { highlightManager } from './highlight';
+import { ActionType } from '../types';
+import { setLocale } from '../utils/i18n';
+import { StorageService } from '../services/storage';
 
 console.log('AI Text Tools content script loaded');
+
+// Initialize language
+(async () => {
+  try {
+    const storageService = new StorageService();
+    const language = await storageService.getLanguage();
+    if (language) {
+      setLocale(language);
+    }
+  } catch (error) {
+    console.error('Error loading language:', error);
+  }
+})();
 
 const popupUI = new PopupUI();
 const popupIntegration = new PopupIntegration(popupUI);
@@ -24,7 +40,7 @@ function handleSelectionChange(): void {
 function showPopupIfTextSelected(): void {
   const selectedText = getSelectedText();
   
-  if (!isValidSelection(selectedText, 3)) {
+  if (!isValidSelection(selectedText, 1)) {
     popupUI.hide();
     return;
   }
@@ -98,19 +114,19 @@ window.addEventListener('beforeunload', () => {
 
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   try {
-    if (message.action === 'HIGHLIGHT_KEYWORDS') {
+    if (message.action === ActionType.HIGHLIGHT_KEYWORDS) {
       console.log('Highlight keywords command received');
       await highlightManager.initialize();
       await highlightManager.highlightKeywords();
       sendResponse({ success: true });
-    } else if (message.action === 'CLEAR_HIGHLIGHTS') {
+    } else if (message.action === ActionType.CLEAR_HIGHLIGHTS) {
       console.log('Clear highlights command received');
       highlightManager.clearHighlights();
       sendResponse({ success: true });
-    } else if (message.action === 'GET_SELECTED_TEXT') {
+    } else if (message.action === ActionType.GET_SELECTED_TEXT) {
       const selectedText = getSelectedText();
       sendResponse({ success: true, text: selectedText });
-    } else if (message.action === 'CONTEXT_MENU_ACTION') {
+    } else if (message.action === ActionType.CONTEXT_MENU_ACTION) {
       console.log('Context menu action received:', message.contextAction);
       const selectedText = message.selectedText || getSelectedText();
       
@@ -133,8 +149,47 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
         }
       }
       sendResponse({ success: true });
+    } else if (message.action === ActionType.REPHRASE) {
+      console.log('Rephrase action received');
+      const selectedText = getSelectedText();
+      if (selectedText && selectedText.trim()) {
+        const selectionRect = getSelectionRect();
+        if (selectionRect) {
+          popupUI.show(selectedText, selectionRect);
+          setTimeout(() => {
+            popupUI.triggerAction('rephrase');
+          }, 100);
+        }
+      }
+      sendResponse({ success: true });
+    } else if (message.action === ActionType.TRANSLATE) {
+      console.log('Translate action received');
+      const selectedText = getSelectedText();
+      if (selectedText && selectedText.trim()) {
+        const selectionRect = getSelectionRect();
+        if (selectionRect) {
+          popupUI.show(selectedText, selectionRect);
+          setTimeout(() => {
+            popupUI.triggerAction('translate');
+          }, 100);
+        }
+      }
+      sendResponse({ success: true });
+    } else if (message.action === ActionType.SUMMARIZE) {
+      console.log('Summarize action received');
+      const selectedText = getSelectedText();
+      if (selectedText && selectedText.trim()) {
+        const selectionRect = getSelectionRect();
+        if (selectionRect) {
+          popupUI.show(selectedText, selectionRect);
+          setTimeout(() => {
+            popupUI.triggerAction('summarize');
+          }, 100);
+        }
+      }
+      sendResponse({ success: true });
     } else {
-      console.warn('Unknown action:', message.action);
+      console.debug('Unknown action:', message.action);
       sendResponse({ success: false, error: 'Unknown action' });
     }
   } catch (error) {

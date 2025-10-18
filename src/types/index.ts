@@ -1,3 +1,14 @@
+export enum ActionType {
+  HIGHLIGHT_KEYWORDS = 'HIGHLIGHT_KEYWORDS',
+  CLEAR_HIGHLIGHTS = 'CLEAR_HIGHLIGHTS',
+  GET_SELECTED_TEXT = 'GET_SELECTED_TEXT',
+  CONTEXT_MENU_ACTION = 'CONTEXT_MENU_ACTION',
+  REPHRASE = 'REPHRASE',
+  TRANSLATE = 'TRANSLATE',
+  SUMMARIZE = 'SUMMARIZE',
+  OPEN_OPTIONS = 'OPEN_OPTIONS'
+}
+
 export interface HistoryItem {
   id: string;
   type: 'summarize' | 'rephrase' | 'translate';
@@ -124,4 +135,11 @@ export interface HighlightResult {
   success: boolean;
   highlightedCount?: number;
   error?: string;
+}
+
+export interface SummarizerResult {
+  summary: string;
+  originalLength: number;
+  summaryLength: number;
+  compressionRatio: number;
 }

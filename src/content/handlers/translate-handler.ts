@@ -2,6 +2,8 @@ import { GeminiService } from '../../services/gemini-api';
 import { StorageService } from '../../services/storage';
 import { Translator } from '../../components/translator';
 import { TranslatorResult } from '../../types';
+import { SpeechSynthesisManager } from '../speech-utils';
+import { t } from '../../utils/i18n';
 
 export class TranslateHandler {
   private geminiService: GeminiService | null;
@@ -10,26 +12,29 @@ export class TranslateHandler {
   private shadowRoot: ShadowRoot;
   private lastTranslationResult: TranslatorResult | null = null;
   private lastOriginalText: string | null = null;
+  private speechManager: SpeechSynthesisManager;
 
   constructor(
     shadowRoot: ShadowRoot,
     geminiService: GeminiService | null,
-    storageService: StorageService
+    storageService: StorageService,
+    speechManager: SpeechSynthesisManager | null = null
   ) {
     this.shadowRoot = shadowRoot;
     this.geminiService = geminiService;
     this.storageService = storageService;
     this.translator = geminiService ? new Translator(geminiService) : null;
+    this.speechManager = speechManager || new SpeechSynthesisManager();
   }
 
   public async handleTranslate(selectedText: string): Promise<void> {
     if (!this.translator) {
-      this.showError('API key not configured. Please set your Gemini API key in the options page.');
+      this.showError(t('api.missingKey'));
       return;
     }
 
     if (!selectedText.trim()) {
-      this.showError('Please select some text to translate.');
+      this.showError(t('common.noTextSelected'));
       return;
     }
 
@@ -39,7 +44,7 @@ export class TranslateHandler {
     const targetLanguage = targetSelect?.value || 'en';
 
     if (sourceLanguage === targetLanguage && sourceLanguage !== 'auto') {
-      this.showError('Source and target languages cannot be the same.');
+      this.showError(t('translate.sameLanguages'));
       return;
     }
 
@@ -50,10 +55,14 @@ export class TranslateHandler {
     try {
       this.showLoading(button, resultContainer, resultText);
 
-      const result = await this.translator.translate(selectedText, {
+      const result = await this.translator.translateWithStream(selectedText, {
         sourceLanguage: sourceLanguage as any,
         targetLanguage: targetLanguage as any,
         preserveFormatting: true
+      }, (chunk: string) => {
+        if (resultText) {
+          resultText.textContent += chunk;
+        }
       });
 
       this.lastTranslationResult = result;
@@ -62,10 +71,14 @@ export class TranslateHandler {
       this.showResult(resultContainer, resultText, result.translatedText);
       this.updateSourceLanguage(result.detectedLanguage);
       this.enableSwapButton();
+      this.updateSpeechButtons();
       await this.saveToHistory(selectedText, result);
     } catch (error) {
       console.error('Translation error:', error);
-      this.showError(`Failed to translate text: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      const base = t('errors.translateFailed');
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const reason = t('errors.withReason', { reason: errorMessage });
+      this.showError(`${base}. ${reason}`);
     } finally {
       this.restoreButton(button);
     }
@@ -92,10 +105,11 @@ export class TranslateHandler {
     this.enableTranslateButton();
   }
 
-  public getLastTranslation(): { result: TranslatorResult | null, originalText: string | null } {
+  public getLastTranslation(): { result: TranslatorResult | null, originalText: string | null, selectedText: string | null } {
     return {
       result: this.lastTranslationResult,
-      originalText: this.lastOriginalText
+      originalText: this.lastOriginalText,
+      selectedText: this.lastOriginalText
     };
   }
 
@@ -126,9 +140,9 @@ export class TranslateHandler {
 
   private showLoading(button: HTMLButtonElement, resultContainer: HTMLElement, resultText: HTMLElement): void {
     button.disabled = true;
-    button.textContent = 'Translating...';
+    button.textContent = t('status.translating');
     resultContainer.hidden = false;
-    resultText.textContent = 'Translating your text...';
+    resultText.textContent = t('status.translating');
     resultText.className = 'result-text loading';
   }
 
@@ -136,6 +150,8 @@ export class TranslateHandler {
     resultText.textContent = text;
     resultText.className = 'result-text';
     resultContainer.hidden = false;
+    
+    this.updateSpeechButtons();
   }
 
   private showError(message: string): void {
@@ -151,7 +167,7 @@ export class TranslateHandler {
 
   private restoreButton(button: HTMLButtonElement): void {
     button.disabled = false;
-    button.textContent = 'Translate';
+    button.textContent = t('common.translate');
   }
 
   private updateSourceLanguage(detectedLanguage?: string): void {
@@ -175,5 +191,55 @@ export class TranslateHandler {
     if (translateButton) {
       translateButton.disabled = false;
     }
+  }
+
+  public updateSpeechButtons(): void {
+    const sourceLanguage = this.getSourceLanguage();
+    const targetLanguage = this.getTargetLanguage();
+    
+    const sourceButton = this.shadowRoot.querySelector('#btn-speak-source') as HTMLButtonElement;
+    const translationButton = this.shadowRoot.querySelector('#btn-speak-translation') as HTMLButtonElement;
+    
+    if (sourceButton) {
+      const isSourceSupported = this.speechManager.isLanguageSupportedForSpeech(sourceLanguage);
+      const hasSourceVoice = this.speechManager.hasVoiceForLanguage(sourceLanguage);
+      const shouldShowSource = isSourceSupported && hasSourceVoice;
+      sourceButton.style.display = shouldShowSource ? 'inline-block' : 'none';
+      sourceButton.disabled = !shouldShowSource;
+    }
+    
+    if (translationButton) {
+      const isTargetSupported = this.speechManager.isLanguageSupportedForSpeech(targetLanguage);
+      const hasTargetVoice = this.speechManager.hasVoiceForLanguage(targetLanguage);
+      const shouldShowTarget = isTargetSupported && hasTargetVoice;
+      translationButton.style.display = shouldShowTarget ? 'inline-block' : 'none';
+      translationButton.disabled = !shouldShowTarget;
+    }
+  }
+
+  private getSourceLanguage(): string {
+    const sourceSelect = this.shadowRoot.querySelector('#source-language') as HTMLSelectElement;
+    return sourceSelect?.value || 'auto';
+  }
+
+  private getTargetLanguage(): string {
+    const targetSelect = this.shadowRoot.querySelector('#target-language') as HTMLSelectElement;
+    return targetSelect?.value || 'en';
+  }
+
+  public attachLanguageChangeListeners(): void {
+    const sourceLanguageSelect = this.shadowRoot.querySelector('#source-language');
+    const targetLanguageSelect = this.shadowRoot.querySelector('#target-language');
+
+    sourceLanguageSelect?.addEventListener('change', () => {
+      this.updateSpeechButtons();
+    });
+
+    targetLanguageSelect?.addEventListener('change', () => {
+      this.updateSpeechButtons();
+    });
+
+    // Initial update of speech buttons
+    this.updateSpeechButtons();
   }
 }

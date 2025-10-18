@@ -1,4 +1,5 @@
 import { Tabs } from '../components/tabs';
+import { t } from '../utils/i18n';
 
 export class PopupUI {
   private hostElement: HTMLDivElement | null = null;
@@ -8,6 +9,7 @@ export class PopupUI {
   private selectedText: string = '';
   private isVisible: boolean = false;
   private tabsComponent: Tabs | null = null;
+  private mode: 'mini' | 'full' = 'mini';
 
   constructor() {
     this.createPopupStructure();
@@ -37,7 +39,9 @@ export class PopupUI {
       position: fixed;
       top: 0;
       left: 0;
-      transform: translate(-9999px, -9999px);
+      opacity: 0;
+      visibility: hidden;
+      will-change: transform;
       max-width: 400px;
       min-width: 320px;
       background: white;
@@ -72,18 +76,20 @@ export class PopupUI {
     // Initialize tabs if not already created
     if (!this.tabsComponent) {
       this.tabsComponent = new Tabs([
-        { id: 'summarize', label: 'Summarize' },
-        { id: 'rephrase', label: 'Rephrase' },
-        { id: 'translate', label: 'Translate' }
+        { id: 'summarize', label: t('common.summarize') },
+        { id: 'rephrase', label: t('common.rephrase') },
+        { id: 'translate', label: t('common.translate') }
       ]);
       
-      const tabsHtml = this.tabsComponent.render();
+      // Start with mini mode
+      this.mode = 'mini';
+      const tabsHtml = this.tabsComponent.renderMiniMode();
       this.setContent(tabsHtml);
       
       // Ensure tabs are successfully injected before attaching event listeners
-      const tabsElement = this.shadowRoot!.querySelector('.tabs');
+      const tabsElement = this.shadowRoot!.querySelector('.mini-tabs');
       if (!tabsElement) {
-        console.warn('Tabs element not found, event listeners may not work properly');
+        console.warn('Mini tabs element not found, event listeners may not work properly');
       }
       
       this.tabsComponent.attachEventListeners(this.shadowRoot!);
@@ -108,7 +114,9 @@ export class PopupUI {
   public hide(): void {
     this.isVisible = false;
     if (this.popupContainer) {
-      this.popupContainer.style.transform = 'translate(-9999px, -9999px)';
+      this.popupContainer.style.opacity = '0';
+      this.popupContainer.style.visibility = 'hidden';
+      this.popupContainer.style.transform = '';
     }
     this.cleanupEventListeners();
     
@@ -125,7 +133,8 @@ export class PopupUI {
       offsetLeft: 0
     };
 
-    this.popupContainer.style.transform = 'translate(-9999px, -9999px)';
+    this.popupContainer.style.visibility = 'hidden';
+    this.popupContainer.style.opacity = '0';
     const popupRect = this.popupContainer.getBoundingClientRect();
     const popupWidth = popupRect.width;
     const popupHeight = popupRect.height;
@@ -142,6 +151,8 @@ export class PopupUI {
     );
 
     this.popupContainer.style.transform = `translate(${position.left}px, ${position.top}px)`;
+    this.popupContainer.style.visibility = 'visible';
+    this.popupContainer.style.opacity = '1';
   }
 
   private calculateOptimalPosition(
@@ -182,12 +193,41 @@ export class PopupUI {
 
     document.addEventListener('pointerdown', (event) => {
       const path = event.composedPath();
-      const clickedInside = this.hostElement && path.includes(this.hostElement);
+      const clickedInside = path.some(el => el === this.popupContainer || (el instanceof HTMLElement && this.popupContainer?.contains(el)));
+      
+      // Исключения для интерактивных элементов
+      const target = event.target as HTMLElement;
+      const isInteractiveElement = target && (
+        target.tagName === 'TEXTAREA' ||
+        target.tagName === 'INPUT' ||
+        target.tagName === 'BUTTON' ||
+        target.tagName === 'SELECT' ||
+        target.closest('button') ||
+        target.closest('textarea') ||
+        target.closest('input') ||
+        target.closest('select') ||
+        target.closest('.chat-input') ||
+        target.closest('.chat-messages') ||
+        target.hasAttribute('contenteditable')
+      );
       
       if (!clickedInside) {
         this.hide();
       }
     }, { capture: true, signal: this.abortController.signal });
+
+    // Add click handlers for mini mode buttons to switch to full mode
+    if (this.mode === 'mini' && this.shadowRoot) {
+      const miniButtons = this.shadowRoot.querySelectorAll('.mini-tab');
+      miniButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          // Switch to full mode when any mini button is clicked
+          setTimeout(() => {
+            this.switchToFullMode();
+          }, 100);
+        }, { signal: this.abortController?.signal });
+      });
+    }
   }
 
   private cleanupEventListeners(): void {
@@ -244,6 +284,51 @@ export class PopupUI {
         this.tabsComponent.setTab('translate');
       }
     }
+  }
+
+  public switchToFullMode(): void {
+    if (this.mode === 'full' || !this.tabsComponent) return;
+    
+    this.mode = 'full';
+    const tabsHtml = this.tabsComponent.render();
+    this.setContent(tabsHtml);
+    
+    // Re-attach event listeners for full mode
+    this.tabsComponent.attachEventListeners(this.shadowRoot!);
+    
+    // Keep current tab active
+    const currentTab = this.tabsComponent.getCurrentTab();
+    this.tabsComponent.setTab(currentTab.id);
+    
+    this.updateSelectedTextDisplay();
+  }
+
+  public switchToMiniMode(): void {
+    if (this.mode === 'mini' || !this.tabsComponent) return;
+    
+    this.mode = 'mini';
+    const tabsHtml = this.tabsComponent.renderMiniMode();
+    this.setContent(tabsHtml);
+    
+    // Re-attach event listeners for mini mode
+    this.tabsComponent.attachEventListeners(this.shadowRoot!);
+    
+    // Keep current tab active
+    const currentTab = this.tabsComponent.getCurrentTab();
+    this.tabsComponent.setTab(currentTab.id);
+    
+    this.updateSelectedTextDisplay();
+  }
+
+  public getMode(): 'mini' | 'full' {
+    return this.mode;
+  }
+
+  public getCurrentTab(): { id: string; index: number } {
+    if (this.tabsComponent) {
+      return this.tabsComponent.getCurrentTab();
+    }
+    return { id: 'summarize', index: 0 };
   }
 
   public destroy(): void {

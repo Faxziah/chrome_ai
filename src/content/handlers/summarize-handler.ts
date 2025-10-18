@@ -1,13 +1,13 @@
 import { GeminiService } from '../../services/gemini-api';
 import { StorageService } from '../../services/storage';
-import { Rephraser } from '../../components/rephraser';
-import { RephraserResult } from '../../types';
+import { Summarizer } from '../../components/summarizer';
+import { SummarizerResult } from '../../types';
 import { t } from '../../utils/i18n';
 
-export class RephraseHandler {
+export class SummarizeHandler {
   private geminiService: GeminiService | null;
   private storageService: StorageService;
-  private rephraser: Rephraser | null;
+  private summarizer: Summarizer | null;
   private shadowRoot: ShadowRoot;
 
   constructor(
@@ -18,11 +18,11 @@ export class RephraseHandler {
     this.shadowRoot = shadowRoot;
     this.geminiService = geminiService;
     this.storageService = storageService;
-    this.rephraser = geminiService ? new Rephraser(geminiService) : null;
+    this.summarizer = geminiService ? new Summarizer(geminiService, undefined, storageService) : null;
   }
 
-  public async handleRephrase(selectedText: string): Promise<void> {
-    if (!this.rephraser) {
+  public async handleSummarize(selectedText: string): Promise<void> {
+    if (!this.summarizer) {
       this.showError(t('api.missingKey'));
       return;
     }
@@ -32,31 +32,32 @@ export class RephraseHandler {
       return;
     }
 
-    const styleSelect = this.shadowRoot.querySelector('#rephrase-style') as HTMLSelectElement;
-    const style = styleSelect?.value || 'casual';
+    const styleSelect = this.shadowRoot.querySelector('#summarize-style') as HTMLSelectElement;
+    const style = styleSelect?.value || 'brief';
 
-    const button = this.shadowRoot.querySelector('#btn-rephrase') as HTMLButtonElement;
-    const resultContainer = this.shadowRoot.querySelector('#rephrase-result') as HTMLElement;
-    const resultText = this.shadowRoot.querySelector('#rephrase-text') as HTMLElement;
+    const button = this.shadowRoot.querySelector('#btn-summarize') as HTMLButtonElement;
+    const resultContainer = this.shadowRoot.querySelector('#summary-result') as HTMLElement;
+    const resultText = this.shadowRoot.querySelector('#summary-text') as HTMLElement;
 
     try {
       this.showLoading(button, resultContainer, resultText);
 
-      const result = await this.rephraser.rephraseWithStream(
+      const result = await this.summarizer.summarizeWithStream(
         selectedText, 
-        { style: style as 'casual' | 'formal' | 'professional' | 'friendly' | 'academic' },
+        { style: style as 'brief' | 'detailed' | 'bullet-points' },
         (chunk: string) => {
           if (resultText) {
             resultText.textContent += chunk;
+            resultText.className = 'result-text';
           }
         }
       );
       
-      this.showResult(resultContainer, resultText, result.rephrasedText);
+      this.showResult(resultContainer, resultText, result.summary);
       await this.saveToHistory(selectedText, result);
     } catch (error) {
-      console.error('Rephrase error:', error);
-      const base = t('errors.rephraseFailed');
+      console.error('Summarize error:', error);
+      const base = t('errors.summarizeFailed');
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       const reason = t('errors.withReason', { reason: errorMessage });
       this.showError(`${base}. ${reason}`);
@@ -65,17 +66,17 @@ export class RephraseHandler {
     }
   }
 
-  private async saveToHistory(originalText: string, result: RephraserResult): Promise<void> {
+  private async saveToHistory(originalText: string, result: SummarizerResult): Promise<void> {
     try {
       await this.storageService.saveToHistory({
-        type: 'rephrase',
+        type: 'summarize',
         prompt: originalText,
-        response: result.rephrasedText,
+        response: result.summary,
         metadata: {
-          style: result.style,
+          style: 'brief',
           originalLength: result.originalLength,
-          rephrasedLength: result.rephrasedLength,
-          lengthDelta: result.lengthDelta
+          summaryLength: result.summaryLength,
+          compressionRatio: result.compressionRatio
         }
       });
     } catch (error) {
@@ -85,14 +86,14 @@ export class RephraseHandler {
 
   public updateServices(geminiService: GeminiService | null): void {
     this.geminiService = geminiService;
-    this.rephraser = geminiService ? new Rephraser(geminiService) : null;
+    this.summarizer = geminiService ? new Summarizer(geminiService, undefined, this.storageService) : null;
   }
 
   private showLoading(button: HTMLButtonElement, resultContainer: HTMLElement, resultText: HTMLElement): void {
     button.disabled = true;
-    button.textContent = t('status.rephrasing');
+    button.textContent = t('status.summarizing');
     resultContainer.hidden = false;
-    resultText.textContent = t('status.rephrasing');
+    resultText.textContent = t('status.summarizing');
     resultText.className = 'result-text loading';
   }
 
@@ -103,8 +104,8 @@ export class RephraseHandler {
   }
 
   private showError(message: string): void {
-    const resultContainer = this.shadowRoot.querySelector('#rephrase-result') as HTMLElement;
-    const resultText = this.shadowRoot.querySelector('#rephrase-text') as HTMLElement;
+    const resultContainer = this.shadowRoot.querySelector('#summary-result') as HTMLElement;
+    const resultText = this.shadowRoot.querySelector('#summary-text') as HTMLElement;
     
     if (resultContainer && resultText) {
       resultText.textContent = message;
@@ -115,6 +116,6 @@ export class RephraseHandler {
 
   private restoreButton(button: HTMLButtonElement): void {
     button.disabled = false;
-    button.textContent = t('common.rephrase');
+    button.textContent = t('common.summarize');
   }
 }

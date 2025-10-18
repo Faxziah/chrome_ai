@@ -1,8 +1,9 @@
-import { GeminiService } from '../services/gemini-api';
-import { StorageService } from '../services/storage';
+import { GeminiService } from '../services';
+import { StorageService } from '../services';
+// @ts-ignore
+import { repairJSON } from 'json-repair-js';
 
 export interface HighlightData {
-  keywords: string[];
   sentences: string[];
 }
 
@@ -105,49 +106,53 @@ export class HighlightManager {
   }
 
   private async getKeywordsFromGemini(text: string): Promise<HighlightData> {
-    const prompt = `Analyze the following text and extract key information. Return a JSON response with:
-    - "keywords": array of 5-10 most important keywords/phrases
-    - "sentences": array of 3-5 most important sentences
+    const prompt = `Identify the most important sentences in this text. Return ONLY a JSON object with format: {"sentences": ["sentence1", "sentence2"]}
     
-    Text: ${text.substring(0, 4000)}
-    
-    Return only valid JSON in this format:
-    {
-      "keywords": ["keyword1", "keyword2", ...],
-      "sentences": ["sentence1", "sentence2", ...]
-    }`;
+    Text: ${text.substring(0, 4000)}`;
 
     try {
       // Load saved API configuration
       const apiConfig = await this.storageService.getApiConfig();
       
       const response = await this.geminiService.generateContent(prompt, {
-        model: apiConfig?.model || 'gemini-pro',
+        model: apiConfig?.model || 'gemini-2.5-flash',
         temperature: apiConfig?.temperature || 0.7,
         maxTokens: apiConfig?.maxTokens || 2048
       });
-      const jsonMatch = response.text.match(/\{[\s\S]*\}/);
+      const jsonMatch = response.text.match(/```json\s*([\s\S]*?)```/) || response.text.match(/\{[\s\S]*\}/);
       
       if (jsonMatch) {
-        const data = JSON.parse(jsonMatch[0]);
-        return {
-          keywords: data.keywords || [],
-          sentences: data.sentences || []
-        };
+        let jsonString = jsonMatch[1] || jsonMatch[0];
+        
+        try {
+          // Попытка парсинга как есть
+          const data = JSON.parse(jsonString);
+          return { sentences: data.sentences || [] };
+        } catch (error) {
+          console.log('JSON parse failed, attempting repair...');
+          try {
+            // Используем json-repair для исправления
+            const repairedJson = repairJSON(jsonString);
+            const data = JSON.parse(repairedJson);
+            return { sentences: data.sentences || [] };
+          } catch (repairError) {
+            console.error('JSON repair failed:', repairError);
+            throw new Error('Failed to parse Gemini response even after repair');
+          }
+        }
       } else {
         throw new Error('No valid JSON found in response');
       }
     } catch (error) {
       console.error('Error parsing Gemini response:', error);
-      return { keywords: [], sentences: [] };
+      return { sentences: [] };
     }
   }
 
   private applyHighlights(highlightData: HighlightData): void {
     this.clearHighlights();
 
-    const allText = highlightData.keywords.concat(highlightData.sentences);
-    const uniqueTexts = [...new Set(allText.filter(text => text.trim()))];
+    const uniqueTexts = [...new Set(highlightData.sentences.filter(text => text.trim()))];
     
     if (uniqueTexts.length === 0) {
       return;

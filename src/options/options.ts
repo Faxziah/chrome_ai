@@ -1,5 +1,6 @@
 import { StorageService, HistoryService, FavoritesService, GeminiService } from '../services';
 import { HistoryItem, FavoriteItem } from '../types';
+import { t, setLocale, getLocale } from '../utils/i18n';
 
 class OptionsPage {
   private readonly storageService: StorageService;
@@ -24,6 +25,7 @@ class OptionsPage {
   }
 
   private async init(): Promise<void> {
+    await this.loadLanguage();
     await this.loadApiKey();
     await this.loadGeminiConfig();
     await this.loadShortcuts();
@@ -31,9 +33,13 @@ class OptionsPage {
     await this.loadFavorites();
     await this.loadStats();
     this.setupEventListeners();
+    this.updateUITexts();
   }
 
   private setupEventListeners(): void {
+    // Language events
+    document.getElementById('save-language')?.addEventListener('click', () => this.saveLanguage());
+    
     // API Key events
     document.getElementById('save-api-key')?.addEventListener('click', () => this.saveApiKey());
     document.getElementById('test-api-key')?.addEventListener('click', () => this.testApiKey());
@@ -115,6 +121,43 @@ class OptionsPage {
         }
       }
     });
+  }
+
+  private async loadLanguage(): Promise<void> {
+    try {
+      const language = await this.storageService.getLanguage();
+      if (language) {
+        setLocale(language);
+        const languageSelect = document.getElementById('interface-language') as HTMLSelectElement;
+        if (languageSelect) {
+          languageSelect.value = language;
+        }
+      }
+    } catch (error) {
+      console.error('Error loading language:', error);
+    }
+  }
+
+  private async saveLanguage(): Promise<void> {
+    const languageSelect = document.getElementById('interface-language') as HTMLSelectElement;
+    const language = languageSelect.value;
+
+    try {
+      const success = await this.storageService.setLanguage(language);
+      if (success) {
+        setLocale(language);
+        this.showStatus('language-status', t('status.languageSaved'), 'success');
+        // Reload page to apply new language
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      } else {
+        this.showStatus('language-status', t('status.errorSavingLanguage'), 'error');
+      }
+    } catch (error) {
+      console.error('Error saving language:', error);
+      this.showStatus('language-status', t('status.errorSavingLanguage'), 'error');
+    }
   }
 
   private async loadApiKey(): Promise<void> {
@@ -424,10 +467,6 @@ class OptionsPage {
   }
 
   private async clearHistory(): Promise<void> {
-    if (!confirm('Вы уверены, что хотите очистить всю историю?')) {
-      return;
-    }
-
     try {
       const success = await this.historyService.clearHistory();
       if (success) {
@@ -444,10 +483,6 @@ class OptionsPage {
   }
 
   private async clearFavorites(): Promise<void> {
-    if (!confirm('Вы уверены, что хотите очистить все избранное?')) {
-      return;
-    }
-
     try {
       const success = await this.favoritesService.clearAllFavorites();
       if (success) {
@@ -696,10 +731,6 @@ class OptionsPage {
   }
 
   private async clearAllData(): Promise<void> {
-    if (!confirm('Вы уверены, что хотите удалить ВСЕ данные? Это действие нельзя отменить!')) {
-      return;
-    }
-
     try {
       const success = await this.storageService.clearAllData();
       if (success) {
@@ -819,6 +850,31 @@ class OptionsPage {
     if (displayElement) {
       displayElement.textContent = value;
     }
+  }
+
+  private updateUITexts(): void {
+    // Update page title
+    document.title = t('options.title');
+    
+    // Update main heading
+    const mainHeading = document.querySelector('h1');
+    if (mainHeading) {
+      mainHeading.textContent = t('options.title');
+    }
+    
+    // Update language section
+    const languageSection = document.querySelector('.section h2');
+    if (languageSection) {
+      languageSection.textContent = '🌐 ' + t('options.languageSettings');
+    }
+    
+    // Update API section
+    const apiSection = document.querySelectorAll('.section h2')[1];
+    if (apiSection) {
+      apiSection.textContent = '🔑 ' + t('options.apiSettings');
+    }
+    
+    // Update other sections as needed...
   }
 }
 

@@ -6,6 +6,8 @@ import { Summarizer } from '../components/summarizer';
 import { Rephraser } from '../components/rephraser';
 import { Translator } from '../components/translator';
 import { Chat, ChatMessage } from '../components/chat';
+import { ActionType } from '../types';
+import { setLocale } from '../utils/i18n';
 
 // Material Design Utils (будет доступен глобально после загрузки скрипта)
 declare global {
@@ -23,7 +25,7 @@ class PopupApp {
   private readonly rephraser: Rephraser;
   private readonly translator: Translator;
   private readonly chat: Chat;
-  private currentTab: string = 'summarize';
+  private currentTab: string = 'highlight';
   private lastAssistantMessageId: string | null = null;
 
   constructor() {
@@ -31,12 +33,26 @@ class PopupApp {
     this.storageService = new StorageService();
     this.historyService = new HistoryService(this.storageService);
     this.favoritesService = new FavoritesService(this.storageService);
+    
+    // Initialize language
+    this.initializeLanguage();
     this.summarizer = new Summarizer(this.geminiService, this.historyService);
     this.rephraser = new Rephraser(this.geminiService, this.historyService);
     this.translator = new Translator(this.geminiService, this.historyService);
     this.chat = new Chat(this.geminiService, this.storageService, this.favoritesService);
     
     this.initializeApp().catch(console.error);
+  }
+
+  private async initializeLanguage(): Promise<void> {
+    try {
+      const language = await this.storageService.getLanguage();
+      if (language) {
+        setLocale(language);
+      }
+    } catch (error) {
+      console.error('Error loading language:', error);
+    }
   }
 
   private async initializeApp(): Promise<void> {
@@ -94,20 +110,20 @@ class PopupApp {
       favoriteBtn.addEventListener('click', () => this.addToFavorites());
     }
 
-    const rephraseBtn = document.getElementById('rephrase-btn') as HTMLButtonElement;
-    const translateBtn = document.getElementById('translate-btn') as HTMLButtonElement;
     const highlightBtn = document.getElementById('highlight-btn') as HTMLButtonElement;
-
-    if (rephraseBtn) {
-      rephraseBtn.addEventListener('click', () => this.sendMessageToContentScript('REPHRASE'));
-    }
-
-    if (translateBtn) {
-      translateBtn.addEventListener('click', () => this.sendMessageToContentScript('TRANSLATE'));
-    }
+    const viewHistoryBtn = document.getElementById('view-history-btn') as HTMLButtonElement;
+    const viewFavoritesBtn = document.getElementById('view-favorites-btn') as HTMLButtonElement;
 
     if (highlightBtn) {
-      highlightBtn.addEventListener('click', () => this.sendMessageToContentScript('HIGHLIGHT_KEYWORDS'));
+      highlightBtn.addEventListener('click', () => this.sendMessageToContentScript(ActionType.HIGHLIGHT_KEYWORDS));
+    }
+
+    if (viewHistoryBtn) {
+      viewHistoryBtn.addEventListener('click', () => this.toggleHistoryView());
+    }
+
+    if (viewFavoritesBtn) {
+      viewFavoritesBtn.addEventListener('click', () => this.toggleFavoritesView());
     }
 
     // History and Favorites event listeners
@@ -182,64 +198,41 @@ class PopupApp {
       }
     }
 
-    if (tabId === 'summarize') {
-      await this.handleSummarizeTab();
-    } else if (tabId === 'history') {
+    if (tabId === 'history') {
       await this.loadHistory();
     } else if (tabId === 'favorites') {
       await this.loadFavorites();
     }
   }
 
-  private async handleSummarizeTab(): Promise<void> {
-    const selectedText = await this.getSelectedTextFromActiveTab();
-    if (selectedText && selectedText.trim().length > 0) {
-      await this.summarizeSelectedText(selectedText);
+  private async toggleHistoryView(): Promise<void> {
+    const historyList = document.getElementById('history-list') as HTMLDivElement;
+    const viewHistoryBtn = document.getElementById('view-history-btn') as HTMLButtonElement;
+    
+    if (historyList && viewHistoryBtn) {
+      if (historyList.style.display === 'none') {
+        historyList.style.display = 'block';
+        viewHistoryBtn.textContent = 'Скрыть';
+        await this.loadHistory();
+      } else {
+        historyList.style.display = 'none';
+        viewHistoryBtn.textContent = 'Просмотр';
+      }
     }
   }
 
-  private async summarizeSelectedText(text: string): Promise<void> {
-    const button = document.getElementById('summarize-btn') as HTMLButtonElement;
+  private async toggleFavoritesView(): Promise<void> {
+    const favoritesList = document.getElementById('favorites-list') as HTMLDivElement;
+    const viewFavoritesBtn = document.getElementById('view-favorites-btn') as HTMLButtonElement;
     
-    try {
-      // Показываем loading состояние
-      if (window.MaterialDesignUtils && button) {
-        window.MaterialDesignUtils.showLoading(button, 'Суммаризация...');
-      }
-
-      const assistantMessage: ChatMessage = {
-        id: this.generateId(),
-        role: 'assistant',
-        content: '',
-        timestamp: Date.now(),
-        isStreaming: true,
-        messageType: 'summary'
-      };
-
-      this.chat.loadHistory([assistantMessage]);
-      this.updateChatUI();
-
-      await this.summarizer.summarizeWithStream(text, {
-        style: 'brief',
-        language: 'Russian'
-      }, (chunk) => {
-        assistantMessage.content += chunk;
-        assistantMessage.isStreaming = true;
-        this.updateChatUI();
-      });
-
-      assistantMessage.isStreaming = false;
-      this.lastAssistantMessageId = assistantMessage.id;
-      this.updateChatUI();
-      this.updateFavoriteButton();
-
-    } catch (error) {
-      console.error('Error summarizing text:', error);
-      this.showStatus('Ошибка суммаризации', 'error');
-    } finally {
-      // Скрываем loading состояние
-      if (window.MaterialDesignUtils && button) {
-        window.MaterialDesignUtils.hideLoading(button);
+    if (favoritesList && viewFavoritesBtn) {
+      if (favoritesList.style.display === 'none') {
+        favoritesList.style.display = 'block';
+        viewFavoritesBtn.textContent = 'Скрыть';
+        await this.loadFavorites();
+      } else {
+        favoritesList.style.display = 'none';
+        viewFavoritesBtn.textContent = 'Просмотр';
       }
     }
   }
@@ -393,7 +386,7 @@ class PopupApp {
     return new Promise((resolve) => {
       chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         if (tabs[0]?.id) {
-          chrome.tabs.sendMessage(tabs[0].id, { action: 'GET_SELECTED_TEXT' }, (response) => {
+          chrome.tabs.sendMessage(tabs[0].id, { action: ActionType.GET_SELECTED_TEXT }, (response) => {
             if (chrome.runtime.lastError) {
               console.error('Error getting selected text:', chrome.runtime.lastError.message);
               resolve(null);
@@ -447,7 +440,7 @@ class PopupApp {
   }
 
   private async renderHistory(history: any[]): Promise<void> {
-    const historyList = document.getElementById('history-list');
+    const historyList = document.getElementById('history-items');
     if (!historyList) return;
 
     if (history.length === 0) {
@@ -492,7 +485,7 @@ class PopupApp {
   }
 
   private renderFavorites(favorites: any[]): void {
-    const favoritesList = document.getElementById('favorites-list');
+    const favoritesList = document.getElementById('favorites-items');
     if (!favoritesList) return;
 
     if (favorites.length === 0) {
@@ -569,28 +562,24 @@ class PopupApp {
   }
 
   private async clearHistory(): Promise<void> {
-    if (confirm('Вы уверены, что хотите очистить всю историю?')) {
-      try {
-        await this.historyService.clearHistory();
-        await this.renderHistory([]);
-        this.showStatus('История очищена', 'success');
-      } catch (error) {
-        console.error('Error clearing history:', error);
-        this.showStatus('Ошибка очистки истории', 'error');
-      }
+    try {
+      await this.historyService.clearHistory();
+      await this.renderHistory([]);
+      this.showStatus('История очищена', 'success');
+    } catch (error) {
+      console.error('Error clearing history:', error);
+      this.showStatus('Ошибка очистки истории', 'error');
     }
   }
 
   private async clearFavorites(): Promise<void> {
-    if (confirm('Вы уверены, что хотите очистить все избранное?')) {
-      try {
-        await this.favoritesService.clearAllFavorites();
-        this.renderFavorites([]);
-        this.showStatus('Избранное очищено', 'success');
-      } catch (error) {
-        console.error('Error clearing favorites:', error);
-        this.showStatus('Ошибка очистки избранного', 'error');
-      }
+    try {
+      await this.favoritesService.clearAllFavorites();
+      this.renderFavorites([]);
+      this.showStatus('Избранное очищено', 'success');
+    } catch (error) {
+      console.error('Error clearing favorites:', error);
+      this.showStatus('Ошибка очистки избранного', 'error');
     }
   }
 
@@ -606,7 +595,7 @@ class PopupApp {
   }
 
   private setupHistoryEventListeners(): void {
-    const historyList = document.getElementById('history-list');
+    const historyList = document.getElementById('history-items');
     if (!historyList) return;
 
     // Remove existing listeners to avoid duplicates
@@ -617,7 +606,7 @@ class PopupApp {
   }
 
   private setupFavoritesEventListeners(): void {
-    const favoritesList = document.getElementById('favorites-list');
+    const favoritesList = document.getElementById('favorites-items');
     if (!favoritesList) return;
 
     // Remove existing listeners to avoid duplicates
@@ -705,15 +694,13 @@ class PopupApp {
   }
 
   private async deleteHistoryItem(itemId: string): Promise<void> {
-    if (confirm('Удалить этот элемент из истории?')) {
-      try {
-        await this.historyService.removeFromHistory(itemId);
-        await this.loadHistory();
-        this.showStatus('Удалено из истории', 'success');
-      } catch (error) {
-        console.error('Error deleting history item:', error);
-        this.showStatus('Ошибка удаления из истории', 'error');
-      }
+    try {
+      await this.historyService.removeFromHistory(itemId);
+      await this.loadHistory();
+      this.showStatus('Удалено из истории', 'success');
+    } catch (error) {
+      console.error('Error deleting history item:', error);
+      this.showStatus('Ошибка удаления из истории', 'error');
     }
   }
 
@@ -729,15 +716,13 @@ class PopupApp {
   }
 
   private async deleteFavoriteItem(itemId: string): Promise<void> {
-    if (confirm('Удалить этот элемент из избранного?')) {
-      try {
-        await this.favoritesService.removeFromFavorites(itemId);
-        await this.loadFavorites();
-        this.showStatus('Удалено из избранного', 'success');
-      } catch (error) {
-        console.error('Error deleting favorite item:', error);
-        this.showStatus('Ошибка удаления из избранного', 'error');
-      }
+    try {
+      await this.favoritesService.removeFromFavorites(itemId);
+      await this.loadFavorites();
+      this.showStatus('Удалено из избранного', 'success');
+    } catch (error) {
+      console.error('Error deleting favorite item:', error);
+      this.showStatus('Ошибка удаления из избранного', 'error');
     }
   }
 }

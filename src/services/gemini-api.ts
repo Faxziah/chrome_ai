@@ -44,7 +44,7 @@ export class GeminiService {
           maxOutputTokens: config?.maxTokens || 2048,
         }
       });
-      const response = await result.response;
+      const response = result.response;
       const text = response.text();
 
       return {
@@ -55,9 +55,31 @@ export class GeminiService {
           totalTokens: result.response.usageMetadata?.totalTokenCount || 0,
         }
       };
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error generating content:', error);
-      throw new Error(`Failed to generate content: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      
+      // Handle 404 errors for model not found
+      if (error.message?.includes('404') || error.message?.includes('not found')) {
+        throw new Error('MODEL_NOT_AVAILABLE');
+      }
+      
+      // Handle 401 errors for API key issues
+      if (error.message?.includes('401') || error.message?.includes('API key')) {
+        throw new Error(
+          'API ключ некорректный или отсутствует. ' +
+          'Проверьте ключ в настройках расширения.'
+        );
+      }
+      
+      // Handle 429 errors for rate limits
+      if (error.message?.includes('429') || error.message?.includes('quota')) {
+        throw new Error(
+          'Превышен лимит запросов к API. ' +
+          'Пожалуйста, подождите несколько минут и попробуйте снова.'
+        );
+      }
+      
+      throw new Error(`Ошибка Gemini API: ${error.message || 'Неизвестная ошибка'}`);
     }
   }
 
@@ -97,19 +119,56 @@ export class GeminiService {
         isComplete: true
       };
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error streaming content:', error);
-      throw new Error(`Failed to stream content: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      
+      // Проверка на 404 ошибку модели
+      if (error.message?.includes('404') || error.message?.includes('not found')) {
+        throw new Error(
+          'Модель недоступна для текущей версии API. ' +
+          'Пожалуйста, выберите другую модель в настройках расширения. ' +
+          'Доступные модели: gemini-1.5-flash, gemini-1.5-pro.'
+        );
+      }
+      
+      // Проверка на ошибку API ключа
+      if (error.message?.includes('API key') || error.message?.includes('401')) {
+        throw new Error(
+          'API ключ некорректный или отсутствует. ' +
+          'Проверьте ключ в настройках расширения.'
+        );
+      }
+      
+      // Проверка на rate limit
+      if (error.message?.includes('429') || error.message?.includes('quota')) {
+        throw new Error(
+          'Превышен лимит запросов к API. ' +
+          'Пожалуйста, подождите несколько минут и попробуйте снова.'
+        );
+      }
+      
+      // Общая ошибка
+      throw new Error(`Ошибка Gemini API: ${error.message || 'Неизвестная ошибка'}`);
     }
   }
 
   async testConnection(): Promise<boolean> {
     try {
       this.ensureInitialized();
-      await this.generateContent('Test connection');
+      await this.generateContent('Test', { temperature: 0.1, maxTokens: 10 });
       return true;
-    } catch (error) {
-      console.error('Connection test failed:', error);
+    } catch (error: any) {
+      console.error('API key validation failed:', error);
+      
+      // Логировать конкретную причину
+      if (error.message?.includes('404') || error.message?.includes('MODEL_NOT_AVAILABLE')) {
+        console.error('Model not found');
+      } else if (error.message?.includes('401') || error.message?.includes('API key')) {
+        console.error('Invalid API key');
+      } else if (error.message?.includes('429') || error.message?.includes('quota')) {
+        console.error('Rate limit exceeded');
+      }
+      
       return false;
     }
   }

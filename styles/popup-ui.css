@@ -119,6 +119,59 @@ button:active {
 
 .tabs::-webkit-scrollbar { display: none; }
 
+/* Mini Tab Styles */
+.mini-tabs {
+  position: relative;
+  display: flex;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm);
+  justify-content: center;
+  align-items: center;
+  border-bottom: 1px solid var(--popup-border);
+  background: color-mix(in srgb, var(--primary-color) 3%, transparent);
+}
+
+.mini-tab {
+  position: relative;
+  appearance: none;
+  background: transparent;
+  border: 0;
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--secondary-color);
+  cursor: pointer;
+  font: 600 1rem/1 system-ui, -apple-system, sans-serif;
+  transition: all var(--transition-speed);
+  border-radius: 50%;
+  border: 2px solid transparent;
+}
+
+.mini-tab:hover {
+  background: color-mix(in srgb, var(--primary-color) 12%, transparent);
+  color: var(--primary-color);
+  transform: scale(1.05);
+}
+
+.mini-tab:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+.mini-tab.is-active {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+  box-shadow: 0 2px 8px rgba(26, 115, 232, 0.3);
+}
+
+.mini-tab.is-active:hover {
+  background: var(--primary-hover);
+  transform: scale(1.05);
+}
+
 .tab {
   position: relative;
   appearance: none;
@@ -361,6 +414,23 @@ textarea:focus {
   background: color-mix(in srgb, var(--success-color) 90%, black);
 }
 
+/* Favorite Toggle Styles */
+.btn-secondary.favorite-active {
+  background: var(--success-color);
+  color: white;
+  border-color: var(--success-color);
+  transition: all 0.3s ease;
+}
+
+.btn-secondary.favorite-active:hover {
+  background: color-mix(in srgb, var(--success-color) 90%, black);
+  transform: scale(1.02);
+}
+
+.btn-secondary.favorite-active:active {
+  transform: scale(0.98);
+}
+
 .btn:disabled,
 .btn[disabled] {
   opacity: 0.38;
@@ -439,6 +509,14 @@ textarea:focus {
   .select {
     background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><path fill="%239aa0a6" d="M6 9L1 4h10z"/></svg>');
   }
+
+  .mini-tabs {
+    background: color-mix(in srgb, var(--primary-color) 5%, transparent);
+  }
+
+  .mini-tab:hover {
+    background: color-mix(in srgb, var(--primary-color) 15%, transparent);
+  }
 }
 
 /* Translation-Specific Styles */
@@ -499,9 +577,13 @@ textarea:focus {
   pointer-events: none;
 }
 
-#translate-result .result-text {
-  min-height: 60px;
+#rephrase-result .result-text,
+#translate-result .result-text,
+#summary-result .result-text {
+  max-height: 150px;
+  overflow-y: auto;
   white-space: pre-wrap;
+  word-break: break-word;
 }
 
 #translate-result .result-label {
@@ -510,6 +592,124 @@ textarea:focus {
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+}
+
+/* Toast Styles */
+.toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: 8px;
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 500;
+  z-index: 10000;
+  opacity: 0;
+  transform: translateX(100%);
+  transition: all 0.3s ease;
+  max-width: 300px;
+  word-wrap: break-word;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.toast-error {
+  background: var(--error-color);
+}
+
+.toast-success {
+  background: var(--success-color);
+}
+
+.toast-show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Стили для speak-source-container */
+.speak-source-container {
+  margin-top: 8px;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.speak-source-container .btn-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Стили для api-key-error */
+.api-key-error {
+  background: #fef7e0;
+  border: 1px solid #f9ab00;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 12px 0;
+  color: #5f4b00;
+}
+
+.api-key-error p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.api-key-error a {
+  color: #1a73e8;
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.api-key-error a:hover {
+  color: #1557b0;
+}
+
+/* Стили для speech-error-container */
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.speech-error-container {
+  animation: slideIn 0.3s ease;
+}
+
+/* Стили для результатов с ограничением высоты */
+#summary-result .result-text,
+#rephrase-result .result-text,
+#translate-result .result-text {
+  max-height: 150px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.6;
+}
+
+/* Стили для скроллбара */
+#summary-result .result-text::-webkit-scrollbar,
+#rephrase-result .result-text::-webkit-scrollbar,
+#translate-result .result-text::-webkit-scrollbar {
+  width: 6px;
+}
+
+#summary-result .result-text::-webkit-scrollbar-thumb,
+#rephrase-result .result-text::-webkit-scrollbar-thumb,
+#translate-result .result-text::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+#summary-result .result-text::-webkit-scrollbar-thumb:hover,
+#rephrase-result .result-text::-webkit-scrollbar-thumb:hover,
+#translate-result .result-text::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
 }
 
 @media (max-width: 480px) {
@@ -525,5 +725,11 @@ textarea:focus {
   .language-row .btn-icon {
     align-self: center;
     transform: rotate(90deg);
+  }
+  
+  .toast {
+    right: 10px;
+    left: 10px;
+    max-width: none;
   }
 }

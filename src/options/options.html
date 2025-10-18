@@ -294,6 +294,28 @@
     <div class="container">
         <h1>AI Text Tools - Настройки</h1>
 
+        <!-- Language Settings Section -->
+        <div class="section">
+            <h2>🌐 Настройки языка</h2>
+            <div class="form-group">
+                <label for="interface-language">Язык интерфейса:</label>
+                <select id="interface-language">
+                    <option value="ru" selected>Русский</option>
+                    <option value="en">English</option>
+                    <option value="de">Deutsch</option>
+                    <option value="fr">Français</option>
+                    <option value="zh">中文</option>
+                </select>
+                <div class="help-text">
+                    Выберите язык для интерфейса расширения
+                </div>
+            </div>
+            <div class="button-group">
+                <button class="md-button md-button--primary" id="save-language">Сохранить язык</button>
+            </div>
+            <div class="status-message" id="language-status"></div>
+        </div>
+
         <!-- API Configuration Section -->
         <div class="section">
             <h2>🔑 Настройки API</h2>
