@@ -18,6 +18,6 @@ chrome.commands.onCommand.addListener((command) => {
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'OPEN_OPTIONS') {
-    chrome.runtime.openOptionsPage();
+    chrome.runtime.openOptionsPage().catch(console.error);
   }
 });

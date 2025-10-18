@@ -1,9 +1,9 @@
 import { SpeechConfig, VoiceInfo } from '../types';
 
 export class SpeechSynthesisManager {
-  private synthesis: SpeechSynthesis | null;
+  private readonly synthesis: SpeechSynthesis | null;
   private voices: SpeechSynthesisVoice[];
-  private isInitialized: boolean;
+  private readonly isInitialized: boolean;
 
   constructor() {
     if ('speechSynthesis' in window) {

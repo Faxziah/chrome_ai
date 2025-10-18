@@ -4,7 +4,7 @@ import { StorageService } from '../services/storage';
 import { Rephraser } from '../components/rephraser';
 import { Translator } from '../components/translator';
 import { SpeechSynthesisManager } from './speech-utils';
-import { RephraserConfig, RephraserResult, TranslatorConfig, TranslatorResult, HistoryItem } from '../types';
+import { RephraserConfig, RephraserResult, TranslatorConfig, TranslatorResult, HistoryItem, LanguageCode } from '../types';
 
 export class PopupIntegration {
   private popupUI: PopupUI;
@@ -20,7 +20,7 @@ export class PopupIntegration {
   constructor(popupUI: PopupUI) {
     this.popupUI = popupUI;
     this.storageService = new StorageService();
-    this.initializeServicesAndAttachListeners();
+    this.initializeServicesAndAttachListeners().catch(console.error);
   }
 
   private async initializeServicesAndAttachListeners(): Promise<void> {
@@ -56,7 +56,7 @@ export class PopupIntegration {
       return;
     }
 
-    shadowRoot.addEventListener('click', (event: Event) => {
+    shadowRoot.addEventListener('click', async (event: Event) => {
       const target = event.target as HTMLElement;
       const button = target.closest('.btn') as HTMLElement;
       
@@ -65,19 +65,19 @@ export class PopupIntegration {
       const buttonId = button.id;
       
       if (buttonId === 'btn-rephrase') {
-        this.handleRephraseClick(event);
+        await this.handleRephraseClick(event);
       } else if (buttonId === 'btn-copy-rephrase') {
-        this.handleCopyClick(event, 'rephrase');
+        await this.handleCopyClick(event, 'rephrase');
       } else if (buttonId === 'btn-translate') {
-        this.handleTranslateClick(event);
+        await this.handleTranslateClick(event);
       } else if (buttonId === 'btn-swap-languages') {
         this.handleSwapLanguagesClick(event);
       } else if (buttonId === 'btn-speak-source') {
-        this.handleSpeakClick(event, 'source');
+        await this.handleSpeakClick(event, 'source');
       } else if (buttonId === 'btn-speak-translation') {
-        this.handleSpeakClick(event, 'translation');
+        await this.handleSpeakClick(event, 'translation');
       } else if (buttonId === 'btn-copy-translate') {
-        this.handleCopyClick(event, 'translate');
+        await this.handleCopyClick(event, 'translate');
       }
     });
 
@@ -325,8 +325,8 @@ export class PopupIntegration {
       }
 
       const config: TranslatorConfig = {
-        sourceLanguage,
-        targetLanguage
+        sourceLanguage: sourceLanguage as LanguageCode,
+        targetLanguage: targetLanguage as Exclude<LanguageCode, 'auto'>
       };
 
       const result = await this.translator.translate(selectedText, config);

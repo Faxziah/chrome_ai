@@ -45,6 +45,7 @@ export class ExampleUsage {
       const response = await this.geminiService.generateContent(prompt, config);
       
       await this.storageService.saveToHistory({
+        type: 'summarize',
         prompt,
         response: response.text,
         model: config?.model || 'gemini-pro'
@@ -70,6 +71,7 @@ export class ExampleUsage {
       }
 
       await this.storageService.saveToHistory({
+        type: 'summarize',
         prompt,
         response: fullResponse,
         model: config?.model || 'gemini-pro'
@@ -85,6 +87,7 @@ export class ExampleUsage {
   async addToFavorites(prompt: string, response: string, tags?: string[]): Promise<boolean> {
     try {
       return await this.storageService.addToFavorites({
+        type: 'summarize',
         prompt,
         response,
         model: 'gemini-pro',

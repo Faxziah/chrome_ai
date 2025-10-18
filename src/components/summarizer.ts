@@ -22,37 +22,7 @@ export class Summarizer {
   }
 
   async summarize(text: string, config?: SummarizerConfig): Promise<SummarizerResult> {
-    if (!text || text.trim().length === 0) {
-      throw new Error('Text cannot be empty');
-    }
-
-    const originalLength = text.length;
-    const maxLength = config?.maxLength || Math.max(100, Math.floor(originalLength * 0.3));
-    const style = config?.style || 'brief';
-    const language = config?.language || 'Russian';
-
-    const prompt = this.buildPrompt(text, maxLength, style, language);
-
-    try {
-      const response: GeminiResponse = await this.geminiService.generateContent(prompt, {
-        temperature: 0.3,
-        maxTokens: Math.min(2048, maxLength * 2)
-      });
-
-      const summary = response.text.trim();
-      const summaryLength = summary.length;
-      const compressionRatio = originalLength > 0 ? summaryLength / originalLength : 0;
-
-      return {
-        summary,
-        originalLength,
-        summaryLength,
-        compressionRatio
-      };
-    } catch (error) {
-      console.error('Summarization error:', error);
-      throw new Error(`Failed to summarize text: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    }
+    return this.summarizeInternal(text, config);
   }
 
   private buildPrompt(text: string, maxLength: number, style: string, language: string): string {
@@ -74,6 +44,14 @@ ${text}
   }
 
   async summarizeWithStream(
+    text: string, 
+    config?: SummarizerConfig,
+    onChunk?: (chunk: string) => void
+  ): Promise<SummarizerResult> {
+    return this.summarizeInternal(text, config, onChunk);
+  }
+
+  private async summarizeInternal(
     text: string, 
     config?: SummarizerConfig,
     onChunk?: (chunk: string) => void
@@ -115,8 +93,8 @@ ${text}
         compressionRatio
       };
     } catch (error) {
-      console.error('Streaming summarization error:', error);
-      throw new Error(`Failed to summarize text with stream: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error('Summarization error:', error);
+      throw new Error(`Failed to summarize text: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 }

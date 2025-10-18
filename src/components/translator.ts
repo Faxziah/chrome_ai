@@ -1,5 +1,5 @@
 import { GeminiService } from '../services/gemini-api';
-import { TranslatorConfig, TranslatorResult } from '../types';
+import { TranslatorConfig, TranslatorResult, LanguageCode } from '../types';
 
 export class Translator {
   private geminiService: GeminiService;
@@ -14,7 +14,7 @@ export class Translator {
     if (typeof configOrTargetLanguage === 'string') {
       const config: TranslatorConfig = {
         sourceLanguage: 'auto',
-        targetLanguage: configOrTargetLanguage
+        targetLanguage: configOrTargetLanguage as Exclude<LanguageCode, 'auto'>
       };
       return this.translateWithConfig(text, config);
     }
@@ -81,7 +81,7 @@ export class Translator {
     if (typeof configOrTargetLanguage === 'string') {
       const config: TranslatorConfig = {
         sourceLanguage: 'auto',
-        targetLanguage: configOrTargetLanguage
+        targetLanguage: configOrTargetLanguage as Exclude<LanguageCode, 'auto'>
       };
       return this.translateWithStreamConfig(text, config, onChunk);
     }

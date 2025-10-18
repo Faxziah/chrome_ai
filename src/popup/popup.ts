@@ -1,14 +1,13 @@
 import { GeminiService } from '../services/gemini-api';
 import { StorageService } from '../services/storage';
 import { Summarizer } from '../components/summarizer';
-import { Chat } from '../components/chat';
-import { ChatMessage } from '../components/chat';
+import { Chat, ChatMessage } from '../components/chat';
 
 class PopupApp {
-  private geminiService: GeminiService;
-  private storageService: StorageService;
-  private summarizer: Summarizer;
-  private chat: Chat;
+  private readonly geminiService: GeminiService;
+  private readonly storageService: StorageService;
+  private readonly summarizer: Summarizer;
+  private readonly chat: Chat;
   private currentTab: string = 'summarize';
   private lastAssistantMessageId: string | null = null;
 
@@ -18,7 +17,7 @@ class PopupApp {
     this.summarizer = new Summarizer(this.geminiService);
     this.chat = new Chat(this.geminiService, this.storageService);
     
-    this.initializeApp();
+    this.initializeApp().catch(console.error);
   }
 
   private async initializeApp(): Promise<void> {
@@ -45,9 +44,9 @@ class PopupApp {
     const tabContents = document.querySelectorAll('.tab-content');
     
     tabs.forEach(tab => {
-      tab.addEventListener('click', () => {
+      tab.addEventListener('click', async () => {
         const tabId = tab.id.replace('-tab', '');
-        this.switchTab(tabId);
+        await this.switchTab(tabId);
       });
     });
 
@@ -56,12 +55,12 @@ class PopupApp {
     const favoriteBtn = document.getElementById('favorite-btn') as HTMLButtonElement;
 
     if (sendBtn && chatInput) {
-      sendBtn.addEventListener('click', () => this.sendMessage());
+      sendBtn.addEventListener('click', async () => await this.sendMessage());
       
-      chatInput.addEventListener('keydown', (e) => {
+      chatInput.addEventListener('keydown', async (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
           e.preventDefault();
-          this.sendMessage();
+          await this.sendMessage();
         }
       });
 
@@ -120,7 +119,7 @@ class PopupApp {
     }
   }
 
-  private switchTab(tabId: string): void {
+  private async switchTab(tabId: string): Promise<void> {
     this.currentTab = tabId;
     
     const tabs = document.querySelectorAll('.tab');
@@ -138,7 +137,7 @@ class PopupApp {
     }
 
     if (tabId === 'summarize') {
-      this.handleSummarizeTab();
+      await this.handleSummarizeTab();
     }
   }
 
@@ -184,7 +183,7 @@ class PopupApp {
   }
 
   private generateId(): string {
-    return `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `msg_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
   }
 
   private async sendMessage(): Promise<void> {

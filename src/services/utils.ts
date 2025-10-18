@@ -1,5 +1,5 @@
 export function validateApiKey(apiKey: string): boolean {
-  if (!apiKey || typeof apiKey !== 'string') {
+  if (!apiKey) {
     return false;
   }
   

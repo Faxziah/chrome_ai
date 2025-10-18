@@ -730,10 +730,9 @@ export class PopupUI {
     if (this.shadowRoot) {
       const selectedTextDisplay = this.shadowRoot.querySelector('.tab-panel:not([hidden]) .selected-text-display');
       if (selectedTextDisplay) {
-        const text = this.selectedText.length > 200 
+        selectedTextDisplay.textContent = this.selectedText.length > 200 
           ? this.selectedText.substring(0, 200) + '...' 
           : this.selectedText;
-        selectedTextDisplay.textContent = text;
       }
     }
   }

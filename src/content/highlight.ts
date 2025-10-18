@@ -78,7 +78,8 @@ export class HighlightManager {
   }
 
   private isElementVisible(element: Element): boolean {
-    if (element.offsetParent === null) {
+    const htmlElement = element as HTMLElement;
+    if (htmlElement.offsetParent === null) {
       return false;
     }
 
