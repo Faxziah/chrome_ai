@@ -22,7 +22,7 @@ export interface ChatConfig {
 export class Chat {
   private geminiService: GeminiService;
   private storageService: StorageService;
-  private favoritesService?: FavoritesService;
+  private readonly favoritesService?: FavoritesService;
   private messages: ChatMessage[] = [];
   private config: ChatConfig;
   private onMessageUpdate?: (message: ChatMessage) => void;
@@ -169,9 +169,13 @@ export class Chat {
     try {
       const prompt = this.buildPrompt();
       
+      // Load saved API configuration
+      const apiConfig = await this.storageService.getApiConfig();
+      
       for await (const chunk of this.geminiService.streamContent(prompt, {
-        temperature: this.config.temperature,
-        maxTokens: this.config.maxTokens
+        model: apiConfig?.model || 'gemini-pro',
+        temperature: apiConfig?.temperature || this.config.temperature,
+        maxTokens: apiConfig?.maxTokens || this.config.maxTokens
       })) {
         if (!chunk.isComplete) {
           assistantMessage.content += chunk.text;

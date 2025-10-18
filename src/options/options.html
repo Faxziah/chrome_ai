@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Text Tools - Настройки</title>
+    <link rel="stylesheet" href="../../styles/material-design.css">
     <link rel="stylesheet" href="../../styles/options.css">
     <style>
         .container {
@@ -13,16 +14,17 @@
         }
 
         .section {
-            background: #f9f9f9;
+            background: var(--md-surface);
             padding: 20px;
-            border-radius: 8px;
+            border-radius: var(--md-radius-medium);
             margin-bottom: 20px;
+            box-shadow: var(--md-elevation-1);
         }
 
         .section h2 {
             margin-top: 0;
-            color: #333;
-            border-bottom: 2px solid #4285f4;
+            color: var(--md-on-surface);
+            border-bottom: 2px solid var(--md-primary);
             padding-bottom: 10px;
         }
 
@@ -67,39 +69,42 @@
         }
 
         .btn {
-            background-color: #4285f4;
+            background-color: var(--md-primary);
             color: white;
             padding: 10px 20px;
             border: none;
-            border-radius: 4px;
+            border-radius: var(--md-radius-small);
             cursor: pointer;
             font-size: 14px;
             font-weight: 500;
-            transition: background-color 0.2s;
+            transition: all var(--md-transition-fast);
         }
 
         .btn:hover {
-            background-color: #3367d6;
+            background-color: var(--md-primary-dark);
+            transform: translateY(-1px);
+            box-shadow: var(--md-elevation-2);
         }
 
         .btn:active {
-            background-color: #2c5aa0;
+            transform: translateY(0);
+            box-shadow: var(--md-elevation-1);
         }
 
         .btn-danger {
-            background-color: #dc3545;
+            background-color: var(--md-error);
         }
 
         .btn-danger:hover {
-            background-color: #c82333;
+            background-color: var(--md-error-dark);
         }
 
         .btn-secondary {
-            background-color: #6c757d;
+            background-color: var(--md-on-surface-variant);
         }
 
         .btn-secondary:hover {
-            background-color: #5a6268;
+            background-color: var(--md-on-surface);
         }
 
         .status-message {
@@ -300,11 +305,47 @@
                 </div>
             </div>
             <div class="button-group">
-                <button class="btn" id="save-api-key">Сохранить ключ</button>
-                <button class="btn btn-secondary" id="test-api-key">Проверить ключ</button>
-                <button class="btn btn-secondary" id="toggle-api-visibility">Показать/скрыть</button>
+                <button class="md-button md-button--primary" id="save-api-key">Сохранить ключ</button>
+                <button class="md-button md-button--secondary" id="test-api-key">Проверить ключ</button>
+                <button class="md-button md-button--secondary" id="toggle-api-visibility">Показать/скрыть</button>
             </div>
             <div class="status-message" id="api-status"></div>
+        </div>
+
+        <!-- Gemini Model Configuration Section -->
+        <div class="section">
+            <h2>🤖 Настройки модели Gemini</h2>
+            <div class="form-group">
+                <label for="gemini-model">Модель:</label>
+                <select id="gemini-model">
+                    <option value="gemini-pro">Gemini Pro</option>
+                    <option value="gemini-pro-vision">Gemini Pro Vision</option>
+                    <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+                    <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+                </select>
+                <div class="help-text">
+                    Выберите модель Gemini для обработки запросов
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="gemini-temperature">Температура (0.0 - 1.0):</label>
+                <input type="range" id="gemini-temperature" min="0" max="1" step="0.1" value="0.7">
+                <div class="help-text">
+                    <span id="temperature-value">0.7</span> - Выше = более креативные ответы, Ниже = более точные ответы
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="gemini-max-tokens">Максимум токенов:</label>
+                <input type="number" id="gemini-max-tokens" min="100" max="8192" step="100" value="2048">
+                <div class="help-text">
+                    Максимальное количество токенов в ответе (100-8192)
+                </div>
+            </div>
+            <div class="button-group">
+                <button class="md-button md-button--primary" id="save-gemini-config">Сохранить настройки</button>
+                <button class="md-button md-button--secondary" id="reset-gemini-config">Сбросить к умолчанию</button>
+            </div>
+            <div class="status-message" id="gemini-config-status"></div>
         </div>
 
         <!-- Keyboard Shortcuts Section -->
@@ -325,7 +366,7 @@
                 </div>
             </div>
             <div class="button-group">
-                <button class="btn" id="change-shortcuts">Изменить сочетания</button>
+                <button class="md-button md-button--primary" id="change-shortcuts">Изменить сочетания</button>
             </div>
         </div>
 
@@ -333,15 +374,16 @@
         <div class="section">
             <h2>📊 Управление данными</h2>
             
-            <div class="tabs">
-                <div class="tab active" data-tab="history">История</div>
-                <div class="tab" data-tab="favorites">Избранное</div>
-                <div class="tab" data-tab="stats">Статистика</div>
+            <div class="md-tabs">
+                <div class="md-tab active" data-tab="history">История</div>
+                <div class="md-tab" data-tab="favorites">Избранное</div>
+                <div class="md-tab" data-tab="stats">Статистика</div>
             </div>
 
             <!-- History Tab -->
-            <div class="tab-content active" id="history-tab">
+            <div class="md-tab-content active" id="history-tab">
                 <div class="search-box">
+                    <label for="history-search" class="sr-only">Search history</label>
                     <input type="text" id="history-search" placeholder="Поиск в истории...">
                 </div>
                 <div class="filter-buttons">
@@ -351,9 +393,9 @@
                     <button class="filter-btn" data-filter="translate">Перевод</button>
                 </div>
                 <div class="button-group">
-                    <button class="btn btn-danger" id="clear-history">Очистить историю</button>
-                    <button class="btn btn-secondary" id="export-history">Экспорт истории</button>
-                    <button class="btn btn-secondary" id="import-history">Импорт истории</button>
+                    <button class="md-button md-button--danger" id="clear-history">Очистить историю</button>
+                    <button class="md-button md-button--secondary" id="export-history">Экспорт истории</button>
+                    <button class="md-button md-button--secondary" id="import-history">Импорт истории</button>
                 </div>
                 <div class="data-list" id="history-list">
                     <div class="empty-state">Загрузка истории...</div>
@@ -361,8 +403,9 @@
             </div>
 
             <!-- Favorites Tab -->
-            <div class="tab-content" id="favorites-tab">
+            <div class="md-tab-content" id="favorites-tab">
                 <div class="search-box">
+                    <label for="favorites-search" class="sr-only">Search favorites</label>
                     <input type="text" id="favorites-search" placeholder="Поиск в избранном...">
                 </div>
                 <div class="filter-buttons">
@@ -372,9 +415,9 @@
                     <button class="filter-btn" data-filter="translate">Перевод</button>
                 </div>
                 <div class="button-group">
-                    <button class="btn btn-danger" id="clear-favorites">Очистить избранное</button>
-                    <button class="btn btn-secondary" id="export-favorites">Экспорт избранного</button>
-                    <button class="btn btn-secondary" id="import-favorites">Импорт избранного</button>
+                    <button class="md-button md-button--danger" id="clear-favorites">Очистить избранное</button>
+                    <button class="md-button md-button--secondary" id="export-favorites">Экспорт избранного</button>
+                    <button class="md-button md-button--secondary" id="import-favorites">Импорт избранного</button>
                 </div>
                 <div class="data-list" id="favorites-list">
                     <div class="empty-state">Загрузка избранного...</div>
@@ -382,7 +425,7 @@
             </div>
 
             <!-- Stats Tab -->
-            <div class="tab-content" id="stats-tab">
+            <div class="md-tab-content" id="stats-tab">
                 <div class="stats-grid" id="stats-grid">
                     <div class="stat-card">
                         <div class="stat-number" id="total-history">0</div>
@@ -412,14 +455,15 @@
         <div class="section">
             <h2>📁 Импорт/Экспорт</h2>
             <div class="button-group">
-                <button class="btn" id="export-all">Экспорт всех данных</button>
-                <button class="btn btn-secondary" id="import-all">Импорт данных</button>
-                <button class="btn btn-danger" id="clear-all-data">Очистить все данные</button>
+                <button class="md-button md-button--primary" id="export-all">Экспорт всех данных</button>
+                <button class="md-button md-button--secondary" id="import-all">Импорт данных</button>
+                <button class="md-button md-button--danger" id="clear-all-data">Очистить все данные</button>
             </div>
             <div class="status-message" id="import-export-status"></div>
         </div>
     </div>
 
+    <script src="../utils/material-design.js"></script>
     <script src="../../dist/options.js"></script>
 </body>
 </html>

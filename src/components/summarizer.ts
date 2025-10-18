@@ -1,5 +1,6 @@
 import { GeminiService } from '../services/gemini-api';
 import { HistoryService } from '../services/history';
+import { StorageService } from '../services/storage';
 import { GeminiResponse } from '../types';
 
 export interface SummarizerConfig {
@@ -17,11 +18,13 @@ export interface SummarizerResult {
 
 export class Summarizer {
   private geminiService: GeminiService;
-  private historyService?: HistoryService;
+  private readonly historyService?: HistoryService;
+  private readonly storageService: StorageService;
 
-  constructor(geminiService: GeminiService, historyService?: HistoryService) {
+  constructor(geminiService: GeminiService, historyService?: HistoryService, storageService?: StorageService) {
     this.geminiService = geminiService;
     this.historyService = historyService;
+    this.storageService = storageService || new StorageService();
   }
 
   async summarize(text: string, config?: SummarizerConfig): Promise<SummarizerResult> {
@@ -71,11 +74,15 @@ ${text}
     const prompt = this.buildPrompt(text, maxLength, style, language);
 
     try {
+      // Load saved API configuration
+      const apiConfig = await this.storageService.getApiConfig();
+      
       let fullSummary = '';
       
       for await (const chunk of this.geminiService.streamContent(prompt, {
-        temperature: 0.3,
-        maxTokens: Math.min(2048, maxLength * 2)
+        model: apiConfig?.model || 'gemini-pro',
+        temperature: apiConfig?.temperature || 0.3,
+        maxTokens: apiConfig?.maxTokens || Math.min(2048, maxLength * 2)
       })) {
         if (!chunk.isComplete) {
           fullSummary += chunk.text;

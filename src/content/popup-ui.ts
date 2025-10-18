@@ -25,6 +25,12 @@ export class PopupUI {
 
     this.shadowRoot = this.hostElement.attachShadow({ mode: 'open' });
 
+    // Добавляем Material Design CSS в Shadow DOM
+    const materialDesignLink = document.createElement('link');
+    materialDesignLink.rel = 'stylesheet';
+    materialDesignLink.href = chrome.runtime.getURL('styles/material-design.css');
+    this.shadowRoot.appendChild(materialDesignLink);
+
     this.popupContainer = document.createElement('div');
     this.popupContainer.id = 'popup-container';
     this.popupContainer.style.cssText = `
@@ -743,6 +749,19 @@ export class PopupUI {
 
   public getShadowRoot(): ShadowRoot | null {
     return this.shadowRoot;
+  }
+
+  public triggerAction(action: string): void {
+    if (this.tabsComponent) {
+      // Switch to the appropriate tab and trigger the action
+      if (action === 'summarize') {
+        this.tabsComponent.switchToTab('summarize');
+      } else if (action === 'rephrase') {
+        this.tabsComponent.switchToTab('rephrase');
+      } else if (action === 'translate') {
+        this.tabsComponent.switchToTab('translate');
+      }
+    }
   }
 
   public destroy(): void {

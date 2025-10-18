@@ -110,6 +110,29 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
     } else if (message.action === 'GET_SELECTED_TEXT') {
       const selectedText = getSelectedText();
       sendResponse({ success: true, text: selectedText });
+    } else if (message.action === 'CONTEXT_MENU_ACTION') {
+      console.log('Context menu action received:', message.contextAction);
+      const selectedText = message.selectedText || getSelectedText();
+      
+      if (selectedText && selectedText.trim()) {
+        // Show popup with the selected text and trigger the appropriate action
+        const selectionRect = getSelectionRect();
+        if (selectionRect) {
+          popupUI.show(selectedText, selectionRect);
+          
+          // Trigger the specific action based on context menu selection
+          setTimeout(() => {
+            if (message.contextAction === 'summarize-text') {
+              popupUI.triggerAction('summarize');
+            } else if (message.contextAction === 'rephrase-text') {
+              popupUI.triggerAction('rephrase');
+            } else if (message.contextAction === 'translate-text') {
+              popupUI.triggerAction('translate');
+            }
+          }, 100);
+        }
+      }
+      sendResponse({ success: true });
     } else {
       console.warn('Unknown action:', message.action);
       sendResponse({ success: false, error: 'Unknown action' });

@@ -1,14 +1,17 @@
 import { GeminiService } from '../services/gemini-api';
 import { HistoryService } from '../services/history';
+import { StorageService } from '../services/storage';
 import { RephraserConfig, RephraserResult } from '../types';
 
 export class Rephraser {
   private geminiService: GeminiService;
-  private historyService?: HistoryService;
+  private readonly historyService?: HistoryService;
+  private readonly storageService: StorageService;
 
-  constructor(geminiService: GeminiService, historyService?: HistoryService) {
+  constructor(geminiService: GeminiService, historyService?: HistoryService, storageService?: StorageService) {
     this.geminiService = geminiService;
     this.historyService = historyService;
+    this.storageService = storageService || new StorageService();
   }
 
   // Overload for simple style-based rephrasing
@@ -34,9 +37,14 @@ export class Rephraser {
       const originalLength = text.length;
 
       const prompt = this.buildPrompt(text, style, preserveMeaning, language);
+      
+      // Load saved API configuration
+      const apiConfig = await this.storageService.getApiConfig();
+      
       const response = await this.geminiService.generateContent(prompt, {
-        temperature: 0.7,
-        maxTokens: 2048
+        model: apiConfig?.model || 'gemini-pro',
+        temperature: apiConfig?.temperature || 0.7,
+        maxTokens: apiConfig?.maxTokens || 2048
       });
 
       const rephrasedText = response.text.trim();
@@ -130,9 +138,13 @@ export class Rephraser {
       const prompt = this.buildPrompt(text, style, preserveMeaning, language);
       let fullRephrasedText = '';
 
+      // Load saved API configuration
+      const apiConfig = await this.storageService.getApiConfig();
+      
       for await (const chunk of this.geminiService.streamContent(prompt, {
-        temperature: 0.7,
-        maxTokens: 2048
+        model: apiConfig?.model || 'gemini-pro',
+        temperature: apiConfig?.temperature || 0.7,
+        maxTokens: apiConfig?.maxTokens || 2048
       })) {
         if (!chunk.isComplete) {
           fullRephrasedText += chunk.text;

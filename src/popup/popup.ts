@@ -7,6 +7,13 @@ import { Rephraser } from '../components/rephraser';
 import { Translator } from '../components/translator';
 import { Chat, ChatMessage } from '../components/chat';
 
+// Material Design Utils (будет доступен глобально после загрузки скрипта)
+declare global {
+  interface Window {
+    MaterialDesignUtils: any;
+  }
+}
+
 class PopupApp {
   private readonly geminiService: GeminiService;
   private readonly storageService: StorageService;
@@ -52,8 +59,8 @@ class PopupApp {
   }
 
   private setupEventListeners(): void {
-    const tabs = document.querySelectorAll('.tab');
-    const tabContents = document.querySelectorAll('.tab-content');
+    const tabs = document.querySelectorAll('.md-tab');
+    const tabContents = document.querySelectorAll('.md-tab-content');
     
     tabs.forEach(tab => {
       tab.addEventListener('click', async () => {
@@ -154,8 +161,8 @@ class PopupApp {
   private async switchTab(tabId: string): Promise<void> {
     this.currentTab = tabId;
     
-    const tabs = document.querySelectorAll('.tab');
-    const tabContents = document.querySelectorAll('.tab-content');
+    const tabs = document.querySelectorAll('.md-tab');
+    const tabContents = document.querySelectorAll('.md-tab-content');
     
     tabs.forEach(tab => tab.classList.remove('active'));
     tabContents.forEach(content => content.classList.remove('active'));
@@ -166,6 +173,11 @@ class PopupApp {
     if (activeTab && activeContent) {
       activeTab.classList.add('active');
       activeContent.classList.add('active');
+      
+      // Добавляем анимацию появления
+      if (window.MaterialDesignUtils) {
+        window.MaterialDesignUtils.animateElement(activeContent, 'fadeIn');
+      }
     }
 
     if (tabId === 'summarize') {
@@ -180,12 +192,19 @@ class PopupApp {
   private async handleSummarizeTab(): Promise<void> {
     const selectedText = await this.getSelectedTextFromActiveTab();
     if (selectedText && selectedText.trim().length > 0) {
-      this.summarizeSelectedText(selectedText);
+      await this.summarizeSelectedText(selectedText);
     }
   }
 
   private async summarizeSelectedText(text: string): Promise<void> {
+    const button = document.getElementById('summarize-btn') as HTMLButtonElement;
+    
     try {
+      // Показываем loading состояние
+      if (window.MaterialDesignUtils && button) {
+        window.MaterialDesignUtils.showLoading(button, 'Суммаризация...');
+      }
+
       const assistantMessage: ChatMessage = {
         id: this.generateId(),
         role: 'assistant',
@@ -215,6 +234,11 @@ class PopupApp {
     } catch (error) {
       console.error('Error summarizing text:', error);
       this.showStatus('Ошибка суммаризации', 'error');
+    } finally {
+      // Скрываем loading состояние
+      if (window.MaterialDesignUtils && button) {
+        window.MaterialDesignUtils.hideLoading(button);
+      }
     }
   }
 
@@ -321,16 +345,22 @@ class PopupApp {
   }
 
   private showStatus(message: string, type: 'success' | 'error' = 'success'): void {
-    const statusDiv = document.getElementById('status') as HTMLDivElement;
-    if (!statusDiv) return;
+    // Используем Material Design toast уведомления
+    if (window.MaterialDesignUtils) {
+      window.MaterialDesignUtils.showToast(message, type, 3000);
+    } else {
+      // Fallback к старому способу
+      const statusDiv = document.getElementById('status') as HTMLDivElement;
+      if (!statusDiv) return;
 
-    statusDiv.textContent = message;
-    statusDiv.className = `status ${type}`;
-    statusDiv.style.display = 'block';
-    
-    setTimeout(() => {
-      statusDiv.style.display = 'none';
-    }, 3000);
+      statusDiv.textContent = message;
+      statusDiv.className = `status ${type}`;
+      statusDiv.style.display = 'block';
+      
+      setTimeout(() => {
+        statusDiv.style.display = 'none';
+      }, 3000);
+    }
   }
 
   private async getSelectedTextFromActiveTab(): Promise<string | null> {
@@ -688,6 +718,5 @@ class PopupApp {
 
 
 document.addEventListener('DOMContentLoaded', () => {
-  const app = new PopupApp();
-  (window as any).popupApp = app;
+  (window as any).popupApp = new PopupApp();
 });

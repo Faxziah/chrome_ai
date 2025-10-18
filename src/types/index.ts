@@ -95,6 +95,7 @@ export interface TranslatorResult {
   detectedLanguage?: string;
   originalLength: number;
   translatedLength: number;
+  compressionRatio: number;
 }
 
 export interface SpeechConfig {

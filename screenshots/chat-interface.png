@@ -1,0 +1,19 @@
+# Screenshot Placeholder
+# This file should contain the actual screenshot (PNG format)
+# Content: AI chat conversation example
+# Steps:
+# 1. Open extension popup
+# 2. Go to Chat tab
+# 3. Start a conversation with AI
+# 4. Take screenshot showing:
+#    - User message
+#    - AI response
+#    - Chat history
+#    - Send button
+
+# To create the actual screenshot:
+# 1. Open the extension popup
+# 2. Go to the Chat tab
+# 3. Start a conversation with the AI
+# 4. Take screenshot of the chat interface
+# 5. Replace this placeholder with the actual PNG file

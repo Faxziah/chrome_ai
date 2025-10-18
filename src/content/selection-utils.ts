@@ -32,10 +32,7 @@ export function getSelectionRect(): DOMRect | null {
 }
 
 export function isValidSelection(text: string | null, minLength: number = 3): text is string {
-  if (!text) return false;
-  if (text.length < minLength) return false;
-  if (/^\s+$/.test(text)) return false;
-  return true;
+  return text !== null && text.length >= minLength && !/^\s+$/.test(text);
 }
 
 export function getSelectionContext(maxChars: number = 100): { before: string; selected: string; after: string } | null {

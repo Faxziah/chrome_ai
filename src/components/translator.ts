@@ -1,14 +1,49 @@
 import { GeminiService } from '../services/gemini-api';
 import { HistoryService } from '../services/history';
+import { StorageService } from '../services/storage';
 import { TranslatorConfig, TranslatorResult, LanguageCode } from '../types';
 
 export class Translator {
   private geminiService: GeminiService;
-  private historyService?: HistoryService;
+  private readonly historyService?: HistoryService;
+  private readonly storageService: StorageService;
 
-  constructor(geminiService: GeminiService, historyService?: HistoryService) {
+  constructor(geminiService: GeminiService, historyService?: HistoryService, storageService?: StorageService) {
     this.geminiService = geminiService;
     this.historyService = historyService;
+    this.storageService = storageService || new StorageService();
+  }
+
+  private validateTranslationInput(text: string, config: TranslatorConfig): void {
+    if (!text || text.trim().length === 0) {
+      throw new Error('Text cannot be empty');
+    }
+
+    if (!config.targetLanguage || config.targetLanguage.trim().length === 0) {
+      throw new Error('Target language is required');
+    }
+  }
+
+  private processTranslationResult(
+    translatedText: string, 
+    sourceLanguage: string, 
+    targetLanguage: string, 
+    originalLength: number
+  ): TranslatorResult {
+    const { detectedLanguage, cleanedText } = this.parseDetectedLanguage(translatedText);
+    const finalTranslatedText = cleanedText;
+    const translatedLength = finalTranslatedText.length;
+    const finalSourceLanguage = detectedLanguage || sourceLanguage;
+
+    return {
+      translatedText: finalTranslatedText,
+      sourceLanguage: finalSourceLanguage,
+      targetLanguage,
+      detectedLanguage,
+      originalLength,
+      translatedLength,
+      compressionRatio: originalLength > 0 ? translatedLength / originalLength : 1
+    };
   }
 
   async translate(text: string, config: TranslatorConfig): Promise<TranslatorResult>;
@@ -26,54 +61,38 @@ export class Translator {
 
   private async translateWithConfig(text: string, config: TranslatorConfig): Promise<TranslatorResult> {
     try {
-      if (!text || text.trim().length === 0)
-         {
-        throw new Error('Text cannot be empty');
-      }
-
-      if (!config.targetLanguage || config.targetLanguage.trim().length === 0) {
-        throw new Error('Target language is required');
-      }
+      this.validateTranslationInput(text, config);
 
       const { sourceLanguage, targetLanguage, preserveFormatting = true } = config;
       const originalLength = text.length;
 
       const prompt = this.buildPrompt(text, sourceLanguage, targetLanguage, preserveFormatting);
       
+      // Load saved API configuration
+      const apiConfig = await this.storageService.getApiConfig();
+      
       const response = await this.geminiService.generateContent(prompt, {
-        temperature: 0.5,
-        maxTokens: 2048
+        model: apiConfig?.model || 'gemini-pro',
+        temperature: apiConfig?.temperature || 0.5,
+        maxTokens: apiConfig?.maxTokens || 2048
       });
 
       const translatedText = response.text.trim();
-      const { detectedLanguage, cleanedText } = this.parseDetectedLanguage(translatedText);
-      const finalTranslatedText = cleanedText;
-      const translatedLength = finalTranslatedText.length;
-
-      const finalSourceLanguage = detectedLanguage || sourceLanguage;
-
-      const result = {
-        translatedText: finalTranslatedText,
-        sourceLanguage: finalSourceLanguage,
-        targetLanguage,
-        detectedLanguage,
-        originalLength,
-        translatedLength
-      };
+      const result = this.processTranslationResult(translatedText, sourceLanguage, targetLanguage, originalLength);
 
       if (this.historyService) {
         await this.historyService.addToHistory(
           'translate',
           text,
-          finalTranslatedText,
+          result.translatedText,
           text,
           {
-            sourceLanguage: finalSourceLanguage,
-            targetLanguage,
-            detectedLanguage,
+            sourceLanguage: result.sourceLanguage,
+            targetLanguage: result.targetLanguage,
+            detectedLanguage: result.detectedLanguage,
             preserveFormatting: config.preserveFormatting,
-            originalLength,
-            translatedLength
+            originalLength: result.originalLength,
+            translatedLength: result.translatedLength
           }
         );
       }
@@ -116,13 +135,7 @@ export class Translator {
     onChunk?: (chunk: string) => void
   ): Promise<TranslatorResult> {
     try {
-      if (!text || text.trim().length === 0) {
-        throw new Error('Text cannot be empty');
-      }
-
-      if (!config.targetLanguage || config.targetLanguage.trim().length === 0) {
-        throw new Error('Target language is required');
-      }
+      this.validateTranslationInput(text, config);
 
       const { sourceLanguage, targetLanguage, preserveFormatting = true } = config;
       const originalLength = text.length;
@@ -131,9 +144,13 @@ export class Translator {
       
       let fullTranslatedText = '';
       
+      // Load saved API configuration
+      const apiConfig = await this.storageService.getApiConfig();
+      
       for await (const chunk of this.geminiService.streamContent(prompt, {
-        temperature: 0.5,
-        maxTokens: 2048
+        model: apiConfig?.model || 'gemini-pro',
+        temperature: apiConfig?.temperature || 0.5,
+        maxTokens: apiConfig?.maxTokens || 2048
       })) {
         if (!chunk.isComplete) {
           fullTranslatedText += chunk.text;
@@ -143,34 +160,21 @@ export class Translator {
         }
       }
 
-      const { detectedLanguage, cleanedText } = this.parseDetectedLanguage(fullTranslatedText);
-      const finalTranslatedText = cleanedText;
-      const translatedLength = finalTranslatedText.length;
-
-      const finalSourceLanguage = detectedLanguage || sourceLanguage;
-
-      const result = {
-        translatedText: finalTranslatedText,
-        sourceLanguage: finalSourceLanguage,
-        targetLanguage,
-        detectedLanguage,
-        originalLength,
-        translatedLength
-      };
+      const result = this.processTranslationResult(fullTranslatedText, sourceLanguage, targetLanguage, originalLength);
 
       if (this.historyService) {
         await this.historyService.addToHistory(
           'translate',
           text,
-          finalTranslatedText,
+          result.translatedText,
           text,
           {
-            sourceLanguage: finalSourceLanguage,
-            targetLanguage,
-            detectedLanguage,
+            sourceLanguage: result.sourceLanguage,
+            targetLanguage: result.targetLanguage,
+            detectedLanguage: result.detectedLanguage,
             preserveFormatting: config.preserveFormatting,
-            originalLength,
-            translatedLength
+            originalLength: result.originalLength,
+            translatedLength: result.translatedLength
           }
         );
       }

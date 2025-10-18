@@ -5,7 +5,7 @@ import { GeminiService } from '../services/gemini-api';
 import { HistoryItem, FavoriteItem } from '../types';
 
 class OptionsPage {
-  private storageService: StorageService;
+  private readonly storageService: StorageService;
   private historyService: HistoryService;
   private favoritesService: FavoritesService;
   private currentTab: string = 'history';
@@ -26,6 +26,7 @@ class OptionsPage {
 
   private async init(): Promise<void> {
     await this.loadApiKey();
+    await this.loadGeminiConfig();
     await this.loadShortcuts();
     await this.loadHistory();
     await this.loadFavorites();
@@ -39,11 +40,16 @@ class OptionsPage {
     document.getElementById('test-api-key')?.addEventListener('click', () => this.testApiKey());
     document.getElementById('toggle-api-visibility')?.addEventListener('click', () => this.toggleApiVisibility());
 
+    // Gemini Model Configuration events
+    document.getElementById('save-gemini-config')?.addEventListener('click', () => this.saveGeminiConfig());
+    document.getElementById('reset-gemini-config')?.addEventListener('click', () => this.resetGeminiConfig());
+    document.getElementById('gemini-temperature')?.addEventListener('input', (e) => this.updateTemperatureDisplay(e));
+
     // Shortcuts events
     document.getElementById('change-shortcuts')?.addEventListener('click', () => this.changeShortcuts());
 
     // Tab switching
-    document.querySelectorAll('.tab').forEach(tab => {
+    document.querySelectorAll('.md-tab').forEach(tab => {
       tab.addEventListener('click', (e) => {
         const target = e.target as HTMLElement;
         this.switchTab(target.dataset.tab!);
@@ -224,13 +230,13 @@ class OptionsPage {
 
   private switchTab(tabName: string): void {
     // Update tab buttons
-    document.querySelectorAll('.tab').forEach(tab => {
+    document.querySelectorAll('.md-tab').forEach(tab => {
       tab.classList.remove('active');
     });
     document.querySelector(`[data-tab="${tabName}"]`)?.classList.add('active');
 
     // Update tab content
-    document.querySelectorAll('.tab-content').forEach(content => {
+    document.querySelectorAll('.md-tab-content').forEach(content => {
       content.classList.remove('active');
     });
     document.getElementById(`${tabName}-tab`)?.classList.add('active');
@@ -530,7 +536,7 @@ class OptionsPage {
 
   private async loadItemContent(itemId: string, type: 'history' | 'favorites'): Promise<void> {
     try {
-      let item: HistoryItem | FavoriteItem | null = null;
+      let item: HistoryItem | FavoriteItem | null;
       
       if (type === 'history') {
         const history = await this.historyService.getHistory();
@@ -733,6 +739,86 @@ class OptionsPage {
       setTimeout(() => {
         element.style.display = 'none';
       }, 5000);
+    }
+  }
+
+  private async loadGeminiConfig(): Promise<void> {
+    try {
+      const config = await this.storageService.getApiConfig();
+      if (config) {
+        const modelSelect = document.getElementById('gemini-model') as HTMLSelectElement;
+        const temperatureSlider = document.getElementById('gemini-temperature') as HTMLInputElement;
+        const maxTokensInput = document.getElementById('gemini-max-tokens') as HTMLInputElement;
+        
+        if (modelSelect && config.model) {
+          modelSelect.value = config.model;
+        }
+        
+        if (temperatureSlider && config.temperature !== undefined) {
+          temperatureSlider.value = config.temperature.toString();
+          this.updateTemperatureDisplay({ target: temperatureSlider } as unknown as Event);
+        }
+        
+        if (maxTokensInput && config.maxTokens) {
+          maxTokensInput.value = config.maxTokens.toString();
+        }
+      }
+    } catch (error) {
+      console.error('Error loading Gemini config:', error);
+    }
+  }
+
+  private async saveGeminiConfig(): Promise<void> {
+    try {
+      const modelSelect = document.getElementById('gemini-model') as HTMLSelectElement;
+      const temperatureSlider = document.getElementById('gemini-temperature') as HTMLInputElement;
+      const maxTokensInput = document.getElementById('gemini-max-tokens') as HTMLInputElement;
+      
+      const config = {
+        model: modelSelect?.value || 'gemini-pro',
+        temperature: parseFloat(temperatureSlider?.value || '0.7'),
+        maxTokens: parseInt(maxTokensInput?.value || '2048')
+      };
+      
+      const success = await this.storageService.setApiConfig(config);
+      if (success) {
+        this.showStatus('gemini-config-status', 'Настройки модели сохранены', 'success');
+      } else {
+        this.showStatus('gemini-config-status', 'Ошибка при сохранении настроек', 'error');
+      }
+    } catch (error) {
+      console.error('Error saving Gemini config:', error);
+      this.showStatus('gemini-config-status', 'Ошибка при сохранении настроек', 'error');
+    }
+  }
+
+  private async resetGeminiConfig(): Promise<void> {
+    try {
+      const defaultConfig = {
+        model: 'gemini-pro',
+        temperature: 0.7,
+        maxTokens: 2048
+      };
+      
+      const success = await this.storageService.setApiConfig(defaultConfig);
+      if (success) {
+        await this.loadGeminiConfig();
+        this.showStatus('gemini-config-status', 'Настройки сброшены к умолчанию', 'success');
+      } else {
+        this.showStatus('gemini-config-status', 'Ошибка при сбросе настроек', 'error');
+      }
+    } catch (error) {
+      console.error('Error resetting Gemini config:', error);
+      this.showStatus('gemini-config-status', 'Ошибка при сбросе настроек', 'error');
+    }
+  }
+
+  private updateTemperatureDisplay(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    const value = target.value;
+    const displayElement = document.getElementById('temperature-value');
+    if (displayElement) {
+      displayElement.textContent = value;
     }
   }
 }

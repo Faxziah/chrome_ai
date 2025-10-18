@@ -118,7 +118,14 @@ export class HighlightManager {
     }`;
 
     try {
-      const response = await this.geminiService.generateContent(prompt);
+      // Load saved API configuration
+      const apiConfig = await this.storageService.getApiConfig();
+      
+      const response = await this.geminiService.generateContent(prompt, {
+        model: apiConfig?.model || 'gemini-pro',
+        temperature: apiConfig?.temperature || 0.7,
+        maxTokens: apiConfig?.maxTokens || 2048
+      });
       const jsonMatch = response.text.match(/\{[\s\S]*\}/);
       
       if (jsonMatch) {

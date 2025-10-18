@@ -158,7 +158,7 @@ export class PopupIntegration {
         resultText.className = 'result-text';
       }
 
-      this.saveRephraseToHistory(selectedText, result);
+      await this.saveRephraseToHistory(selectedText, result);
     } catch (error) {
       console.error('Rephrase error:', error);
       const shadowRoot = this.popupUI.getShadowRoot();
@@ -227,7 +227,7 @@ export class PopupIntegration {
         textarea.style.opacity = '0';
         document.body.appendChild(textarea);
         textarea.select();
-        document.execCommand('copy');
+        await navigator.clipboard.writeText(text);
         document.body.removeChild(textarea);
         this.showCopySuccess(event);
       } catch (fallbackError) {
@@ -347,7 +347,7 @@ export class PopupIntegration {
         swapButton.disabled = !(sourceLanguage !== 'auto' || result.detectedLanguage);
       }
 
-      this.saveTranslationToHistory(selectedText, result);
+      await this.saveTranslationToHistory(selectedText, result);
     } catch (error) {
       console.error('Translation error:', error);
       const shadowRoot = this.popupUI.getShadowRoot();
