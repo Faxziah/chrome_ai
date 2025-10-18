@@ -81,3 +81,46 @@ export interface RephraserResult {
   rephrasedLength: number;
   lengthDelta: number;
 }
+
+export interface TranslatorConfig {
+  sourceLanguage: LanguageCode;
+  targetLanguage: Exclude<LanguageCode, 'auto'>;
+  preserveFormatting?: boolean;
+}
+
+export interface TranslatorResult {
+  translatedText: string;
+  sourceLanguage: string;
+  targetLanguage: string;
+  detectedLanguage?: string;
+  originalLength: number;
+  translatedLength: number;
+}
+
+export interface SpeechConfig {
+  text: string;
+  languageCode: string;
+  rate?: number;
+  pitch?: number;
+  volume?: number;
+}
+
+export interface VoiceInfo {
+  voice: SpeechSynthesisVoice;
+  name: string;
+  lang: string;
+  localService: boolean;
+}
+
+export type LanguageCode = 'auto' | 'en' | 'ru' | 'es' | 'fr' | 'de' | 'zh' | 'ja' | 'ko' | 'it' | 'pt';
+
+export interface HighlightData {
+  keywords: string[];
+  sentences: string[];
+}
+
+export interface HighlightResult {
+  success: boolean;
+  highlightedCount?: number;
+  error?: string;
+}

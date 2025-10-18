@@ -1,6 +1,7 @@
 import { PopupUI } from './popup-ui';
 import { PopupIntegration } from './popup-integration';
 import { getSelectedText, getSelectionRect, isValidSelection } from './selection-utils';
+import { highlightManager } from './highlight';
 
 console.log('AI Text Tools content script loaded');
 
@@ -95,10 +96,16 @@ window.addEventListener('beforeunload', () => {
   popupUI.destroy();
 });
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   try {
     if (message.action === 'HIGHLIGHT_KEYWORDS') {
       console.log('Highlight keywords command received');
+      await highlightManager.initialize();
+      await highlightManager.highlightKeywords();
+      sendResponse({ success: true });
+    } else if (message.action === 'CLEAR_HIGHLIGHTS') {
+      console.log('Clear highlights command received');
+      highlightManager.clearHighlights();
       sendResponse({ success: true });
     } else if (message.action === 'GET_SELECTED_TEXT') {
       const selectedText = getSelectedText();

@@ -72,12 +72,61 @@ const result = await rephraser.rephraseWithStream(
 );
 ```
 
+### Translator (`translator.ts`)
+AI-powered translation component with auto-detection and text-to-speech support.
+
+**Features:**
+- Translation between 10 languages: EN, RU, ES, FR, DE, ZH, JA, KO, IT, PT
+- Automatic source language detection via Gemini
+- Preserves text formatting (line breaks, lists, structure)
+- Streaming support for real-time translation display
+- Integration with Web Speech API for text-to-speech
+- Language swap functionality
+
+**Usage:**
+```typescript
+import { Translator } from './translator';
+import { GeminiService } from '../services/gemini-api';
+
+const geminiService = new GeminiService(apiKey);
+const translator = new Translator(geminiService);
+
+// Auto-detect source language
+const result = await translator.translate(
+  'Hello, world!',
+  { sourceLanguage: 'auto', targetLanguage: 'ru' }
+);
+
+console.log(result.translatedText); // "Привет, мир!"
+console.log(result.detectedLanguage); // "en"
+
+// Explicit source language
+const result2 = await translator.translate(
+  'Bonjour le monde',
+  { sourceLanguage: 'fr', targetLanguage: 'en' }
+);
+```
+
+**Streaming usage:**
+```typescript
+const result = await translator.translateWithStream(
+  'Long text here...',
+  { sourceLanguage: 'en', targetLanguage: 'es' },
+  (chunk) => {
+    // Update UI with each chunk
+    console.log('Received chunk:', chunk);
+  }
+);
+```
+
+**Text-to-speech integration:**
+The Translator component is designed to work with Web Speech API through PopupIntegration. The integration layer handles voice selection, language mapping, and speech synthesis.
+
 ## Future Components
 
 The following components will be added in subsequent phases:
 
 - **Summarizer** (Phase 5): Text summarization with AI chat interface
-- **Translator** (Phase 7): Translation with text-to-speech
 - **HistoryViewer** (Phase 8): Display and manage operation history
 - **FavoritesManager** (Phase 8): Manage favorite translations/summaries
 

@@ -30,6 +30,13 @@
         "mac": "Command+Shift+H"
       },
       "description": "Highlight key words and sentences on page"
+    },
+    "clear-highlights": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+C",
+        "mac": "Command+Shift+C"
+      },
+      "description": "Clear all highlights from page"
     }
   },
   "action": {

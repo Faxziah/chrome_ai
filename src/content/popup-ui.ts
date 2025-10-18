@@ -481,6 +481,92 @@ export class PopupUI {
           background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><path fill="%239aa0a6" d="M6 9L1 4h10z"/></svg>');
         }
       }
+
+      .language-row {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+      }
+
+      .language-row .select {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .language-row .btn-icon {
+        flex-shrink: 0;
+      }
+
+      .result-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: var(--spacing-sm);
+        gap: var(--spacing-sm);
+      }
+
+      .result-header > div {
+        display: flex;
+        gap: var(--spacing-xs);
+      }
+
+      .btn-icon.speaking {
+        background: var(--primary-color);
+        color: white;
+        animation: pulse 1.5s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%, 100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.8;
+          transform: scale(1.05);
+        }
+      }
+
+      .btn-icon:disabled {
+        opacity: 0.38;
+        cursor: not-allowed;
+        pointer-events: none;
+      }
+
+      .btn-icon[disabled] {
+        opacity: 0.38;
+        cursor: not-allowed;
+        pointer-events: none;
+      }
+
+      #translate-result .result-text {
+        min-height: 60px;
+        white-space: pre-wrap;
+      }
+
+      #translate-result .result-label {
+        font-weight: 500;
+        color: var(--success-color);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      @media (max-width: 480px) {
+        .language-row {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        
+        .language-row .select {
+          width: 100%;
+        }
+        
+        .language-row .btn-icon {
+          align-self: center;
+          transform: rotate(90deg);
+        }
+      }
     `;
 
     const content = document.createElement('div');
