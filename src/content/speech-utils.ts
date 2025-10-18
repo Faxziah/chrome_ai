@@ -37,6 +37,10 @@ export class SpeechSynthesisManager {
     console.log('Loaded voices:', this.voices.length);
   }
 
+  public getVoices(): SpeechSynthesisVoice[] {
+    return this.voices;
+  }
+
   isSupported(): boolean {
     return this.synthesis !== null && this.isInitialized;
   }

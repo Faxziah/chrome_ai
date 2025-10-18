@@ -68,7 +68,7 @@
   --md-spacing-xl: 32px;
   
   /* Typography */
-  --md-font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --md-font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif, system-ui;
   --md-font-size-small: 12px;
   --md-font-size-body: 14px;
   --md-font-size-subtitle: 16px;
@@ -96,7 +96,7 @@
 }
 
 body {
-  font-family: var(--md-font-family);
+  font-family: var(--md-font-family), sans-serif;
   font-size: var(--md-font-size-body);
   line-height: 1.5;
   color: var(--md-on-surface);
@@ -114,11 +114,11 @@ body {
   padding: 10px 16px;
   border: none;
   border-radius: var(--md-radius-small);
-  font-family: var(--md-font-family);
+  font-family: var(--md-font-family), sans-serif;
   font-size: var(--md-font-size-body);
   font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
   cursor: pointer;
   transition: all var(--md-transition-fast);
   position: relative;
@@ -175,18 +175,7 @@ body {
   background-color: rgba(25, 118, 210, 0.08);
 }
 
-/* Text Button */
-.md-button--text {
-  background-color: transparent;
-  color: var(--md-primary);
-  padding: 8px 12px;
-  text-transform: none;
-  letter-spacing: normal;
-}
 
-.md-button--text:hover {
-  background-color: rgba(25, 118, 210, 0.08);
-}
 
 /* Danger Button */
 .md-button--danger {
@@ -223,7 +212,7 @@ body {
   padding: 12px 16px;
   border: 1px solid rgba(0, 0, 0, 0.23);
   border-radius: var(--md-radius-small);
-  font-family: var(--md-font-family);
+  font-family: var(--md-font-family), sans-serif;
   font-size: var(--md-font-size-body);
   background-color: var(--md-surface);
   color: var(--md-on-surface);
@@ -238,45 +227,6 @@ body {
   padding: 11px 15px;
 }
 
-.md-input input:focus + .md-input-label,
-.md-input textarea:focus + .md-input-label,
-.md-input input:not(:placeholder-shown) + .md-input-label,
-.md-input textarea:not(:placeholder-shown) + .md-input-label {
-  transform: translateY(-20px) scale(0.75);
-  color: var(--md-primary);
-}
-
-.md-input-label {
-  position: absolute;
-  left: 16px;
-  top: 12px;
-  color: var(--md-on-surface-variant);
-  font-size: var(--md-font-size-body);
-  pointer-events: none;
-  transition: all var(--md-transition-fast);
-  background-color: var(--md-surface);
-  padding: 0 4px;
-}
-
-.md-input--error input,
-.md-input--error textarea {
-  border-color: var(--md-error);
-}
-
-.md-input--error .md-input-label {
-  color: var(--md-error);
-}
-
-.md-input-helper {
-  font-size: var(--md-font-size-small);
-  color: var(--md-on-surface-variant);
-  margin-top: 4px;
-  padding: 0 16px;
-}
-
-.md-input-error {
-  color: var(--md-error);
-}
 
 /* ===== Material Design Cards ===== */
 .md-card {
@@ -334,7 +284,7 @@ body {
   border: none;
   background: transparent;
   color: var(--md-on-surface-variant);
-  font-family: var(--md-font-family);
+  font-family: var(--md-font-family), sans-serif;
   font-size: var(--md-font-size-body);
   font-weight: 500;
   cursor: pointer;
@@ -434,75 +384,6 @@ body {
   }
 }
 
-/* ===== Toast Notifications ===== */
-.md-toast-container {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  z-index: 1000;
-}
-
-.md-toast {
-  min-width: 300px;
-  max-width: 500px;
-  padding: 16px 20px;
-  border-radius: var(--md-radius-medium);
-  box-shadow: var(--md-elevation-3);
-  animation: slideInRight var(--md-transition-normal) ease-out;
-  display: flex;
-  align-items: center;
-  gap: var(--md-spacing-sm);
-}
-
-.md-toast--success {
-  background-color: var(--md-success);
-  color: white;
-}
-
-.md-toast--error {
-  background-color: var(--md-error);
-  color: white;
-}
-
-.md-toast--warning {
-  background-color: var(--md-warning);
-  color: white;
-}
-
-.md-toast--info {
-  background-color: var(--md-primary);
-  color: white;
-}
-
-@keyframes slideInRight {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-.md-toast-close {
-  background: none;
-  border: none;
-  color: inherit;
-  font-size: 18px;
-  cursor: pointer;
-  padding: 0;
-  margin-left: auto;
-  opacity: 0.7;
-  transition: opacity var(--md-transition-fast);
-}
-
-.md-toast-close:hover {
-  opacity: 1;
-}
 
 /* ===== Error States ===== */
 .md-error-state {
@@ -555,16 +436,6 @@ body {
     padding: 8px 12px;
   }
   
-  .md-toast-container {
-    left: 10px;
-    right: 10px;
-    top: 10px;
-  }
-  
-  .md-toast {
-    min-width: auto;
-    width: 100%;
-  }
 }
 
 @media (max-width: 360px) {
@@ -619,58 +490,19 @@ body {
 .md-rounded-small { border-radius: var(--md-radius-small); }
 .md-rounded-medium { border-radius: var(--md-radius-medium); }
 .md-rounded-large { border-radius: var(--md-radius-large); }
-.md-rounded-round { border-radius: var(--md-radius-round); }
 
-.md-spacing-xs { margin: var(--md-spacing-xs); }
 .md-spacing-sm { margin: var(--md-spacing-sm); }
 .md-spacing-md { margin: var(--md-spacing-md); }
-.md-spacing-lg { margin: var(--md-spacing-lg); }
-.md-spacing-xl { margin: var(--md-spacing-xl); }
 
 .md-text-center { text-align: center; }
-.md-text-left { text-align: left; }
 .md-text-right { text-align: right; }
 
-.md-flex { display: flex; }
-.md-flex-column { flex-direction: column; }
-.md-flex-center { align-items: center; justify-content: center; }
-.md-flex-between { justify-content: space-between; }
 .md-flex-wrap { flex-wrap: wrap; }
 
 .md-hidden { display: none; }
-.md-visible { display: block; }
 
 /* ===== Animation Classes ===== */
 .md-fade-in {
   animation: fadeIn var(--md-transition-normal) ease-in-out;
 }
 
-.md-slide-up {
-  animation: slideUp var(--md-transition-normal) ease-out;
-}
-
-@keyframes slideUp {
-  from {
-    transform: translateY(20px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-.md-scale-in {
-  animation: scaleIn var(--md-transition-fast) ease-out;
-}
-
-@keyframes scaleIn {
-  from {
-    transform: scale(0.9);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}

@@ -58,7 +58,7 @@
   "options_page": "src/options/options.html",
   "web_accessible_resources": [
     {
-      "resources": ["styles/material-design.css", "styles/highlight.css"],
+      "resources": ["styles/material-design.css", "styles/highlight.css", "styles/popup-ui.css"],
       "matches": ["<all_urls>"]
     }
   ]

@@ -4,6 +4,7 @@
 ![Manifest V3](https://img.shields.io/badge/Manifest-V3-green)
 ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)
 ![Gemini AI](https://img.shields.io/badge/AI-Gemini-orange?logo=google)
+![Tests](https://github.com/your-username/chrome-ai-text-tools/workflows/Tests/badge.svg)
 
 **AI-powered text summarization, rephrasing, translation, and keyword highlighting using Google's Gemini API**
 
@@ -197,6 +198,45 @@ src/
 - **Material Design** - UI framework
 - **Chrome Manifest V3** - Latest extension standard
 - **Google Gemini API** - AI processing
+
+## 🧪 Testing
+
+This project uses Vitest for testing with jsdom for DOM simulation.
+
+**Run tests:**
+```bash
+npm test          # Run tests in watch mode
+npm run test:run  # Run tests once
+npm run test:ui   # Run tests with UI
+npm run test:coverage  # Generate coverage report
+```
+
+**Test structure:**
+- Unit tests: `src/**/*.test.ts`
+- Test utilities: `src/test/test-utils.ts`
+- Test setup: `src/test/setup.ts`
+- Coverage target: 80%+
+
+**Mocked APIs:**
+- Chrome extension APIs (storage, runtime, tabs, commands)
+- Web Speech API (speechSynthesis)
+- DOM selection API (window.getSelection)
+
+## 🏗️ Architecture
+
+**Refactored structure:**
+- **Components** (`src/components/`): Pure business logic (Rephraser, Translator, Tabs, etc.)
+- **Handlers** (`src/content/handlers/`): UI event handlers (RephraseHandler, TranslateHandler, etc.)
+- **Services** (`src/services/`): Shared infrastructure (GeminiService, StorageService)
+- **Utilities** (`src/content/`): Reusable helpers (selection-utils, speech-utils)
+- **Styles** (`styles/`): External CSS files (material-design.css, popup-ui.css)
+
+**Key improvements:**
+- Reduced file sizes: popup-ui.ts (778→250 lines), popup-integration.ts (487→150 lines)
+- Extracted 520+ lines of inline CSS to external files
+- Removed 50+ unused CSS selectors
+- Added comprehensive test coverage (80%+)
+- Fixed all WebStorm linting warnings
 
 ## 🔐 Security & Privacy
 

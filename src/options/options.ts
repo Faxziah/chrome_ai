@@ -1,7 +1,4 @@
-import { StorageService } from '../services/storage';
-import { HistoryService } from '../services/history';
-import { FavoritesService } from '../services/favorites';
-import { GeminiService } from '../services/gemini-api';
+import { StorageService, HistoryService, FavoritesService, GeminiService } from '../services';
 import { HistoryItem, FavoriteItem } from '../types';
 
 class OptionsPage {
@@ -21,7 +18,9 @@ class OptionsPage {
     this.storageService = new StorageService();
     this.historyService = new HistoryService(this.storageService);
     this.favoritesService = new FavoritesService(this.storageService);
-    this.init();
+    (async () => {
+      await this.init();
+    })();
   }
 
   private async init(): Promise<void> {
@@ -50,29 +49,29 @@ class OptionsPage {
 
     // Tab switching
     document.querySelectorAll('.md-tab').forEach(tab => {
-      tab.addEventListener('click', (e) => {
+      tab.addEventListener('click', async (e) => {
         const target = e.target as HTMLElement;
-        this.switchTab(target.dataset.tab!);
+        await this.switchTab(target.dataset.tab!);
       });
     });
 
     // Filter buttons
     document.querySelectorAll('.filter-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+      btn.addEventListener('click', async (e) => {
         const target = e.target as HTMLElement;
-        this.setFilter(target.dataset.filter!);
+        await this.setFilter(target.dataset.filter!);
       });
     });
 
     // Search functionality
-    document.getElementById('history-search')?.addEventListener('input', (e) => {
+    document.getElementById('history-search')?.addEventListener('input', async (e) => {
       const target = e.target as HTMLInputElement;
-      this.searchHistory(target.value);
+      await this.searchHistory(target.value);
     });
 
-    document.getElementById('favorites-search')?.addEventListener('input', (e) => {
+    document.getElementById('favorites-search')?.addEventListener('input', async (e) => {
       const target = e.target as HTMLInputElement;
-      this.searchFavorites(target.value);
+      await this.searchFavorites(target.value);
     });
 
     // Data management buttons
@@ -89,30 +88,30 @@ class OptionsPage {
     document.getElementById('clear-all-data')?.addEventListener('click', () => this.clearAllData());
 
     // Delegated event listeners for data lists
-    document.getElementById('history-list')?.addEventListener('click', (e) => {
+    document.getElementById('history-list')?.addEventListener('click', async (e) => {
       const target = e.target as HTMLElement;
       const button = target.closest('button');
       if (button) {
         const action = button.dataset.action;
         const id = button.dataset.id;
         if (action === 'view' && id) {
-          this.viewItem(id, 'history');
+          await this.viewItem(id, 'history');
         } else if (action === 'remove' && id) {
-          this.removeFromHistory(id);
+          await this.removeFromHistory(id);
         }
       }
     });
 
-    document.getElementById('favorites-list')?.addEventListener('click', (e) => {
+    document.getElementById('favorites-list')?.addEventListener('click', async (e) => {
       const target = e.target as HTMLElement;
       const button = target.closest('button');
       if (button) {
         const action = button.dataset.action;
         const id = button.dataset.id;
         if (action === 'view' && id) {
-          this.viewItem(id, 'favorites');
+          await this.viewItem(id, 'favorites');
         } else if (action === 'remove' && id) {
-          this.removeFromFavorites(id);
+          await this.removeFromFavorites(id);
         }
       }
     });
@@ -219,16 +218,16 @@ class OptionsPage {
     }
   }
 
-  private changeShortcuts(): void {
+  private async changeShortcuts(): Promise<void> {
     try {
-      chrome.tabs.create({ url: 'chrome://extensions/shortcuts' });
+      await chrome.tabs.create({ url: 'chrome://extensions/shortcuts' });
     } catch (error) {
       console.error('Error opening shortcuts page:', error);
       this.showStatus('api-status', 'Ошибка при открытии страницы горячих клавиш', 'error');
     }
   }
 
-  private switchTab(tabName: string): void {
+  private async switchTab(tabName: string): Promise<void> {
     // Update tab buttons
     document.querySelectorAll('.md-tab').forEach(tab => {
       tab.classList.remove('active');
@@ -244,15 +243,15 @@ class OptionsPage {
     this.currentTab = tabName;
 
     if (tabName === 'history') {
-      this.loadHistory();
+      await this.loadHistory();
     } else if (tabName === 'favorites') {
-      this.loadFavorites();
+      await this.loadFavorites();
     } else if (tabName === 'stats') {
-      this.loadStats();
+      await this.loadStats();
     }
   }
 
-  private setFilter(filter: string): void {
+  private async setFilter(filter: string): Promise<void> {
     // Update filter buttons
     document.querySelectorAll('.filter-btn').forEach(btn => {
       btn.classList.remove('active');
@@ -262,9 +261,9 @@ class OptionsPage {
     this.currentFilter = filter;
 
     if (this.currentTab === 'history') {
-      this.loadHistory();
+      await this.loadHistory();
     } else if (this.currentTab === 'favorites') {
-      this.loadFavorites();
+      await this.loadFavorites();
     }
   }
 
@@ -496,7 +495,7 @@ class OptionsPage {
     }
   }
 
-  private viewItem(itemId: string, type: 'history' | 'favorites'): void {
+  private async viewItem(itemId: string, type: 'history' | 'favorites'): Promise<void> {
     // Open item in a modal or new window
     const modal = document.createElement('div');
     modal.style.cssText = `
@@ -531,7 +530,7 @@ class OptionsPage {
     });
     
     // Load item content
-    this.loadItemContent(itemId, type);
+    await this.loadItemContent(itemId, type);
   }
 
   private async loadItemContent(itemId: string, type: 'history' | 'favorites'): Promise<void> {
