@@ -69,7 +69,7 @@ export class GeminiService {
 
     try {
       const model = this.genAI!.getGenerativeModel({ 
-        model: config?.model || 'gemini-1.5-flash'
+        model: config?.model || 'gemini-2.5-flash'
       });
 
       const result = await model.generateContentStream({
