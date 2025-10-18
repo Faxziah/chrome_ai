@@ -9,7 +9,7 @@ export class StorageService {
     API_CONFIG: 'api_config'
   } as const;
 
-  private static readonly HISTORY_LIMIT = 20;
+  public static readonly HISTORY_LIMIT = 20;
 
   async getApiKey(): Promise<string | null> {
     try {
@@ -114,6 +114,17 @@ export class StorageService {
   async addToFavorites(item: Omit<FavoriteItem, 'id' | 'timestamp'>): Promise<boolean> {
     try {
       const favorites = await this.getFavorites();
+      
+      // Check for duplicates by sourceId or content
+      const isDuplicate = favorites.some(f => 
+        (item.metadata?.sourceId && f.metadata?.sourceId === item.metadata.sourceId) ||
+        (f.type === item.type && f.prompt === item.prompt && f.response === item.response)
+      );
+      
+      if (isDuplicate) {
+        return true; // Already exists, no need to add
+      }
+      
       const newFavorite: FavoriteItem = {
         ...item,
         id: this.generateId(),
@@ -189,6 +200,43 @@ export class StorageService {
       return true;
     } catch (error) {
       console.error('Error setting API config:', error);
+      return false;
+    }
+  }
+
+  async setHistory(items: HistoryItem[]): Promise<boolean> {
+    try {
+      const limitedItems = items.slice(0, StorageService.HISTORY_LIMIT);
+      await chrome.storage.local.set({
+        [StorageService.STORAGE_KEYS.HISTORY]: limitedItems
+      });
+      return true;
+    } catch (error) {
+      console.error('Error setting history:', error);
+      return false;
+    }
+  }
+
+  async setFavorites(items: FavoriteItem[]): Promise<boolean> {
+    try {
+      await chrome.storage.local.set({
+        [StorageService.STORAGE_KEYS.FAVORITES]: items
+      });
+      return true;
+    } catch (error) {
+      console.error('Error setting favorites:', error);
+      return false;
+    }
+  }
+
+  async clearFavorites(): Promise<boolean> {
+    try {
+      await chrome.storage.local.set({
+        [StorageService.STORAGE_KEYS.FAVORITES]: []
+      });
+      return true;
+    } catch (error) {
+      console.error('Error clearing favorites:', error);
       return false;
     }
   }

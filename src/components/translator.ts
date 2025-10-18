@@ -1,11 +1,14 @@
 import { GeminiService } from '../services/gemini-api';
+import { HistoryService } from '../services/history';
 import { TranslatorConfig, TranslatorResult, LanguageCode } from '../types';
 
 export class Translator {
   private geminiService: GeminiService;
+  private historyService?: HistoryService;
 
-  constructor(geminiService: GeminiService) {
+  constructor(geminiService: GeminiService, historyService?: HistoryService) {
     this.geminiService = geminiService;
+    this.historyService = historyService;
   }
 
   async translate(text: string, config: TranslatorConfig): Promise<TranslatorResult>;
@@ -49,7 +52,7 @@ export class Translator {
 
       const finalSourceLanguage = detectedLanguage || sourceLanguage;
 
-      return {
+      const result = {
         translatedText: finalTranslatedText,
         sourceLanguage: finalSourceLanguage,
         targetLanguage,
@@ -57,6 +60,25 @@ export class Translator {
         originalLength,
         translatedLength
       };
+
+      if (this.historyService) {
+        await this.historyService.addToHistory(
+          'translate',
+          text,
+          finalTranslatedText,
+          text,
+          {
+            sourceLanguage: finalSourceLanguage,
+            targetLanguage,
+            detectedLanguage,
+            preserveFormatting: config.preserveFormatting,
+            originalLength,
+            translatedLength
+          }
+        );
+      }
+
+      return result;
     } catch (error) {
       console.error('Translation error:', error);
       throw new Error(`Translation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -127,7 +149,7 @@ export class Translator {
 
       const finalSourceLanguage = detectedLanguage || sourceLanguage;
 
-      return {
+      const result = {
         translatedText: finalTranslatedText,
         sourceLanguage: finalSourceLanguage,
         targetLanguage,
@@ -135,6 +157,25 @@ export class Translator {
         originalLength,
         translatedLength
       };
+
+      if (this.historyService) {
+        await this.historyService.addToHistory(
+          'translate',
+          text,
+          finalTranslatedText,
+          text,
+          {
+            sourceLanguage: finalSourceLanguage,
+            targetLanguage,
+            detectedLanguage,
+            preserveFormatting: config.preserveFormatting,
+            originalLength,
+            translatedLength
+          }
+        );
+      }
+
+      return result;
     } catch (error) {
       console.error('Streaming translation error:', error);
       throw new Error(`Translation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);

@@ -1,11 +1,14 @@
 import { GeminiService } from '../services/gemini-api';
+import { HistoryService } from '../services/history';
 import { RephraserConfig, RephraserResult } from '../types';
 
 export class Rephraser {
   private geminiService: GeminiService;
+  private historyService?: HistoryService;
 
-  constructor(geminiService: GeminiService) {
+  constructor(geminiService: GeminiService, historyService?: HistoryService) {
     this.geminiService = geminiService;
+    this.historyService = historyService;
   }
 
   // Overload for simple style-based rephrasing
@@ -40,13 +43,30 @@ export class Rephraser {
       const rephrasedLength = rephrasedText.length;
       const lengthDelta = rephrasedLength - originalLength;
 
-      return {
+      const result = {
         rephrasedText,
         style,
         originalLength,
         rephrasedLength,
         lengthDelta
       };
+
+      if (this.historyService) {
+        await this.historyService.addToHistory(
+          'rephrase',
+          text,
+          rephrasedText,
+          text,
+          {
+            style,
+            preserveMeaning: config.preserveMeaning,
+            language: config.language,
+            lengthDelta
+          }
+        );
+      }
+
+      return result;
     } catch (error) {
       console.error('Rephraser error:', error);
       throw new Error(`Failed to rephrase text: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -126,13 +146,30 @@ export class Rephraser {
       const rephrasedLength = rephrasedText.length;
       const lengthDelta = rephrasedLength - originalLength;
 
-      return {
+      const result = {
         rephrasedText,
         style,
         originalLength,
         rephrasedLength,
         lengthDelta
       };
+
+      if (this.historyService) {
+        await this.historyService.addToHistory(
+          'rephrase',
+          text,
+          rephrasedText,
+          text,
+          {
+            style,
+            preserveMeaning: config.preserveMeaning,
+            language: config.language,
+            lengthDelta
+          }
+        );
+      }
+
+      return result;
     } catch (error) {
       console.error('Rephraser streaming error:', error);
       throw new Error(`Failed to rephrase text with streaming: ${error instanceof Error ? error.message : 'Unknown error'}`);

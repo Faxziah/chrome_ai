@@ -1,4 +1,5 @@
 import { GeminiService } from '../services/gemini-api';
+import { HistoryService } from '../services/history';
 import { GeminiResponse } from '../types';
 
 export interface SummarizerConfig {
@@ -16,9 +17,11 @@ export interface SummarizerResult {
 
 export class Summarizer {
   private geminiService: GeminiService;
+  private historyService?: HistoryService;
 
-  constructor(geminiService: GeminiService) {
+  constructor(geminiService: GeminiService, historyService?: HistoryService) {
     this.geminiService = geminiService;
+    this.historyService = historyService;
   }
 
   async summarize(text: string, config?: SummarizerConfig): Promise<SummarizerResult> {
@@ -86,12 +89,29 @@ ${text}
       const summaryLength = summary.length;
       const compressionRatio = originalLength > 0 ? summaryLength / originalLength : 0;
 
-      return {
+      const result = {
         summary,
         originalLength,
         summaryLength,
         compressionRatio
       };
+
+      if (this.historyService) {
+        await this.historyService.addToHistory(
+          'summarize',
+          text,
+          summary,
+          text,
+          {
+            style: config?.style || 'brief',
+            language: config?.language || 'Russian',
+            maxLength: config?.maxLength,
+            compressionRatio
+          }
+        );
+      }
+
+      return result;
     } catch (error) {
       console.error('Summarization error:', error);
       throw new Error(`Failed to summarize text: ${error instanceof Error ? error.message : 'Unknown error'}`);

@@ -1,5 +1,6 @@
 import { GeminiService } from '../services/gemini-api';
 import { StorageService } from '../services/storage';
+import { FavoritesService } from '../services/favorites';
 import { FavoriteItem } from '../types';
 
 export interface ChatMessage {
@@ -21,6 +22,7 @@ export interface ChatConfig {
 export class Chat {
   private geminiService: GeminiService;
   private storageService: StorageService;
+  private favoritesService?: FavoritesService;
   private messages: ChatMessage[] = [];
   private config: ChatConfig;
   private onMessageUpdate?: (message: ChatMessage) => void;
@@ -29,10 +31,12 @@ export class Chat {
   constructor(
     geminiService: GeminiService, 
     storageService: StorageService,
+    favoritesService?: FavoritesService,
     config?: ChatConfig
   ) {
     this.geminiService = geminiService;
     this.storageService = storageService;
+    this.favoritesService = favoritesService;
     this.config = {
       systemPrompt: 'Ты полезный AI-ассистент, который помогает с анализом и суммаризацией текста.',
       maxHistory: 20,
@@ -78,16 +82,26 @@ export class Chat {
 
     const tags = message.messageType === 'summary' || messageType === 'summary' ? ['summary'] : ['chat'];
 
-    const favoriteItem: FavoriteItem = {
-      id: this.generateId(),
-      type: 'summarize',
-      prompt: userMessage.content,
-      response: message.content,
-      timestamp: message.timestamp,
-      tags
-    };
+    if (this.favoritesService) {
+      await this.favoritesService.addToFavorites(
+        'summarize',
+        userMessage.content,
+        message.content,
+        userMessage.content,
+        tags
+      );
+    } else {
+      const favoriteItem: FavoriteItem = {
+        id: this.generateId(),
+        type: 'summarize',
+        prompt: userMessage.content,
+        response: message.content,
+        timestamp: message.timestamp,
+        tags
+      };
 
-    await this.storageService.addToFavorites(favoriteItem);
+      await this.storageService.addToFavorites(favoriteItem);
+    }
   }
 
   getMessages(): ChatMessage[] {

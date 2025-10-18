@@ -1,12 +1,20 @@
 import { GeminiService } from '../services/gemini-api';
 import { StorageService } from '../services/storage';
+import { HistoryService } from '../services/history';
+import { FavoritesService } from '../services/favorites';
 import { Summarizer } from '../components/summarizer';
+import { Rephraser } from '../components/rephraser';
+import { Translator } from '../components/translator';
 import { Chat, ChatMessage } from '../components/chat';
 
 class PopupApp {
   private readonly geminiService: GeminiService;
   private readonly storageService: StorageService;
+  private readonly historyService: HistoryService;
+  private readonly favoritesService: FavoritesService;
   private readonly summarizer: Summarizer;
+  private readonly rephraser: Rephraser;
+  private readonly translator: Translator;
   private readonly chat: Chat;
   private currentTab: string = 'summarize';
   private lastAssistantMessageId: string | null = null;
@@ -14,8 +22,12 @@ class PopupApp {
   constructor() {
     this.geminiService = new GeminiService();
     this.storageService = new StorageService();
-    this.summarizer = new Summarizer(this.geminiService);
-    this.chat = new Chat(this.geminiService, this.storageService);
+    this.historyService = new HistoryService(this.storageService);
+    this.favoritesService = new FavoritesService(this.storageService);
+    this.summarizer = new Summarizer(this.geminiService, this.historyService);
+    this.rephraser = new Rephraser(this.geminiService, this.historyService);
+    this.translator = new Translator(this.geminiService, this.historyService);
+    this.chat = new Chat(this.geminiService, this.storageService, this.favoritesService);
     
     this.initializeApp().catch(console.error);
   }
@@ -88,6 +100,38 @@ class PopupApp {
     if (highlightBtn) {
       highlightBtn.addEventListener('click', () => this.sendMessageToContentScript('HIGHLIGHT_KEYWORDS'));
     }
+
+    // History and Favorites event listeners
+    const historyFilter = document.getElementById('history-filter') as HTMLSelectElement;
+    const historySearch = document.getElementById('history-search') as HTMLInputElement;
+    const clearHistoryBtn = document.getElementById('clear-history-btn') as HTMLButtonElement;
+    const favoritesFilter = document.getElementById('favorites-filter') as HTMLSelectElement;
+    const favoritesSearch = document.getElementById('favorites-search') as HTMLInputElement;
+    const clearFavoritesBtn = document.getElementById('clear-favorites-btn') as HTMLButtonElement;
+
+    if (historyFilter) {
+      historyFilter.addEventListener('change', () => this.filterHistory());
+    }
+
+    if (historySearch) {
+      historySearch.addEventListener('input', () => this.filterHistory());
+    }
+
+    if (clearHistoryBtn) {
+      clearHistoryBtn.addEventListener('click', () => this.clearHistory());
+    }
+
+    if (favoritesFilter) {
+      favoritesFilter.addEventListener('change', () => this.filterFavorites());
+    }
+
+    if (favoritesSearch) {
+      favoritesSearch.addEventListener('input', () => this.filterFavorites());
+    }
+
+    if (clearFavoritesBtn) {
+      clearFavoritesBtn.addEventListener('click', () => this.clearFavorites());
+    }
   }
 
   private setupChatCallbacks(): void {
@@ -102,21 +146,9 @@ class PopupApp {
   }
 
   private async loadChatHistory(): Promise<void> {
-    try {
-      const history = await this.storageService.getHistory();
-      if (history.length > 0) {
-        const chatMessages: ChatMessage[] = history.map(item => ({
-          id: item.id,
-          role: 'assistant' as const,
-          content: item.response,
-          timestamp: item.timestamp
-        }));
-        this.chat.loadHistory(chatMessages);
-        this.updateChatUI();
-      }
-    } catch (error) {
-      console.error('Error loading chat history:', error);
-    }
+    // Skip loading operation history into chat to avoid confusing context
+    // Chat should only contain actual conversation messages, not operation results
+    // Operation history is displayed separately in the history tab
   }
 
   private async switchTab(tabId: string): Promise<void> {
@@ -138,6 +170,10 @@ class PopupApp {
 
     if (tabId === 'summarize') {
       await this.handleSummarizeTab();
+    } else if (tabId === 'history') {
+      await this.loadHistory();
+    } else if (tabId === 'favorites') {
+      await this.loadFavorites();
     }
   }
 
@@ -333,8 +369,325 @@ class PopupApp {
       }
     });
   }
+
+  private async loadHistory(): Promise<void> {
+    try {
+      const history = await this.historyService.getHistory();
+      await this.renderHistory(history);
+    } catch (error) {
+      console.error('Error loading history:', error);
+      this.showStatus('Ошибка загрузки истории', 'error');
+    }
+  }
+
+  private async loadFavorites(): Promise<void> {
+    try {
+      const favorites = await this.favoritesService.getFavorites();
+      this.renderFavorites(favorites);
+    } catch (error) {
+      console.error('Error loading favorites:', error);
+      this.showStatus('Ошибка загрузки избранного', 'error');
+    }
+  }
+
+  private async renderHistory(history: any[]): Promise<void> {
+    const historyList = document.getElementById('history-list');
+    if (!historyList) return;
+
+    if (history.length === 0) {
+      historyList.innerHTML = `
+        <div class="empty-state">
+          <h3>История пуста</h3>
+          <p>Здесь будут отображаться ваши последние операции</p>
+        </div>
+      `;
+      return;
+    }
+
+    // Check favorite status for each item
+    const historyWithFavorites = await Promise.all(
+      history.map(async (item) => ({
+        ...item,
+        isFavorite: await this.favoritesService.isFavoriteBySourceId(item.id)
+      }))
+    );
+
+    historyList.innerHTML = historyWithFavorites.map(item => `
+      <div class="history-item" data-id="${item.id}">
+        <div class="item-header">
+          <span class="item-type ${item.type}">${item.type}</span>
+          <div class="item-actions">
+            <button class="action-btn favorite-btn ${item.isFavorite ? 'favorited' : ''}" data-action="toggle-favorite" data-id="${item.id}">
+              ⭐
+            </button>
+            <button class="action-btn delete-btn" data-action="delete-history" data-id="${item.id}">
+              🗑️
+            </button>
+          </div>
+        </div>
+        <div class="item-content">${this.escapeHtml(this.truncateText(item.prompt, 100))}</div>
+        <div class="item-result">${this.escapeHtml(this.truncateText(item.response, 150))}</div>
+        <div class="item-meta">${new Date(item.timestamp).toLocaleString()}</div>
+      </div>
+    `).join('');
+
+    // Add event delegation for history list
+    this.setupHistoryEventListeners();
+  }
+
+  private renderFavorites(favorites: any[]): void {
+    const favoritesList = document.getElementById('favorites-list');
+    if (!favoritesList) return;
+
+    if (favorites.length === 0) {
+      favoritesList.innerHTML = `
+        <div class="empty-state">
+          <h3>Избранное пусто</h3>
+          <p>Добавьте элементы в избранное, нажав на звездочку</p>
+        </div>
+      `;
+      return;
+    }
+
+    favoritesList.innerHTML = favorites.map(item => `
+      <div class="favorite-item" data-id="${item.id}">
+        <div class="item-header">
+          <span class="item-type ${item.type}">${item.type}</span>
+          <div class="item-actions">
+            <button class="action-btn favorite-btn favorited" data-action="remove-favorite" data-id="${item.id}">
+              ⭐
+            </button>
+            <button class="action-btn delete-btn" data-action="delete-favorite" data-id="${item.id}">
+              🗑️
+            </button>
+          </div>
+        </div>
+        <div class="item-content">${this.escapeHtml(this.truncateText(item.prompt, 100))}</div>
+        <div class="item-result">${this.escapeHtml(this.truncateText(item.response, 150))}</div>
+        <div class="item-meta">${new Date(item.timestamp).toLocaleString()}</div>
+      </div>
+    `).join('');
+
+    // Add event delegation for favorites list
+    this.setupFavoritesEventListeners();
+  }
+
+  private async filterHistory(): Promise<void> {
+    try {
+      const filterSelect = document.getElementById('history-filter') as HTMLSelectElement;
+      const searchInput = document.getElementById('history-search') as HTMLInputElement;
+      
+      const filter: any = {};
+      if (filterSelect.value) {
+        filter.type = filterSelect.value;
+      }
+      if (searchInput.value.trim()) {
+        filter.searchText = searchInput.value.trim();
+      }
+
+      const history = await this.historyService.getHistory(filter);
+      await this.renderHistory(history);
+    } catch (error) {
+      console.error('Error filtering history:', error);
+    }
+  }
+
+  private async filterFavorites(): Promise<void> {
+    try {
+      const filterSelect = document.getElementById('favorites-filter') as HTMLSelectElement;
+      const searchInput = document.getElementById('favorites-search') as HTMLInputElement;
+      
+      const filter: any = {};
+      if (filterSelect.value) {
+        filter.type = filterSelect.value;
+      }
+      if (searchInput.value.trim()) {
+        filter.searchText = searchInput.value.trim();
+      }
+
+      const favorites = await this.favoritesService.getFavorites(filter);
+      this.renderFavorites(favorites);
+    } catch (error) {
+      console.error('Error filtering favorites:', error);
+    }
+  }
+
+  private async clearHistory(): Promise<void> {
+    if (confirm('Вы уверены, что хотите очистить всю историю?')) {
+      try {
+        await this.historyService.clearHistory();
+        await this.renderHistory([]);
+        this.showStatus('История очищена', 'success');
+      } catch (error) {
+        console.error('Error clearing history:', error);
+        this.showStatus('Ошибка очистки истории', 'error');
+      }
+    }
+  }
+
+  private async clearFavorites(): Promise<void> {
+    if (confirm('Вы уверены, что хотите очистить все избранное?')) {
+      try {
+        await this.favoritesService.clearAllFavorites();
+        this.renderFavorites([]);
+        this.showStatus('Избранное очищено', 'success');
+      } catch (error) {
+        console.error('Error clearing favorites:', error);
+        this.showStatus('Ошибка очистки избранного', 'error');
+      }
+    }
+  }
+
+  private truncateText(text: string, maxLength: number): string {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + '...';
+  }
+
+  private escapeHtml(text: string): string {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  private setupHistoryEventListeners(): void {
+    const historyList = document.getElementById('history-list');
+    if (!historyList) return;
+
+    // Remove existing listeners to avoid duplicates
+    historyList.removeEventListener('click', this.handleHistoryClick);
+    
+    // Add new listener
+    historyList.addEventListener('click', this.handleHistoryClick.bind(this));
+  }
+
+  private setupFavoritesEventListeners(): void {
+    const favoritesList = document.getElementById('favorites-list');
+    if (!favoritesList) return;
+
+    // Remove existing listeners to avoid duplicates
+    favoritesList.removeEventListener('click', this.handleFavoritesClick);
+    
+    // Add new listener
+    favoritesList.addEventListener('click', this.handleFavoritesClick.bind(this));
+  }
+
+  private async handleHistoryClick(event: Event): Promise<void> {
+    const target = event.target as HTMLElement;
+    const button = target.closest('button[data-action]') as HTMLButtonElement;
+    
+    if (!button) return;
+
+    const action = button.dataset.action;
+    const itemId = button.dataset.id;
+
+    if (!itemId) return;
+
+    event.stopPropagation();
+
+    switch (action) {
+      case 'toggle-favorite':
+        await this.toggleFavorite(itemId);
+        break;
+      case 'delete-history':
+        await this.deleteHistoryItem(itemId);
+        break;
+    }
+  }
+
+  private async handleFavoritesClick(event: Event): Promise<void> {
+    const target = event.target as HTMLElement;
+    const button = target.closest('button[data-action]') as HTMLButtonElement;
+    
+    if (!button) return;
+
+    const action = button.dataset.action;
+    const itemId = button.dataset.id;
+
+    if (!itemId) return;
+
+    event.stopPropagation();
+
+    switch (action) {
+      case 'remove-favorite':
+        await this.removeFromFavorites(itemId);
+        break;
+      case 'delete-favorite':
+        await this.deleteFavoriteItem(itemId);
+        break;
+    }
+  }
+
+  private async toggleFavorite(itemId: string): Promise<void> {
+    try {
+      const isFavorite = await this.favoritesService.isFavoriteBySourceId(itemId);
+      
+      if (isFavorite) {
+        await this.favoritesService.removeBySourceId(itemId);
+        this.showStatus('Удалено из избранного', 'success');
+      } else {
+        const history = await this.historyService.getHistory();
+        const item = history.find(h => h.id === itemId);
+        if (item) {
+          await this.favoritesService.addToFavorites(
+            item.type,
+            item.prompt,
+            item.response,
+            item.originalText,
+            [],
+            { ...item.metadata, sourceId: itemId }
+          );
+          this.showStatus('Добавлено в избранное!', 'success');
+        }
+      }
+      
+      // Update the UI
+      await this.loadHistory();
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+      this.showStatus('Ошибка изменения избранного', 'error');
+    }
+  }
+
+  private async deleteHistoryItem(itemId: string): Promise<void> {
+    if (confirm('Удалить этот элемент из истории?')) {
+      try {
+        await this.historyService.removeFromHistory(itemId);
+        await this.loadHistory();
+        this.showStatus('Удалено из истории', 'success');
+      } catch (error) {
+        console.error('Error deleting history item:', error);
+        this.showStatus('Ошибка удаления из истории', 'error');
+      }
+    }
+  }
+
+  private async removeFromFavorites(itemId: string): Promise<void> {
+    try {
+      await this.favoritesService.removeFromFavorites(itemId);
+      await this.loadFavorites();
+      this.showStatus('Удалено из избранного', 'success');
+    } catch (error) {
+      console.error('Error removing from favorites:', error);
+      this.showStatus('Ошибка удаления из избранного', 'error');
+    }
+  }
+
+  private async deleteFavoriteItem(itemId: string): Promise<void> {
+    if (confirm('Удалить этот элемент из избранного?')) {
+      try {
+        await this.favoritesService.removeFromFavorites(itemId);
+        await this.loadFavorites();
+        this.showStatus('Удалено из избранного', 'success');
+      } catch (error) {
+        console.error('Error deleting favorite item:', error);
+        this.showStatus('Ошибка удаления из избранного', 'error');
+      }
+    }
+  }
 }
 
+
 document.addEventListener('DOMContentLoaded', () => {
-  new PopupApp();
+  const app = new PopupApp();
+  (window as any).popupApp = app;
 });
