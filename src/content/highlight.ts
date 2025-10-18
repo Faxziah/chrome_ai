@@ -39,7 +39,7 @@ export class HighlightManager {
   async highlightKeywords(): Promise<void> {
     try {
       if (!this.geminiService.isInitialized()) {
-        console.warn('GeminiService not initialized. Please set API key in options.');
+        console.log('GeminiService not initialized. Please set API key in options.');
         return;
       }
 

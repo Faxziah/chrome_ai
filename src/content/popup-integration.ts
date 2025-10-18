@@ -32,7 +32,7 @@ export class PopupIntegration {
       if (apiKey && apiKey.trim().length > 0) {
         this.geminiService = new GeminiService(apiKey);
       } else {
-        console.warn('API key not found. User needs to configure in options.');
+        console.log('API key not found. User needs to configure in options.');
       }
       
       this.speechManager = new SpeechSynthesisManager();

@@ -410,11 +410,40 @@
             margin: 0;
             font-size: 12px;
         }
+        
+        .api-warning {
+            background-color: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
+            border-radius: 6px;
+            padding: 12px;
+            margin: 16px;
+            font-size: 14px;
+            text-align: center;
+            display: none;
+        }
+        
+        .api-warning.show {
+            display: block;
+        }
+        
+        .api-warning a {
+            color: #c62828;
+            text-decoration: underline;
+            font-weight: bold;
+        }
+        
+        .api-warning a:hover {
+            color: #b71c1c;
+        }
     </style>
 </head>
 <body>
     <div class="header">
         <h1>AI Text Tools</h1>
+        <div class="api-warning" id="api-warning">
+            ⚠️ API ключ не настроен! <a href="#" id="open-options">Настройте API ключ</a> для использования расширения.
+        </div>
         <div class="md-tabs">
             <button id="summarize-tab" class="md-tab active">Summarize</button>
             <button id="rephrase-tab" class="md-tab">Rephrase</button>

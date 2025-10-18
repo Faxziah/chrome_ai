@@ -44,13 +44,15 @@ class PopupApp {
       const apiKey = await this.storageService.getApiKey();
       if (apiKey) {
         this.geminiService.setApiKey(apiKey);
+        this.hideApiWarning();
       } else {
-        this.showStatus('API ключ не настроен. Перейдите в настройки.', 'error');
+        this.showApiWarning();
         return;
       }
 
       this.setupEventListeners();
       this.setupChatCallbacks();
+      this.setupApiWarningHandlers();
       await this.loadChatHistory();
     } catch (error) {
       console.error('Initialization error:', error);
@@ -360,6 +362,30 @@ class PopupApp {
       setTimeout(() => {
         statusDiv.style.display = 'none';
       }, 3000);
+    }
+  }
+
+  private showApiWarning(): void {
+    const warningElement = document.getElementById('api-warning') as HTMLDivElement;
+    if (warningElement) {
+      warningElement.classList.add('show');
+    }
+  }
+
+  private hideApiWarning(): void {
+    const warningElement = document.getElementById('api-warning') as HTMLDivElement;
+    if (warningElement) {
+      warningElement.classList.remove('show');
+    }
+  }
+
+  private setupApiWarningHandlers(): void {
+    const openOptionsBtn = document.getElementById('open-options');
+    if (openOptionsBtn) {
+      openOptionsBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        chrome.runtime.openOptionsPage();
+      });
     }
   }
 
