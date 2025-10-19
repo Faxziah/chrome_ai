@@ -80,7 +80,7 @@ ${text}
       let fullSummary = '';
       
       for await (const chunk of this.geminiService.streamContent(prompt, {
-        model: apiConfig?.model || 'gemini-pro',
+        model: apiConfig?.model || 'gemini-2.5-flash',
         temperature: apiConfig?.temperature || 0.3,
         maxTokens: apiConfig?.maxTokens || Math.min(2048, maxLength * 2)
       })) {

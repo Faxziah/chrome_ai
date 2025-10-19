@@ -805,7 +805,7 @@ class OptionsPage {
       const maxTokensInput = document.getElementById('gemini-max-tokens') as HTMLInputElement;
       
       const config = {
-        model: modelSelect?.value || 'gemini-pro',
+        model: modelSelect?.value || 'gemini-2.5-flash',
         temperature: parseFloat(temperatureSlider?.value || '0.7'),
         maxTokens: parseInt(maxTokensInput?.value || '2048')
       };
@@ -825,7 +825,7 @@ class OptionsPage {
   private async resetGeminiConfig(): Promise<void> {
     try {
       const defaultConfig = {
-        model: 'gemini-pro',
+        model: 'gemini-2.5-flash',
         temperature: 0.7,
         maxTokens: 2048
       };

@@ -173,7 +173,7 @@ export class Chat {
       const apiConfig = await this.storageService.getApiConfig();
       
       for await (const chunk of this.geminiService.streamContent(prompt, {
-        model: apiConfig?.model || 'gemini-pro',
+        model: apiConfig?.model || 'gemini-2.5-flash',
         temperature: apiConfig?.temperature || this.config.temperature,
         maxTokens: apiConfig?.maxTokens || this.config.maxTokens
       })) {

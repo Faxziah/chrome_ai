@@ -8,10 +8,14 @@ export default [
     output: {
       file: 'dist/content-script.js',
       format: 'iife',
-      name: 'ContentScript'
+      name: 'ContentScript',
+      sourcemap: true
     },
     plugins: [
-      nodeResolve({ browser: true }),
+      nodeResolve({ 
+        browser: true,
+        preferBuiltins: false
+      }),
       commonjs(),
       typescript({ tsconfig: './tsconfig.json' })
     ]
@@ -20,7 +24,8 @@ export default [
     input: 'src/background/service-worker.ts',
     output: {
       file: 'dist/service-worker.js',
-      format: 'es'
+      format: 'es',
+      sourcemap: true
     },
     plugins: [
       nodeResolve({ browser: true }),
@@ -33,7 +38,8 @@ export default [
     output: {
       file: 'dist/options.js',
       format: 'iife',
-      name: 'Options'
+      name: 'Options',
+      sourcemap: true
     },
     plugins: [
       nodeResolve({ browser: true }),
@@ -46,7 +52,22 @@ export default [
     output: {
       file: 'dist/popup.js',
       format: 'iife',
-      name: 'Popup'
+      name: 'Popup',
+      sourcemap: true
+    },
+    plugins: [
+      nodeResolve({ browser: true }),
+      commonjs(),
+      typescript({ tsconfig: './tsconfig.json' })
+    ]
+  },
+  {
+    input: 'src/sidepanel/sidepanel.ts',
+    output: {
+      file: 'dist/sidepanel.js',
+      format: 'iife',
+      name: 'SidePanel',
+      sourcemap: true
     },
     plugins: [
       nodeResolve({ browser: true }),

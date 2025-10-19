@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
-    "json-repair-js": "^1.0.0"
+    "jsonrepair": "^3.2.2"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^26.0.1",

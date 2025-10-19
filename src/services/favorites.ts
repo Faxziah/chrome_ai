@@ -2,7 +2,7 @@ import { FavoriteItem } from '../types';
 import { StorageService } from './storage';
 
 export interface FavoritesFilter {
-  type?: 'summarize' | 'rephrase' | 'translate';
+  type?: 'summarize' | 'rephrase' | 'translate' | 'discuss';
   tags?: string[];
   searchText?: string;
 }
@@ -13,6 +13,7 @@ export interface FavoritesStats {
     summarize: number;
     rephrase: number;
     translate: number;
+    discuss: number;
   };
   byTags: Record<string, number>;
   lastAdded: number | null;
@@ -70,7 +71,7 @@ export class FavoritesService {
   }
 
   async addToFavorites(
-    type: 'summarize' | 'rephrase' | 'translate',
+    type: 'summarize' | 'rephrase' | 'translate' | 'discuss',
     prompt: string,
     response: string,
     originalText?: string,
@@ -186,7 +187,8 @@ export class FavoritesService {
         byType: {
           summarize: 0,
           rephrase: 0,
-          translate: 0
+          translate: 0,
+          discuss: 0
         },
         byTags: {},
         lastAdded: null
@@ -215,7 +217,7 @@ export class FavoritesService {
       console.error('Error getting favorites stats:', error);
       return {
         total: 0,
-        byType: { summarize: 0, rephrase: 0, translate: 0 },
+        byType: { summarize: 0, rephrase: 0, translate: 0, discuss: 0 },
         byTags: {},
         lastAdded: null
       };

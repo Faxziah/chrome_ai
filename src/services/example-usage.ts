@@ -48,7 +48,7 @@ export class ExampleUsage {
         type: 'summarize',
         prompt,
         response: response.text,
-        model: config?.model || 'gemini-pro'
+        model: config?.model || 'gemini-2.5-flash'
       });
 
       return response.text;
@@ -74,7 +74,7 @@ export class ExampleUsage {
         type: 'summarize',
         prompt,
         response: fullResponse,
-        model: config?.model || 'gemini-pro'
+        model: config?.model || 'gemini-2.5-flash'
       });
 
       return fullResponse;
@@ -90,7 +90,7 @@ export class ExampleUsage {
         type: 'summarize',
         prompt,
         response,
-        model: 'gemini-pro',
+        model: 'gemini-2.5-flash',
         tags
       });
     } catch (error) {

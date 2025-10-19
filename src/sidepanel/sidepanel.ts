@@ -1,0 +1,531 @@
+import { StorageService } from '../services/storage';
+import { HistoryService } from '../services/history';
+import { FavoritesService } from '../services/favorites';
+import { ActionType } from '../types';
+import { setLocale, t } from '../utils/i18n';
+
+// Material Design Utils (будет доступен глобально после загрузки скрипта)
+declare global {
+  interface Window {
+    MaterialDesignUtils: any;
+  }
+}
+
+class SidePanelApp {
+  private readonly storageService: StorageService;
+  private readonly historyService: HistoryService;
+  private readonly favoritesService: FavoritesService;
+  private currentTab: string = 'highlight';
+
+  constructor() {
+    this.storageService = new StorageService();
+    this.historyService = new HistoryService(this.storageService);
+    this.favoritesService = new FavoritesService(this.storageService);
+    
+    // Initialize language
+    this.initializeLanguage();
+    
+    this.initializeApp().catch(console.error);
+  }
+
+  private async initializeLanguage(): Promise<void> {
+    try {
+      const language = await this.storageService.getLanguage();
+      if (language) {
+        setLocale(language);
+      }
+    } catch (error) {
+      console.error('Error loading language:', error);
+    }
+  }
+
+  private async initializeApp(): Promise<void> {
+    try {
+      const apiKey = await this.storageService.getApiKey();
+      if (apiKey) {
+        this.hideApiWarning();
+      } else {
+        this.showApiWarning();
+        return;
+      }
+
+      this.setupEventListeners();
+      this.setupApiWarningHandlers();
+      this.localizeElements();
+    } catch (error) {
+      console.error('Initialization error:', error);
+      this.showStatus(t('status.errorSavingSettings'), 'error');
+    }
+  }
+
+  private setupEventListeners(): void {
+    const tabs = document.querySelectorAll('.md-tab');
+    
+    tabs.forEach(tab => {
+      tab.addEventListener('click', async () => {
+        const tabId = tab.id.replace('-tab', '');
+        await this.switchTab(tabId);
+      });
+    });
+
+    const highlightBtn = document.getElementById('highlight-btn') as HTMLButtonElement;
+    if (highlightBtn) {
+      highlightBtn.addEventListener('click', () => this.sendMessageToContentScript(ActionType.HIGHLIGHT_KEYWORDS));
+    }
+
+    // History and Favorites event listeners
+    const historyFilter = document.getElementById('history-filter') as HTMLSelectElement;
+    const historySearch = document.getElementById('history-search') as HTMLInputElement;
+    const clearHistoryBtn = document.getElementById('clear-history-btn') as HTMLButtonElement;
+    const favoritesFilter = document.getElementById('favorites-filter') as HTMLSelectElement;
+    const favoritesSearch = document.getElementById('favorites-search') as HTMLInputElement;
+    const clearFavoritesBtn = document.getElementById('clear-favorites-btn') as HTMLButtonElement;
+
+    if (historyFilter) {
+      historyFilter.addEventListener('change', () => this.filterHistory());
+    }
+
+    if (historySearch) {
+      historySearch.addEventListener('input', () => this.filterHistory());
+    }
+
+    if (clearHistoryBtn) {
+      clearHistoryBtn.addEventListener('click', () => this.clearHistory());
+    }
+
+    if (favoritesFilter) {
+      favoritesFilter.addEventListener('change', () => this.filterFavorites());
+    }
+
+    if (favoritesSearch) {
+      favoritesSearch.addEventListener('input', () => this.filterFavorites());
+    }
+
+    if (clearFavoritesBtn) {
+      clearFavoritesBtn.addEventListener('click', () => this.clearFavorites());
+    }
+  }
+
+  private async switchTab(tabId: string): Promise<void> {
+    this.currentTab = tabId;
+    
+    const tabs = document.querySelectorAll('.md-tab');
+    const tabContents = document.querySelectorAll('.md-tab-content');
+    
+    tabs.forEach(tab => tab.classList.remove('active'));
+    tabContents.forEach(content => content.classList.remove('active'));
+    
+    const activeTab = document.getElementById(`${tabId}-tab`);
+    const activeContent = document.getElementById(`${tabId}-content`);
+    
+    if (activeTab && activeContent) {
+      activeTab.classList.add('active');
+      activeContent.classList.add('active');
+      
+      // Добавляем анимацию появления
+      if (window.MaterialDesignUtils) {
+        window.MaterialDesignUtils.animateElement(activeContent, 'fadeIn');
+      }
+    }
+
+    if (tabId === 'history') {
+      await this.loadHistory();
+    } else if (tabId === 'favorites') {
+      await this.loadFavorites();
+    }
+  }
+
+  private showStatus(message: string, type: 'success' | 'error' = 'success'): void {
+    // Используем Material Design toast уведомления
+    if (window.MaterialDesignUtils) {
+      window.MaterialDesignUtils.showToast(message, type, 3000);
+    } else {
+      // Fallback к старому способу
+      const statusDiv = document.getElementById('status') as HTMLDivElement;
+      if (!statusDiv) return;
+
+      statusDiv.textContent = message;
+      statusDiv.className = `status ${type}`;
+      statusDiv.style.display = 'block';
+      
+      setTimeout(() => {
+        statusDiv.style.display = 'none';
+      }, 3000);
+    }
+  }
+
+  private showApiWarning(): void {
+    const warningElement = document.getElementById('api-warning') as HTMLDivElement;
+    if (warningElement) {
+      warningElement.classList.add('show');
+    }
+  }
+
+  private hideApiWarning(): void {
+    const warningElement = document.getElementById('api-warning') as HTMLDivElement;
+    if (warningElement) {
+      warningElement.classList.remove('show');
+    }
+  }
+
+  private setupApiWarningHandlers(): void {
+    const openOptionsBtn = document.getElementById('open-options');
+    if (openOptionsBtn) {
+      openOptionsBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        chrome.runtime.openOptionsPage();
+      });
+    }
+  }
+
+  private localizeElements(): void {
+    // Localize elements with data-i18n attribute
+    document.querySelectorAll('[data-i18n]').forEach(element => {
+      const key = element.getAttribute('data-i18n');
+      if (key) {
+        element.textContent = t(key);
+      }
+    });
+
+    // Localize elements with data-i18n-placeholder attribute
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+      const key = element.getAttribute('data-i18n-placeholder');
+      if (key && element instanceof HTMLInputElement) {
+        element.placeholder = t(key);
+      }
+    });
+  }
+
+  private sendMessageToContentScript(action: string): void {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs[0]?.id) {
+        chrome.tabs.sendMessage(tabs[0].id, { action }, (response) => {
+          if (chrome.runtime.lastError) {
+            this.showStatus('Error: ' + chrome.runtime.lastError.message, 'error');
+          } else if (response?.success) {
+            this.showStatus('Action completed successfully!');
+          } else {
+            this.showStatus('No text selected. Please select some text first.', 'error');
+          }
+        });
+      }
+    });
+  }
+
+  private async loadHistory(): Promise<void> {
+    try {
+      const history = await this.historyService.getHistory();
+      await this.renderHistory(history);
+    } catch (error) {
+      console.error('Error loading history:', error);
+      this.showStatus(t('status.errorClearingHistory'), 'error');
+    }
+  }
+
+  private async loadFavorites(): Promise<void> {
+    try {
+      const favorites = await this.favoritesService.getFavorites();
+      this.renderFavorites(favorites);
+    } catch (error) {
+      console.error('Error loading favorites:', error);
+      this.showStatus(t('status.errorClearingFavorites'), 'error');
+    }
+  }
+
+  private async renderHistory(history: any[]): Promise<void> {
+    const historyList = document.getElementById('history-items');
+    if (!historyList) return;
+
+    if (history.length === 0) {
+      historyList.innerHTML = `
+        <div class="empty-state">
+          <h3>${t('empty.history')}</h3>
+          <p>${t('empty.loadingHistory')}</p>
+        </div>
+      `;
+      return;
+    }
+
+    // Check favorite status for each item
+    const historyWithFavorites = await Promise.all(
+      history.map(async (item) => ({
+        ...item,
+        isFavorite: await this.favoritesService.isFavoriteBySourceId(item.id)
+      }))
+    );
+
+    historyList.innerHTML = historyWithFavorites.map(item => `
+      <div class="history-item" data-id="${item.id}">
+        <div class="item-header">
+          <span class="item-type ${item.type}">${this.getTypeLabel(item.type)}</span>
+          <div class="item-actions">
+            <button class="action-btn favorite-btn ${item.isFavorite ? 'favorited' : ''}" data-action="toggle-favorite" data-id="${item.id}">
+              ⭐
+            </button>
+            <button class="action-btn delete-btn" data-action="delete-history" data-id="${item.id}">
+              🗑️
+            </button>
+          </div>
+        </div>
+        <div class="item-content">${this.escapeHtml(this.truncateText(item.prompt, 100))}</div>
+        <div class="item-result">${this.escapeHtml(this.truncateText(item.response, 150))}</div>
+        <div class="item-meta">${new Date(item.timestamp).toLocaleString()}</div>
+      </div>
+    `).join('');
+
+    // Add event delegation for history list
+    this.setupHistoryEventListeners();
+  }
+
+  private renderFavorites(favorites: any[]): void {
+    const favoritesList = document.getElementById('favorites-items');
+    if (!favoritesList) return;
+
+    if (favorites.length === 0) {
+      favoritesList.innerHTML = `
+        <div class="empty-state">
+          <h3>${t('empty.favorites')}</h3>
+          <p>${t('empty.loadingFavorites')}</p>
+        </div>
+      `;
+      return;
+    }
+
+    favoritesList.innerHTML = favorites.map(item => `
+      <div class="favorite-item" data-id="${item.id}">
+        <div class="item-header">
+          <span class="item-type ${item.type}">${this.getTypeLabel(item.type)}</span>
+          <div class="item-actions">
+            <button class="action-btn favorite-btn favorited" data-action="remove-favorite" data-id="${item.id}">
+              ⭐
+            </button>
+            <button class="action-btn delete-btn" data-action="delete-favorite" data-id="${item.id}">
+              🗑️
+            </button>
+          </div>
+        </div>
+        <div class="item-content">${this.escapeHtml(this.truncateText(item.prompt, 100))}</div>
+        <div class="item-result">${this.escapeHtml(this.truncateText(item.response, 150))}</div>
+        <div class="item-meta">${new Date(item.timestamp).toLocaleString()}</div>
+      </div>
+    `).join('');
+
+    // Add event delegation for favorites list
+    this.setupFavoritesEventListeners();
+  }
+
+  private getTypeLabel(type: string): string {
+    const labels: Record<string, string> = {
+      'summarize': t('options.summarize'),
+      'rephrase': t('options.rephrase'),
+      'translate': t('options.translate'),
+      'discuss': t('common.discuss')
+    };
+    return labels[type] || type;
+  }
+
+  private async filterHistory(): Promise<void> {
+    try {
+      const filterSelect = document.getElementById('history-filter') as HTMLSelectElement;
+      const searchInput = document.getElementById('history-search') as HTMLInputElement;
+      
+      const filter: any = {};
+      if (filterSelect.value) {
+        filter.type = filterSelect.value;
+      }
+      if (searchInput.value.trim()) {
+        filter.searchText = searchInput.value.trim();
+      }
+
+      const history = await this.historyService.getHistory(filter);
+      await this.renderHistory(history);
+    } catch (error) {
+      console.error('Error filtering history:', error);
+    }
+  }
+
+  private async filterFavorites(): Promise<void> {
+    try {
+      const filterSelect = document.getElementById('favorites-filter') as HTMLSelectElement;
+      const searchInput = document.getElementById('favorites-search') as HTMLInputElement;
+      
+      const filter: any = {};
+      if (filterSelect.value) {
+        filter.type = filterSelect.value;
+      }
+      if (searchInput.value.trim()) {
+        filter.searchText = searchInput.value.trim();
+      }
+
+      const favorites = await this.favoritesService.getFavorites(filter);
+      this.renderFavorites(favorites);
+    } catch (error) {
+      console.error('Error filtering favorites:', error);
+    }
+  }
+
+  private async clearHistory(): Promise<void> {
+    try {
+      await this.historyService.clearHistory();
+      await this.renderHistory([]);
+      this.showStatus(t('status.historyCleared'), 'success');
+    } catch (error) {
+      console.error('Error clearing history:', error);
+      this.showStatus(t('status.errorClearingHistory'), 'error');
+    }
+  }
+
+  private async clearFavorites(): Promise<void> {
+    try {
+      await this.favoritesService.clearAllFavorites();
+      this.renderFavorites([]);
+      this.showStatus(t('status.favoritesCleared'), 'success');
+    } catch (error) {
+      console.error('Error clearing favorites:', error);
+      this.showStatus(t('status.errorClearingFavorites'), 'error');
+    }
+  }
+
+  private truncateText(text: string, maxLength: number): string {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + '...';
+  }
+
+  private escapeHtml(text: string): string {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  private setupHistoryEventListeners(): void {
+    const historyList = document.getElementById('history-items');
+    if (!historyList) return;
+
+    // Remove existing listeners to avoid duplicates
+    historyList.removeEventListener('click', this.handleHistoryClick);
+    
+    // Add new listener
+    historyList.addEventListener('click', this.handleHistoryClick.bind(this));
+  }
+
+  private setupFavoritesEventListeners(): void {
+    const favoritesList = document.getElementById('favorites-items');
+    if (!favoritesList) return;
+
+    // Remove existing listeners to avoid duplicates
+    favoritesList.removeEventListener('click', this.handleFavoritesClick);
+    
+    // Add new listener
+    favoritesList.addEventListener('click', this.handleFavoritesClick.bind(this));
+  }
+
+  private async handleHistoryClick(event: Event): Promise<void> {
+    const target = event.target as HTMLElement;
+    const button = target.closest('button[data-action]') as HTMLButtonElement;
+    
+    if (!button) return;
+
+    const action = button.dataset.action;
+    const itemId = button.dataset.id;
+
+    if (!itemId) return;
+
+    event.stopPropagation();
+
+    switch (action) {
+      case 'toggle-favorite':
+        await this.toggleFavorite(itemId);
+        break;
+      case 'delete-history':
+        await this.deleteHistoryItem(itemId);
+        break;
+    }
+  }
+
+  private async handleFavoritesClick(event: Event): Promise<void> {
+    const target = event.target as HTMLElement;
+    const button = target.closest('button[data-action]') as HTMLButtonElement;
+    
+    if (!button) return;
+
+    const action = button.dataset.action;
+    const itemId = button.dataset.id;
+
+    if (!itemId) return;
+
+    event.stopPropagation();
+
+    switch (action) {
+      case 'remove-favorite':
+        await this.removeFromFavorites(itemId);
+        break;
+      case 'delete-favorite':
+        await this.deleteFavoriteItem(itemId);
+        break;
+    }
+  }
+
+  private async toggleFavorite(itemId: string): Promise<void> {
+    try {
+      const isFavorite = await this.favoritesService.isFavoriteBySourceId(itemId);
+      
+      if (isFavorite) {
+        await this.favoritesService.removeBySourceId(itemId);
+      } else {
+        const history = await this.historyService.getHistory();
+        const item = history.find(h => h.id === itemId);
+        if (item) {
+          await this.favoritesService.addToFavorites(
+            item.type,
+            item.prompt,
+            item.response,
+            item.originalText,
+            [],
+            { ...item.metadata, sourceId: itemId }
+          );
+        }
+      }
+      
+      // Update the UI
+      await this.loadHistory();
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+      this.showStatus(t('common.errorTogglingFavorite'), 'error');
+    }
+  }
+
+  private async deleteHistoryItem(itemId: string): Promise<void> {
+    try {
+      await this.historyService.removeFromHistory(itemId);
+      await this.loadHistory();
+      this.showStatus(t('status.itemRemovedFromHistory'), 'success');
+    } catch (error) {
+      console.error('Error deleting history item:', error);
+      this.showStatus(t('status.errorRemovingItem'), 'error');
+    }
+  }
+
+  private async removeFromFavorites(itemId: string): Promise<void> {
+    try {
+      await this.favoritesService.removeFromFavorites(itemId);
+      await this.loadFavorites();
+    } catch (error) {
+      console.error('Error removing from favorites:', error);
+      this.showStatus(t('common.failedToRemoveFromFavorites'), 'error');
+    }
+  }
+
+  private async deleteFavoriteItem(itemId: string): Promise<void> {
+    try {
+      await this.favoritesService.removeFromFavorites(itemId);
+      await this.loadFavorites();
+    } catch (error) {
+      console.error('Error deleting favorite item:', error);
+      this.showStatus(t('common.failedToRemoveFromFavorites'), 'error');
+    }
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  (window as any).sidePanelApp = new SidePanelApp();
+});

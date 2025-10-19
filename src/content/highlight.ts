@@ -1,7 +1,7 @@
 import { GeminiService } from '../services';
 import { StorageService } from '../services';
-// @ts-ignore
-import { repairJSON } from 'json-repair-js';
+import { jsonrepair } from 'jsonrepair';
+import { t } from '../utils/i18n';
 
 export interface HighlightData {
   sentences: string[];
@@ -40,21 +40,29 @@ export class HighlightManager {
   async highlightKeywords(): Promise<void> {
     try {
       if (!this.geminiService.isInitialized()) {
-        console.log('GeminiService not initialized. Please set API key in options.');
+        this.showHighlightError(t('api.missingKey'));
         return;
       }
 
       const pageText = this.extractPageText();
       if (!pageText.trim()) {
-        console.warn('No text found on page to highlight');
+        this.showHighlightError(t('errors.noTextFound'));
         return;
       }
 
       const highlightData = await this.getKeywordsFromGemini(pageText);
+      
+      if (highlightData.sentences.length === 0) {
+        this.showHighlightError(t('errors.noKeywordsFound'));
+        return;
+      }
+
       this.applyHighlights(highlightData);
       this.showClearButton();
     } catch (error) {
       console.error('Error highlighting keywords:', error);
+      const errorMessage = error instanceof Error ? error.message : t('errors.highlightFailed');
+      this.showHighlightError(errorMessage);
     }
   }
 
@@ -119,6 +127,11 @@ export class HighlightManager {
         temperature: apiConfig?.temperature || 0.7,
         maxTokens: apiConfig?.maxTokens || 2048
       });
+      
+      if (!response.text || response.text.trim() === '') {
+        throw new Error(t('errors.emptyResponse'));
+      }
+      
       const jsonMatch = response.text.match(/```json\s*([\s\S]*?)```/) || response.text.match(/\{[\s\S]*\}/);
       
       if (jsonMatch) {
@@ -131,21 +144,21 @@ export class HighlightManager {
         } catch (error) {
           console.log('JSON parse failed, attempting repair...');
           try {
-            // Используем json-repair для исправления
-            const repairedJson = repairJSON(jsonString);
+            // Используем jsonrepair для исправления
+            const repairedJson = jsonrepair(jsonString);
             const data = JSON.parse(repairedJson);
             return { sentences: data.sentences || [] };
           } catch (repairError) {
             console.error('JSON repair failed:', repairError);
-            throw new Error('Failed to parse Gemini response even after repair');
+            throw new Error(t('errors.highlightParsingFailed'));
           }
         }
       } else {
-        throw new Error('No valid JSON found in response');
+        throw new Error(t('errors.noValidJson'));
       }
     } catch (error) {
       console.error('Error parsing Gemini response:', error);
-      return { sentences: [] };
+      throw error;
     }
   }
 
@@ -280,8 +293,8 @@ export class HighlightManager {
     
     this.clearButton = document.createElement('button');
     this.clearButton.className = 'ai-highlight-clear-btn';
-    this.clearButton.textContent = 'Clear highlights';
-    this.clearButton.title = 'Remove all highlights from the page';
+    this.clearButton.textContent = t('highlight.clearButton');
+    this.clearButton.title = t('highlight.clearButtonTitle');
     
     this.clearButton.addEventListener('click', () => {
       this.clearHighlights();
@@ -303,6 +316,34 @@ export class HighlightManager {
 
   getHighlightCount(): number {
     return this.highlightedElements.size;
+  }
+
+  private showHighlightError(message: string): void {
+    // Создать стилизованный toast для ошибок highlight
+    const toast = document.createElement('div');
+    toast.className = 'ai-highlight-error-toast';
+    toast.textContent = message;
+    toast.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #d93025;
+      color: white;
+      padding: 12px 16px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      z-index: 2147483647;
+      font-size: 14px;
+      max-width: 300px;
+      animation: slideIn 0.3s ease;
+      word-wrap: break-word;
+    `;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+      toast.remove();
+    }, 5000);
   }
 }
 

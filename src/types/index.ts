@@ -11,7 +11,7 @@ export enum ActionType {
 
 export interface HistoryItem {
   id: string;
-  type: 'summarize' | 'rephrase' | 'translate';
+  type: 'summarize' | 'rephrase' | 'translate' | 'discuss';
   prompt: string;
   response: string;
   timestamp: number;
@@ -22,7 +22,7 @@ export interface HistoryItem {
 
 export interface FavoriteItem {
   id: string;
-  type: 'summarize' | 'rephrase' | 'translate';
+  type: 'summarize' | 'rephrase' | 'translate' | 'discuss';
   prompt: string;
   response: string;
   timestamp: number;
@@ -142,4 +142,10 @@ export interface SummarizerResult {
   originalLength: number;
   summaryLength: number;
   compressionRatio: number;
+}
+
+export interface ChatMessage {
+  role: 'user' | 'assistant';
+  content: string;
+  timestamp?: number;
 }

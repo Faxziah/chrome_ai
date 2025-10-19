@@ -2,7 +2,7 @@ import { HistoryItem } from '../types';
 import { StorageService } from './storage';
 
 export interface HistoryFilter {
-  type?: 'summarize' | 'rephrase' | 'translate';
+  type?: 'summarize' | 'rephrase' | 'translate' | 'discuss';
   dateFrom?: number;
   dateTo?: number;
   searchText?: string;
@@ -14,6 +14,7 @@ export interface HistoryStats {
     summarize: number;
     rephrase: number;
     translate: number;
+    discuss: number;
   };
   lastActivity: number | null;
 }
@@ -115,7 +116,8 @@ export class HistoryService {
         byType: {
           summarize: 0,
           rephrase: 0,
-          translate: 0
+          translate: 0,
+          discuss: 0
         },
         lastActivity: null
       };
@@ -136,7 +138,7 @@ export class HistoryService {
       console.error('Error getting history stats:', error);
       return {
         total: 0,
-        byType: { summarize: 0, rephrase: 0, translate: 0 },
+        byType: { summarize: 0, rephrase: 0, translate: 0, discuss: 0 },
         lastActivity: null
       };
     }

@@ -3,7 +3,7 @@ import { GeminiService } from '../services/gemini-api';
 import { StorageService } from '../services/storage';
 import { FavoritesService } from '../services/favorites';
 import { SpeechSynthesisManager } from './speech-utils';
-import { RephraseHandler, TranslateHandler, ClipboardHandler, SpeechHandler, SummarizeHandler } from './handlers';
+import { RephraseHandler, TranslateHandler, ClipboardHandler, SpeechHandler, SummarizeHandler, DiscussHandler } from './handlers';
 import { RephraserConfig, RephraserResult, TranslatorConfig, TranslatorResult, HistoryItem, LanguageCode } from '../types';
 import { t } from '../utils/i18n';
 
@@ -17,6 +17,7 @@ export class PopupIntegration {
   private translateHandler: TranslateHandler | null = null;
   private speechHandler: SpeechHandler | null = null;
   private summarizeHandler: SummarizeHandler | null = null;
+  private discussHandler: DiscussHandler | null = null;
   private isProcessing: boolean = false;
   private isProcessingFavorite: boolean = false;
   private toastTimer: number | null = null;
@@ -63,6 +64,7 @@ export class PopupIntegration {
         this.translateHandler = new TranslateHandler(shadowRoot, this.geminiService, this.storageService, this.speechManager);
         this.speechHandler = new SpeechHandler(shadowRoot, this.speechManager, this.storageService);
         this.summarizeHandler = new SummarizeHandler(shadowRoot, this.geminiService, this.storageService);
+        this.discussHandler = new DiscussHandler(shadowRoot, this.geminiService, this.storageService, this.favoritesService);
       }
     } catch (error) {
       console.error('Failed to initialize services:', error);
@@ -106,6 +108,8 @@ export class PopupIntegration {
         await this.handleSummarizeClick(event);
       } else if (buttonId === 'btn-favorite-toggle') {
         await this.handleFavoriteToggleClick(event);
+      } else if (buttonId === 'btn-send-chat') {
+        await this.handleSendChatClick(event);
       }
     });
 
@@ -350,6 +354,52 @@ export class PopupIntegration {
     }
   }
 
+  private async handleSendChatClick(event: Event): Promise<void> {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (this.isProcessing) return;
+    this.isProcessing = true;
+    this.abortController = new AbortController();
+
+    try {
+      const shadowRoot = this.popupUI.getShadowRoot();
+      const chatInput = shadowRoot?.querySelector('#chat-input') as HTMLTextAreaElement;
+      
+      if (!chatInput || !chatInput.value.trim()) {
+        this.showToast(t('common.noTextSelected'), 'error');
+        return;
+      }
+
+      if (!this.apiKeyValid) {
+        this.showApiKeyError('discuss-text');
+        return;
+      }
+
+      if (!this.discussHandler) {
+        await this.initializeServices();
+        if (!this.discussHandler || !this.apiKeyValid) {
+          this.showApiKeyError('discuss-text');
+          return;
+        }
+      }
+
+      await this.discussHandler.handleSendMessage(chatInput.value);
+    } catch (error) {
+      if (this.abortController?.signal.aborted) {
+        console.log('Chat operation was cancelled');
+        return;
+      }
+      console.error('Chat error:', error);
+      if (error instanceof Error && error.message === 'MODEL_NOT_AVAILABLE') {
+        this.showModelUnavailableError('discuss-text');
+      }
+    } finally {
+      this.isProcessing = false;
+      this.abortController = null;
+    }
+  }
+
   private async handleFavoriteToggleClick(event: Event): Promise<void> {
     event.preventDefault();
     event.stopPropagation();
@@ -430,6 +480,9 @@ export class PopupIntegration {
         response = translateText.textContent;
         type = 'translate';
         break;
+      case 'discuss':
+        this.showToast(t('common.cannotAddToFavoritesFromThisTab'), 'error');
+        return;
       default:
         this.showToast(t('common.cannotAddToFavoritesFromThisTab'), 'error');
         return;
@@ -451,7 +504,6 @@ export class PopupIntegration {
         button.dataset.sourceId = found.metadata?.sourceId || sourceId;
       }
       this.updateFavoriteButtonState(button, true);
-      this.showToast(t('common.addedToFavorites'), 'success');
     } else {
       this.showToast(t('common.failedToAddToFavorites'), 'error');
     }
@@ -469,7 +521,6 @@ export class PopupIntegration {
     
     if (success) {
       this.updateFavoriteButtonState(button, false);
-      this.showToast(t('common.removedFromFavorites'), 'success');
     } else {
       this.showToast(t('common.failedToRemoveFromFavorites'), 'error');
     }
@@ -544,6 +595,9 @@ export class PopupIntegration {
         response = translateText.textContent;
         type = 'translate';
         break;
+      case 'discuss':
+        this.updateFavoriteButtonState(button, false);
+        return;
       default:
         this.updateFavoriteButtonState(button, false);
         return;
@@ -596,13 +650,16 @@ export class PopupIntegration {
   }
 
   private showToast(message: string, type: 'success' | 'error' = 'success'): void {
+    // Clear previous timer
     if (this.toastTimer) {
       clearTimeout(this.toastTimer);
+      this.toastTimer = null;
     }
 
     const shadowRoot = this.popupUI.getShadowRoot();
     if (!shadowRoot) return;
 
+    // Reuse existing toast element
     let toast = shadowRoot.querySelector('.toast') as HTMLElement;
     if (!toast) {
       toast = document.createElement('div');
@@ -632,8 +689,10 @@ export class PopupIntegration {
     toast.style.transform = 'translateX(0)';
 
     this.toastTimer = window.setTimeout(() => {
-      toast.style.opacity = '0';
-      toast.style.transform = 'translateX(100%)';
+      if (toast) {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(100%)';
+      }
       this.toastTimer = null;
     }, 3000);
   }
@@ -657,6 +716,7 @@ export class PopupIntegration {
     this.translateHandler = null;
     this.speechHandler = null;
     this.summarizeHandler = null;
+    this.discussHandler = null;
     if (this.speechManager) {
       this.speechManager.stop();
       this.speechManager = null;

@@ -56,16 +56,16 @@ export class Tabs {
 
   renderMiniMode(): string {
     const miniButtons = this.tabs.map((tab, index) => {
-      const isActive = index === this.currentTabIndex;
       const letter = this.getTabLetter(tab.id);
       return `
         <button 
-          class="mini-tab ${isActive ? 'is-active' : ''}" 
+          class="mini-tab" 
           role="tab" 
-          aria-selected="${isActive}" 
+          aria-selected="false" 
           aria-controls="panel-${tab.id}" 
           id="btn-mini-${tab.id}"
-          tabindex="${isActive ? 0 : -1}"
+          data-tab-id="${tab.id}"
+          tabindex="-1"
           title="${tab.label}"
         >
           ${letter}
@@ -73,35 +73,19 @@ export class Tabs {
       `;
     }).join('');
 
-    const panelsHtml = this.tabs.map((tab, index) => {
-      const isActive = index === this.currentTabIndex;
-      return `
-        <section 
-          id="panel-${tab.id}" 
-          role="tabpanel" 
-          aria-labelledby="btn-mini-${tab.id}" 
-          class="tab-panel"
-          ${isActive ? '' : 'hidden'}
-        >
-          ${this.renderTabContent(tab.id)}
-        </section>
-      `;
-    }).join('');
-
     return `
       <nav class="mini-tabs" role="tablist" aria-label="AI Text Tools Mini">
         ${miniButtons}
       </nav>
-      ${panelsHtml}
     `;
   }
 
   private getTabLetter(tabId: string): string {
     switch (tabId) {
-      case 'summarize': return 'S';
-      case 'rephrase': return 'R';
-      case 'translate': return 'T';
-      case 'discuss': return 'D';
+      case 'summarize': return t('common.miniS');
+      case 'rephrase': return t('common.miniR');
+      case 'translate': return t('common.miniT');
+      case 'discuss': return t('common.miniD');
       default: return tabId.charAt(0).toUpperCase();
     }
   }
@@ -112,16 +96,24 @@ export class Tabs {
         return `
           <div class="tab-content">
             <div class="selected-text-display">${t('common.selectedText')}</div>
-            <button class="btn btn-primary" id="btn-summarize">${t('common.summarize')}</button>
+            <button class="btn btn-primary" id="btn-summarize">${t('common.resume')}</button>
             <div class="result-container" id="summary-result" hidden>
               <div class="result-text" id="summary-text"></div>
             </div>
             <div class="api-key-error-template" id="api-key-error-summarize" style="display: none;">
               <div class="api-key-error">
-                <p>${t('api.missingKey')}
-                <br><a href="http://aistudio.google.com/app/api-keys?hl=ru" target="_blank" rel="noopener noreferrer">${t('api.visitStudio')}</a> and click "${t('api.createApiKey')}"</p>
+                <p>${t('api.missingKey')}</p>
+                <p><a href="http://aistudio.google.com/app/api-keys?hl=ru" target="_blank" rel="noopener noreferrer">${t('api.visitStudio')}</a> ${t('api.createApiKey')}</p>
               </div>
             </div>
+            <button class="btn btn-secondary" id="btn-favorite-toggle" data-is-favorite="false">${t('common.addToFavorites')}</button>
+          </div>
+        `;
+
+      case 'discuss':
+        return `
+          <div class="tab-content">
+            <div class="selected-text-display">${t('common.selectedText')}</div>
             <div class="chat-container">
               <div class="chat-messages" id="chat-messages"></div>
               <div class="chat-input-wrapper">
@@ -129,7 +121,12 @@ export class Tabs {
                 <button class="btn btn-icon" id="btn-send-chat" aria-label="${t('chat.sendMessage')}">➤</button>
               </div>
             </div>
-            <button class="btn btn-secondary" id="btn-favorite-toggle" data-is-favorite="false">${t('common.addToFavorites')}</button>
+            <div class="api-key-error-template" id="api-key-error-discuss" style="display: none;">
+              <div class="api-key-error">
+                <p>${t('api.missingKey')}</p>
+                <p><a href="http://aistudio.google.com/app/api-keys?hl=ru" target="_blank" rel="noopener noreferrer">${t('api.visitStudio')}</a> ${t('api.createApiKey')}</p>
+              </div>
+            </div>
           </div>
         `;
 
@@ -154,8 +151,8 @@ export class Tabs {
             </div>
             <div class="api-key-error-template" id="api-key-error-rephrase" style="display: none;">
               <div class="api-key-error">
-                <p>${t('api.missingKey')}
-                <br><a href="http://aistudio.google.com/app/api-keys?hl=ru" target="_blank" rel="noopener noreferrer">${t('api.visitStudio')}</a> and click "${t('api.createApiKey')}"</p>
+                <p>${t('api.missingKey')}</p>
+                <p><a href="http://aistudio.google.com/app/api-keys?hl=ru" target="_blank" rel="noopener noreferrer">${t('api.visitStudio')}</a> ${t('api.createApiKey')}</p>
               </div>
             </div>
             <button class="btn btn-secondary" id="btn-favorite-toggle" data-is-favorite="false">${t('common.addToFavorites')}</button>
@@ -328,8 +325,8 @@ export class Tabs {
             </div>
             <div class="api-key-error-template" id="api-key-error-translate" style="display: none;">
               <div class="api-key-error">
-                <p>${t('api.missingKey')}
-                <br><a href="http://aistudio.google.com/app/api-keys?hl=ru" target="_blank" rel="noopener noreferrer">${t('api.visitStudio')}</a> and click "${t('api.createApiKey')}"</p>
+                <p>${t('api.missingKey')}</p>
+                <p><a href="http://aistudio.google.com/app/api-keys?hl=ru" target="_blank" rel="noopener noreferrer">${t('api.visitStudio')}</a> ${t('api.createApiKey')}</p>
               </div>
             </div>
             <button class="btn btn-secondary" id="btn-favorite-toggle" data-is-favorite="false">${t('common.addToFavorites')}</button>

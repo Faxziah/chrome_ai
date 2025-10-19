@@ -72,7 +72,7 @@ export class Translator {
       const apiConfig = await this.storageService.getApiConfig();
       
       const response = await this.geminiService.generateContent(prompt, {
-        model: apiConfig?.model || 'gemini-pro',
+        model: apiConfig?.model || 'gemini-2.5-flash',
         temperature: apiConfig?.temperature || 0.5,
         maxTokens: apiConfig?.maxTokens || 2048
       });
@@ -148,7 +148,7 @@ export class Translator {
       const apiConfig = await this.storageService.getApiConfig();
       
       for await (const chunk of this.geminiService.streamContent(prompt, {
-        model: apiConfig?.model || 'gemini-pro',
+        model: apiConfig?.model || 'gemini-2.5-flash',
         temperature: apiConfig?.temperature || 0.5,
         maxTokens: apiConfig?.maxTokens || 2048
       })) {

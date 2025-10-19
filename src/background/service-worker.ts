@@ -1,24 +1,41 @@
 import { ActionType } from '../types';
+import { t, setLocale } from '../utils/i18n';
+import { StorageService } from '../services/storage';
 
 console.log('AI Text Tools service worker initialized');
 
 // Create context menu items on install
-chrome.runtime.onInstalled.addListener(() => {
+chrome.runtime.onInstalled.addListener(async () => {
+  // Setup side panel
+  await chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true }).catch(console.error);
+  
+  // Load language
+  const storage = new StorageService();
+  const language = await storage.getLanguage();
+  if (language) setLocale(language);
+  
+  // Create localized context menus
   chrome.contextMenus.create({
     id: 'summarize-text',
-    title: 'Суммаризировать текст',
+    title: t('contextMenu.summarize'),
     contexts: ['selection']
   });
 
   chrome.contextMenus.create({
     id: 'rephrase-text',
-    title: 'Перефразировать текст',
+    title: t('contextMenu.rephrase'),
     contexts: ['selection']
   });
 
   chrome.contextMenus.create({
     id: 'translate-text',
-    title: 'Перевести текст',
+    title: t('contextMenu.translate'),
+    contexts: ['selection']
+  });
+
+  chrome.contextMenus.create({
+    id: 'discuss-text',
+    title: t('contextMenu.discuss'),
     contexts: ['selection']
   });
 });

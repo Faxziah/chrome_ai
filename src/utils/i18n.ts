@@ -28,6 +28,35 @@ const translations: LocaleData = {
     'common.noTextSelectedToSpeak': 'No text selected to speak',
     'common.speechHandlerNotAvailable': 'Speech handler not available',
     'common.translationHandlerNotAvailable': 'Translation handler not available',
+    'common.discuss': 'Discuss',
+    'common.resume': 'Resume',
+    'common.miniS': 'S',
+    'common.miniR': 'R',
+    'common.miniT': 'T',
+    'common.miniD': 'D',
+    'common.highlight': 'Highlight',
+    'common.history': 'History',
+    'common.favorites': 'Favorites',
+    
+    // Highlight
+    'highlight.clearButton': 'Clear highlights',
+    'highlight.clearButtonTitle': 'Remove all highlights from the page',
+    
+    // Side Panel
+    'sidepanel.title': 'AI Text Tools',
+    'sidepanel.highlightKeywords': 'Highlight Keywords',
+    'sidepanel.historyTitle': 'Operation History',
+    'sidepanel.favoritesTitle': 'Favorites',
+    'sidepanel.allTypes': 'All Types',
+    'sidepanel.searchHistory': 'Search history...',
+    'sidepanel.searchFavorites': 'Search favorites...',
+    'sidepanel.clearAll': 'Clear All',
+    
+    // Context menu
+    'contextMenu.summarize': 'Summarize text',
+    'contextMenu.rephrase': 'Rephrase text',
+    'contextMenu.translate': 'Translate text',
+    'contextMenu.discuss': 'Discuss text',
     
     // Status messages for handlers
     'status.translating': 'Translating...',
@@ -37,13 +66,19 @@ const translations: LocaleData = {
     // API Errors
     'api.missingKey': 'API key is missing or invalid. Please configure your Gemini API key.',
     'api.visitStudio': 'Visit Google AI Studio',
-    'api.createApiKey': 'Create API key',
+    'api.createApiKey': 'Go to this link and click "Create API key"',
     'api.modelUnavailable': 'Model is not available for current API version. Choose another model in settings.',
     
     // Error messages
     'errors.translateFailed': 'Failed to translate text',
     'errors.rephraseFailed': 'Failed to rephrase text',
     'errors.summarizeFailed': 'Failed to summarize text',
+    'errors.highlightFailed': 'Failed to highlight text',
+    'errors.highlightParsingFailed': 'Failed to parse AI response',
+    'errors.noTextFound': 'No text found on page to highlight',
+    'errors.noKeywordsFound': 'No keywords found to highlight',
+    'errors.emptyResponse': 'Empty response from AI',
+    'errors.noValidJson': 'No valid JSON found in response',
     'errors.withReason': 'Reason: {{reason}}',
     
     // Translation
@@ -202,6 +237,35 @@ const translations: LocaleData = {
     'common.noTextSelectedToSpeak': 'Нет выбранного текста для озвучивания',
     'common.speechHandlerNotAvailable': 'Обработчик речи недоступен',
     'common.translationHandlerNotAvailable': 'Обработчик перевода недоступен',
+    'common.discuss': 'Обсудить',
+    'common.resume': 'Резюмировать',
+    'common.miniS': 'Р',
+    'common.miniR': 'П',
+    'common.miniT': 'П',
+    'common.miniD': 'О',
+    'common.highlight': 'Подсветка',
+    'common.history': 'История',
+    'common.favorites': 'Избранное',
+    
+    // Highlight
+    'highlight.clearButton': 'Очистить подсветку',
+    'highlight.clearButtonTitle': 'Удалить все подсветки со страницы',
+    
+    // Side Panel
+    'sidepanel.title': 'AI Text Tools',
+    'sidepanel.highlightKeywords': 'Подсветить ключевые слова',
+    'sidepanel.historyTitle': 'История операций',
+    'sidepanel.favoritesTitle': 'Избранное',
+    'sidepanel.allTypes': 'Все типы',
+    'sidepanel.searchHistory': 'Поиск в истории...',
+    'sidepanel.searchFavorites': 'Поиск в избранном...',
+    'sidepanel.clearAll': 'Очистить все',
+    
+    // Context menu
+    'contextMenu.summarize': 'Суммаризировать текст',
+    'contextMenu.rephrase': 'Перефразировать текст',
+    'contextMenu.translate': 'Перевести текст',
+    'contextMenu.discuss': 'Обсудить текст',
     
     // Status messages for handlers
     'status.translating': 'Переводим...',
@@ -211,13 +275,19 @@ const translations: LocaleData = {
     // API Errors
     'api.missingKey': 'API ключ отсутствует или недействителен. Настройте ваш Gemini API ключ.',
     'api.visitStudio': 'Посетите Google AI Studio',
-    'api.createApiKey': 'Создать API ключ',
+    'api.createApiKey': 'Перейдите по ссылке и нажмите "Создать API ключ"',
     'api.modelUnavailable': 'Модель недоступна для текущей версии API. Выберите другую модель в настройках.',
     
     // Error messages
     'errors.translateFailed': 'Не удалось перевести текст',
     'errors.rephraseFailed': 'Не удалось перефразировать текст',
     'errors.summarizeFailed': 'Не удалось суммаризировать текст',
+    'errors.highlightFailed': 'Не удалось подсветить текст',
+    'errors.highlightParsingFailed': 'Не удалось разобрать ответ ИИ',
+    'errors.noTextFound': 'На странице не найдено текста для подсветки',
+    'errors.noKeywordsFound': 'Не найдено ключевых слов для подсветки',
+    'errors.emptyResponse': 'Пустой ответ от ИИ',
+    'errors.noValidJson': 'Не найден корректный JSON в ответе',
     'errors.withReason': 'Причина: {{reason}}',
     
     // Translation
@@ -376,6 +446,26 @@ const translations: LocaleData = {
     'common.noTextSelectedToSpeak': 'Kein Text zum Sprechen ausgewählt',
     'common.speechHandlerNotAvailable': 'Sprach-Handler nicht verfügbar',
     'common.translationHandlerNotAvailable': 'Übersetzungs-Handler nicht verfügbar',
+    'common.discuss': 'Diskutieren',
+    'common.resume': 'Zusammenfassen',
+    'common.miniS': 'Z',
+    'common.miniR': 'U',
+    'common.miniT': 'Ü',
+    'common.miniD': 'D',
+    
+    // Highlight
+    'highlight.clearButton': 'Hervorhebungen löschen',
+    'highlight.clearButtonTitle': 'Alle Hervorhebungen von der Seite entfernen',
+    
+    // Side Panel
+    'sidepanel.title': 'AI Text Tools',
+    'sidepanel.highlightKeywords': 'Schlüsselwörter hervorheben',
+    'sidepanel.historyTitle': 'Vorgangsverlauf',
+    'sidepanel.favoritesTitle': 'Favoriten',
+    'sidepanel.allTypes': 'Alle Typen',
+    'sidepanel.searchHistory': 'Verlauf durchsuchen...',
+    'sidepanel.searchFavorites': 'Favoriten durchsuchen...',
+    'sidepanel.clearAll': 'Alle löschen',
     
     // API Errors
     'api.missingKey': 'API-Schlüssel fehlt oder ist ungültig. Bitte konfigurieren Sie Ihren Gemini API-Schlüssel.',
@@ -544,6 +634,26 @@ const translations: LocaleData = {
     'common.noTextSelectedToSpeak': 'Aucun texte sélectionné pour la lecture',
     'common.speechHandlerNotAvailable': 'Gestionnaire de parole non disponible',
     'common.translationHandlerNotAvailable': 'Gestionnaire de traduction non disponible',
+    'common.discuss': 'Discuter',
+    'common.resume': 'Résumer',
+    'common.miniS': 'R',
+    'common.miniR': 'P',
+    'common.miniT': 'T',
+    'common.miniD': 'D',
+    
+    // Highlight
+    'highlight.clearButton': 'Effacer les surlignages',
+    'highlight.clearButtonTitle': 'Supprimer tous les surlignages de la page',
+    
+    // Side Panel
+    'sidepanel.title': 'AI Text Tools',
+    'sidepanel.highlightKeywords': 'Surligner les mots-clés',
+    'sidepanel.historyTitle': 'Historique des opérations',
+    'sidepanel.favoritesTitle': 'Favoris',
+    'sidepanel.allTypes': 'Tous les types',
+    'sidepanel.searchHistory': 'Rechercher dans l\'historique...',
+    'sidepanel.searchFavorites': 'Rechercher dans les favoris...',
+    'sidepanel.clearAll': 'Tout effacer',
     
     // API Errors
     'api.missingKey': 'Clé API manquante ou invalide. Veuillez configurer votre clé API Gemini.',
@@ -712,6 +822,26 @@ const translations: LocaleData = {
     'common.noTextSelectedToSpeak': '未选择要朗读的文本',
     'common.speechHandlerNotAvailable': '语音处理器不可用',
     'common.translationHandlerNotAvailable': '翻译处理器不可用',
+    'common.discuss': '讨论',
+    'common.resume': '总结',
+    'common.miniS': '总',
+    'common.miniR': '改',
+    'common.miniT': '翻',
+    'common.miniD': '讨',
+    
+    // Highlight
+    'highlight.clearButton': '清除高亮',
+    'highlight.clearButtonTitle': '从页面删除所有高亮',
+    
+    // Side Panel
+    'sidepanel.title': 'AI文本工具',
+    'sidepanel.highlightKeywords': '高亮关键词',
+    'sidepanel.historyTitle': '操作历史',
+    'sidepanel.favoritesTitle': '收藏夹',
+    'sidepanel.allTypes': '所有类型',
+    'sidepanel.searchHistory': '搜索历史记录...',
+    'sidepanel.searchFavorites': '搜索收藏夹...',
+    'sidepanel.clearAll': '清除全部',
     
     // API Errors
     'api.missingKey': 'API密钥缺失或无效。请配置您的Gemini API密钥。',

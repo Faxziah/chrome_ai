@@ -69,16 +69,17 @@ export class PopupUI {
     document.documentElement.appendChild(this.hostElement);
   }
 
-  public show(selectedText: string, selectionRect: DOMRect): void {
+  public async show(selectedText: string, selectionRect: DOMRect): Promise<void> {
     this.selectedText = selectedText;
     this.isVisible = true;
     
     // Initialize tabs if not already created
     if (!this.tabsComponent) {
       this.tabsComponent = new Tabs([
-        { id: 'summarize', label: t('common.summarize') },
+        { id: 'summarize', label: t('common.resume') },
         { id: 'rephrase', label: t('common.rephrase') },
-        { id: 'translate', label: t('common.translate') }
+        { id: 'translate', label: t('common.translate') },
+        { id: 'discuss', label: t('common.discuss') }
       ]);
       
       // Start with mini mode
@@ -86,24 +87,27 @@ export class PopupUI {
       const tabsHtml = this.tabsComponent.renderMiniMode();
       this.setContent(tabsHtml);
       
+      // Wait for next frame to ensure DOM rendering
+      await new Promise(resolve => requestAnimationFrame(resolve));
+      
       // Ensure tabs are successfully injected before attaching event listeners
       const tabsElement = this.shadowRoot!.querySelector('.mini-tabs');
       if (!tabsElement) {
-        console.warn('Mini tabs element not found, event listeners may not work properly');
+        console.error('Mini tabs element not found after render');
+        return;
       }
       
       this.tabsComponent.attachEventListeners(this.shadowRoot!);
-      this.tabsComponent.setTab('summarize');
       
       // Listen for tab changes
       this.tabsComponent.addEventListener('tabChange', (event: any) => {
-        console.log('Tab changed to:', event.detail.tabId);
         this.updateSelectedTextDisplay();
       });
     }
     
-    this.updateSelectedTextDisplay();
+    // Set position first, then show
     this.updatePosition(selectionRect);
+    this.updateSelectedTextDisplay();
     this.setupEventListeners();
     
     document.dispatchEvent(new CustomEvent('popupShown', { 
@@ -133,8 +137,7 @@ export class PopupUI {
       offsetLeft: 0
     };
 
-    this.popupContainer.style.visibility = 'hidden';
-    this.popupContainer.style.opacity = '0';
+    // Measure popup size without changing visibility
     const popupRect = this.popupContainer.getBoundingClientRect();
     const popupWidth = popupRect.width;
     const popupHeight = popupRect.height;
@@ -150,6 +153,7 @@ export class PopupUI {
       visualViewport
     );
 
+    // Set transform immediately to correct position
     this.popupContainer.style.transform = `translate(${position.left}px, ${position.top}px)`;
     this.popupContainer.style.visibility = 'visible';
     this.popupContainer.style.opacity = '1';
@@ -218,15 +222,19 @@ export class PopupUI {
 
     // Add click handlers for mini mode buttons to switch to full mode
     if (this.mode === 'mini' && this.shadowRoot) {
-      const miniButtons = this.shadowRoot.querySelectorAll('.mini-tab');
-      miniButtons.forEach((button) => {
-        button.addEventListener('click', () => {
-          // Switch to full mode when any mini button is clicked
-          setTimeout(() => {
-            this.switchToFullMode();
-          }, 100);
-        }, { signal: this.abortController?.signal });
-      });
+      // Use event delegation on shadowRoot instead of querySelectorAll
+      this.shadowRoot.addEventListener('click', (event) => {
+        const target = event.target as HTMLElement;
+        if (target && target.classList.contains('mini-tab')) {
+          // Get the target tab id from data attribute
+          const tabId = target.getAttribute('data-tab-id');
+          this.switchToFullMode();
+          // Set the correct tab after switching to full mode
+          if (this.tabsComponent && tabId) {
+            this.tabsComponent.setTab(tabId);
+          }
+        }
+      }, { signal: this.abortController?.signal });
     }
   }
 
@@ -282,6 +290,8 @@ export class PopupUI {
         this.tabsComponent.setTab('rephrase');
       } else if (action === 'translate') {
         this.tabsComponent.setTab('translate');
+      } else if (action === 'discuss') {
+        this.tabsComponent.setTab('discuss');
       }
     }
   }
@@ -289,16 +299,20 @@ export class PopupUI {
   public switchToFullMode(): void {
     if (this.mode === 'full' || !this.tabsComponent) return;
     
+    if (!this.shadowRoot) {
+      console.error('Shadow root not available');
+      return;
+    }
+    
     this.mode = 'full';
     const tabsHtml = this.tabsComponent.render();
     this.setContent(tabsHtml);
     
     // Re-attach event listeners for full mode
-    this.tabsComponent.attachEventListeners(this.shadowRoot!);
+    this.tabsComponent.attachEventListeners(this.shadowRoot);
     
-    // Keep current tab active
-    const currentTab = this.tabsComponent.getCurrentTab();
-    this.tabsComponent.setTab(currentTab.id);
+    // Don't set any tab here - let the click handler set the correct tab
+    // when switching from mini mode to full mode
     
     this.updateSelectedTextDisplay();
   }

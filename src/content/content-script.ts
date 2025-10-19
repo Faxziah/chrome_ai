@@ -34,7 +34,7 @@ function handleSelectionChange(): void {
   
   selectionDebounceTimer = window.setTimeout(() => {
     showPopupIfTextSelected();
-  }, 10);
+  }, 100);
 }
 
 function showPopupIfTextSelected(): void {
@@ -96,8 +96,30 @@ function handleVisualViewportChange(): void {
   schedulePositionUpdate();
 }
 
-document.addEventListener('selectionchange', handleSelectionChange);
-document.addEventListener('mouseup', handleSelectionChange);
+document.addEventListener('mouseup', (event) => {
+  // Игнорировать клики по UI элементам
+  const target = event.target as HTMLElement;
+  if (target.closest('button') || target.closest('input') || target.closest('textarea')) {
+    return;
+  }
+  
+  // Небольшая задержка для завершения выделения
+  setTimeout(() => {
+    handleSelectionChange();
+  }, 50);
+});
+
+document.addEventListener('keyup', (event) => {
+  // Обработка завершения выделения с клавиатуры
+  if (event.key === 'Shift' || event.key === 'Control' || event.key === 'Alt' || event.key === 'Meta') {
+    return;
+  }
+  
+  // Небольшая задержка для завершения выделения
+  setTimeout(() => {
+    handleSelectionChange();
+  }, 100);
+});
 
 window.addEventListener('scroll', handleScroll, { passive: true });
 window.addEventListener('resize', handleResize, { passive: true });
@@ -112,88 +134,94 @@ window.addEventListener('beforeunload', () => {
   popupUI.destroy();
 });
 
-chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
-  try {
-    if (message.action === ActionType.HIGHLIGHT_KEYWORDS) {
-      console.log('Highlight keywords command received');
-      await highlightManager.initialize();
-      await highlightManager.highlightKeywords();
-      sendResponse({ success: true });
-    } else if (message.action === ActionType.CLEAR_HIGHLIGHTS) {
-      console.log('Clear highlights command received');
-      highlightManager.clearHighlights();
-      sendResponse({ success: true });
-    } else if (message.action === ActionType.GET_SELECTED_TEXT) {
-      const selectedText = getSelectedText();
-      sendResponse({ success: true, text: selectedText });
-    } else if (message.action === ActionType.CONTEXT_MENU_ACTION) {
-      console.log('Context menu action received:', message.contextAction);
-      const selectedText = message.selectedText || getSelectedText();
-      
-      if (selectedText && selectedText.trim()) {
-        // Show popup with the selected text and trigger the appropriate action
-        const selectionRect = getSelectionRect();
-        if (selectionRect) {
-          popupUI.show(selectedText, selectionRect);
-          
-          // Trigger the specific action based on context menu selection
-          setTimeout(() => {
-            if (message.contextAction === 'summarize-text') {
-              popupUI.triggerAction('summarize');
-            } else if (message.contextAction === 'rephrase-text') {
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  (async () => {
+    try {
+      if (message.action === ActionType.HIGHLIGHT_KEYWORDS) {
+        console.log('Highlight keywords command received');
+        await highlightManager.initialize();
+        await highlightManager.highlightKeywords();
+        sendResponse({ success: true });
+      } else if (message.action === ActionType.CLEAR_HIGHLIGHTS) {
+        console.log('Clear highlights command received');
+        highlightManager.clearHighlights();
+        sendResponse({ success: true });
+      } else if (message.action === ActionType.GET_SELECTED_TEXT) {
+        const selectedText = getSelectedText();
+        sendResponse({ success: true, text: selectedText });
+      } else if (message.action === ActionType.CONTEXT_MENU_ACTION) {
+        console.log('Context menu action received:', message.contextAction);
+        const selectedText = message.selectedText || getSelectedText();
+        
+        if (selectedText && selectedText.trim()) {
+          // Show popup with the selected text and trigger the appropriate action
+          const selectionRect = getSelectionRect();
+          if (selectionRect) {
+            await popupUI.show(selectedText, selectionRect);
+            
+            // Trigger the specific action based on context menu selection
+            setTimeout(() => {
+              if (message.contextAction === 'summarize-text') {
+                popupUI.triggerAction('summarize');
+              } else if (message.contextAction === 'rephrase-text') {
+                popupUI.triggerAction('rephrase');
+              } else if (message.contextAction === 'translate-text') {
+                popupUI.triggerAction('translate');
+              } else if (message.contextAction === 'discuss-text') {
+                popupUI.triggerAction('discuss');
+              }
+            }, 100);
+          }
+        }
+        sendResponse({ success: true });
+      } else if (message.action === ActionType.REPHRASE) {
+        console.log('Rephrase action received');
+        const selectedText = getSelectedText();
+        if (selectedText && selectedText.trim()) {
+          const selectionRect = getSelectionRect();
+          if (selectionRect) {
+            await popupUI.show(selectedText, selectionRect);
+            setTimeout(() => {
               popupUI.triggerAction('rephrase');
-            } else if (message.contextAction === 'translate-text') {
+            }, 100);
+          }
+        }
+        sendResponse({ success: true });
+      } else if (message.action === ActionType.TRANSLATE) {
+        console.log('Translate action received');
+        const selectedText = getSelectedText();
+        if (selectedText && selectedText.trim()) {
+          const selectionRect = getSelectionRect();
+          if (selectionRect) {
+            await popupUI.show(selectedText, selectionRect);
+            setTimeout(() => {
               popupUI.triggerAction('translate');
-            }
-          }, 100);
+            }, 100);
+          }
         }
-      }
-      sendResponse({ success: true });
-    } else if (message.action === ActionType.REPHRASE) {
-      console.log('Rephrase action received');
-      const selectedText = getSelectedText();
-      if (selectedText && selectedText.trim()) {
-        const selectionRect = getSelectionRect();
-        if (selectionRect) {
-          popupUI.show(selectedText, selectionRect);
-          setTimeout(() => {
-            popupUI.triggerAction('rephrase');
-          }, 100);
+        sendResponse({ success: true });
+      } else if (message.action === ActionType.SUMMARIZE) {
+        console.log('Summarize action received');
+        const selectedText = getSelectedText();
+        if (selectedText && selectedText.trim()) {
+          const selectionRect = getSelectionRect();
+          if (selectionRect) {
+            await popupUI.show(selectedText, selectionRect);
+            setTimeout(() => {
+              popupUI.triggerAction('summarize');
+            }, 100);
+          }
         }
+        sendResponse({ success: true });
+      } else {
+        console.debug('Unknown action:', message.action);
+        sendResponse({ success: false, error: 'Unknown action' });
       }
-      sendResponse({ success: true });
-    } else if (message.action === ActionType.TRANSLATE) {
-      console.log('Translate action received');
-      const selectedText = getSelectedText();
-      if (selectedText && selectedText.trim()) {
-        const selectionRect = getSelectionRect();
-        if (selectionRect) {
-          popupUI.show(selectedText, selectionRect);
-          setTimeout(() => {
-            popupUI.triggerAction('translate');
-          }, 100);
-        }
-      }
-      sendResponse({ success: true });
-    } else if (message.action === ActionType.SUMMARIZE) {
-      console.log('Summarize action received');
-      const selectedText = getSelectedText();
-      if (selectedText && selectedText.trim()) {
-        const selectionRect = getSelectionRect();
-        if (selectionRect) {
-          popupUI.show(selectedText, selectionRect);
-          setTimeout(() => {
-            popupUI.triggerAction('summarize');
-          }, 100);
-        }
-      }
-      sendResponse({ success: true });
-    } else {
-      console.debug('Unknown action:', message.action);
-      sendResponse({ success: false, error: 'Unknown action' });
+    } catch (error) {
+      console.error('Error handling message:', error);
+      sendResponse({ success: false, error: error instanceof Error ? error.message : 'Unknown error' });
     }
-  } catch (error) {
-    console.error('Error handling message:', error);
-    sendResponse({ success: false, error: error instanceof Error ? error.message : 'Unknown error' });
-  }
+  })();
+
+  return true; // Держать message port открытым для async операций
 });
