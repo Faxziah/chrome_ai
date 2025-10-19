@@ -91,7 +91,8 @@
         }
         
         .clear-btn {
-            padding: 6px 12px;
+            padding: 8px 12px;
+            height: 36px;
             border: 1px solid #dc3545;
             border-radius: 4px;
             background: transparent;
@@ -99,6 +100,9 @@
             font-size: 12px;
             cursor: pointer;
             transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .clear-btn:hover {
@@ -177,26 +181,42 @@
         }
         
         .favorite-btn {
-            background: #ffc107;
-            color: #333;
+            background: transparent;
+            color: #ffc107;
+            border: 2px solid #ffc107;
+            font-size: 14px;
+            padding: 6px 8px;
         }
         
         .favorite-btn:hover {
-            background: #ffb300;
+            background: rgba(255, 193, 7, 0.1);
+            border-color: #ffb300;
+            color: #ffb300;
         }
         
         .favorite-btn.favorited {
-            background: #ff9800;
+            background: #ffc107;
             color: white;
+            border-color: #ffc107;
+        }
+        
+        .favorite-btn.favorited:hover {
+            background: #ffb300;
+            border-color: #ffb300;
         }
         
         .delete-btn {
             background: #f44336;
-            color: white;
+            color: #000000; /* Черная иконка */
+            border: none;
+            font-size: 14px;
+            padding: 6px 8px;
         }
         
         .delete-btn:hover {
             background: #d32f2f;
+            color: #000000;
+            transform: scale(1.05);
         }
         
         .item-content {

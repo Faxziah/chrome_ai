@@ -37,6 +37,10 @@ const translations: LocaleData = {
     'common.highlight': 'Highlight',
     'common.history': 'History',
     'common.favorites': 'Favorites',
+    'common.pin': 'Pin popup',
+    'common.unpin': 'Unpin popup',
+    'common.close': 'Close',
+    'common.drag': 'Drag popup',
     
     // Highlight
     'highlight.clearButton': 'Clear highlights',
@@ -222,7 +226,7 @@ const translations: LocaleData = {
     'common.removeFromFavorites': '★ Убрать из избранного',
     'common.copy': '📋 Копировать',
     'common.translate': 'Перевести',
-    'common.summarize': 'Суммаризировать',
+    'common.summarize': 'Резюмировать',
     'common.rephrase': 'Перефразировать',
     'common.selectedText': 'Выделенный текст появится здесь',
     'common.noTextSelected': 'Текст не выбран',
@@ -240,12 +244,16 @@ const translations: LocaleData = {
     'common.discuss': 'Обсудить',
     'common.resume': 'Резюмировать',
     'common.miniS': 'Р',
-    'common.miniR': 'П',
-    'common.miniT': 'П',
+    'common.miniR': 'Ф',
+    'common.miniT': 'Т',
     'common.miniD': 'О',
     'common.highlight': 'Подсветка',
     'common.history': 'История',
     'common.favorites': 'Избранное',
+    'common.pin': 'Закрепить попап',
+    'common.unpin': 'Открепить попап',
+    'common.close': 'Закрыть',
+    'common.drag': 'Перетащить попап',
     
     // Highlight
     'highlight.clearButton': 'Очистить подсветку',
@@ -262,7 +270,7 @@ const translations: LocaleData = {
     'sidepanel.clearAll': 'Очистить все',
     
     // Context menu
-    'contextMenu.summarize': 'Суммаризировать текст',
+    'contextMenu.summarize': 'Резюмировать текст',
     'contextMenu.rephrase': 'Перефразировать текст',
     'contextMenu.translate': 'Перевести текст',
     'contextMenu.discuss': 'Обсудить текст',
@@ -270,7 +278,7 @@ const translations: LocaleData = {
     // Status messages for handlers
     'status.translating': 'Переводим...',
     'status.rephrasing': 'Перефразируем...',
-    'status.summarizing': 'Суммаризируем...',
+    'status.summarizing': 'Резюмируем...',
     
     // API Errors
     'api.missingKey': 'API ключ отсутствует или недействителен. Настройте ваш Gemini API ключ.',
@@ -281,7 +289,7 @@ const translations: LocaleData = {
     // Error messages
     'errors.translateFailed': 'Не удалось перевести текст',
     'errors.rephraseFailed': 'Не удалось перефразировать текст',
-    'errors.summarizeFailed': 'Не удалось суммаризировать текст',
+    'errors.summarizeFailed': 'Не удалось резюмировать текст',
     'errors.highlightFailed': 'Не удалось подсветить текст',
     'errors.highlightParsingFailed': 'Не удалось разобрать ответ ИИ',
     'errors.noTextFound': 'На странице не найдено текста для подсветки',
@@ -341,7 +349,7 @@ const translations: LocaleData = {
     'options.searchHistory': 'Поиск в истории...',
     'options.searchFavorites': 'Поиск в избранном...',
     'options.all': 'Все',
-    'options.summarize': 'Суммаризация',
+    'options.summarize': 'Резюмирование',
     'options.rephrase': 'Перефразирование',
     'options.translate': 'Перевод',
     'options.clearHistory': 'Очистить историю',

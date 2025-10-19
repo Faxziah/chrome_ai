@@ -57,6 +57,86 @@
   border-top: 1px solid var(--popup-border);
 }
 
+/* Popup Header Styles */
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--popup-border);
+  background: #f8f9fa;
+  cursor: move; /* Для перетаскивания */
+}
+
+.popup-header.pinned {
+  cursor: default;
+}
+
+.popup-header-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--popup-text);
+  flex: 1;
+}
+
+.popup-header-controls {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.header-btn {
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  color: var(--secondary-color);
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  transition: all 0.2s;
+}
+
+.header-btn:hover {
+  background: rgba(0, 0, 0, 0.08);
+  color: var(--popup-text);
+}
+
+.header-btn.pin-btn.active {
+  background: var(--primary-color);
+  color: white;
+}
+
+.header-btn.close-btn:hover {
+  background: var(--error-color);
+  color: white;
+}
+
+.header-btn.drag-handle {
+  cursor: move;
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--secondary-color);
+}
+
+.header-btn.drag-handle:hover {
+  background: rgba(0, 0, 0, 0.08);
+  color: var(--popup-text);
+}
+
+/* Drag and Drop Styles */
+.popup-dragging {
+  cursor: move !important;
+  user-select: none;
+}
+
+.popup-dragging * {
+  pointer-events: none;
+}
+
 button {
   padding: 8px 16px;
   border: none;
@@ -113,18 +193,35 @@ button:active {
   gap: var(--spacing-xs);
   padding: var(--spacing-sm) var(--spacing-sm) 0;
   overflow-x: auto;
-  scrollbar-width: none;
+  scrollbar-width: thin;
+  scrollbar-color: #888 #f1f1f1;
   border-bottom: 1px solid var(--popup-border);
 }
 
-.tabs::-webkit-scrollbar { display: none; }
+.tabs::-webkit-scrollbar {
+  height: 6px;
+}
+
+.tabs::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.tabs::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+.tabs::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
 
 /* Mini Tab Styles */
 .mini-tabs {
   position: relative;
   display: flex;
-  gap: var(--spacing-xs);
-  padding: var(--spacing-sm);
+  gap: 2px;
+  padding: 4px;
   justify-content: center;
   align-items: center;
   border-bottom: 1px solid var(--popup-border);
@@ -136,14 +233,14 @@ button:active {
   appearance: none;
   background: transparent;
   border: 0;
-  width: 40px;
-  height: 40px;
+  width: 28px;
+  height: 28px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   color: var(--secondary-color);
   cursor: pointer;
-  font: 600 1rem/1 system-ui, -apple-system, sans-serif;
+  font: 600 0.875rem/1 system-ui, -apple-system, sans-serif;
   transition: all var(--transition-speed);
   border-radius: 50%;
   border: 2px solid transparent;
@@ -436,6 +533,15 @@ textarea:focus {
   opacity: 0.38;
   cursor: not-allowed;
   pointer-events: none;
+}
+
+/* Hide favorite button by default */
+#btn-favorite-toggle {
+  display: none; /* Скрыто до появления результата */
+}
+
+#btn-favorite-toggle.show {
+  display: inline-flex;
 }
 
 .result-text a {

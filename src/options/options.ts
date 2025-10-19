@@ -427,7 +427,7 @@ class OptionsPage {
 
   private getTypeLabel(type: string): string {
     const labels: Record<string, string> = {
-      'summarize': 'Суммаризация',
+      'summarize': 'Резюмирование',
       'rephrase': 'Перефразирование',
       'translate': 'Перевод'
     };

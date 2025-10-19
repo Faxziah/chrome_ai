@@ -38,7 +38,7 @@ export class Chat {
     this.storageService = storageService;
     this.favoritesService = favoritesService;
     this.config = {
-      systemPrompt: 'Ты полезный AI-ассистент, который помогает с анализом и суммаризацией текста.',
+      systemPrompt: 'Ты полезный AI-ассистент, который помогает с анализом и резюмированием текста.',
       maxHistory: 20,
       temperature: 0.7,
       maxTokens: 2048,

@@ -100,6 +100,14 @@ export class RephraseHandler {
     resultText.textContent = text;
     resultText.className = 'result-text';
     resultContainer.hidden = false;
+    
+    // Dispatch event для показа кнопки Favorites
+    const event = new CustomEvent('resultReady', { 
+      detail: { type: 'rephrase' },
+      bubbles: true,
+      composed: true // Проходит через Shadow DOM
+    });
+    this.shadowRoot.dispatchEvent(event);
   }
 
   private showError(message: string): void {

@@ -152,6 +152,14 @@ export class TranslateHandler {
     resultContainer.hidden = false;
     
     this.updateSpeechButtons();
+    
+    // Dispatch event для показа кнопки Favorites
+    const event = new CustomEvent('resultReady', { 
+      detail: { type: 'translate' },
+      bubbles: true,
+      composed: true
+    });
+    this.shadowRoot.dispatchEvent(event);
   }
 
   private showError(message: string): void {

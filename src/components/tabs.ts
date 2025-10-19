@@ -106,7 +106,7 @@ export class Tabs {
                 <p><a href="http://aistudio.google.com/app/api-keys?hl=ru" target="_blank" rel="noopener noreferrer">${t('api.visitStudio')}</a> ${t('api.createApiKey')}</p>
               </div>
             </div>
-            <button class="btn btn-secondary" id="btn-favorite-toggle" data-is-favorite="false">${t('common.addToFavorites')}</button>
+            <button class="btn btn-secondary" id="btn-favorite-toggle-${tabId}" data-is-favorite="false" style="display:none;">${t('common.addToFavorites')}</button>
           </div>
         `;
 
@@ -121,10 +121,11 @@ export class Tabs {
                 <button class="btn btn-icon" id="btn-send-chat" aria-label="${t('chat.sendMessage')}">➤</button>
               </div>
             </div>
+            <button class="btn btn-secondary" id="btn-favorite-toggle-${tabId}" data-is-favorite="false" style="display:none;">${t('common.addToFavorites')}</button>
             <div class="api-key-error-template" id="api-key-error-discuss" style="display: none;">
               <div class="api-key-error">
                 <p>${t('api.missingKey')}</p>
-                <p><a href="http://aistudio.google.com/app/api-keys?hl=ru" target="_blank" rel="noopener noreferrer">${t('api.visitStudio')}</a> ${t('api.createApiKey')}</p>
+                <p><a href="http://aistudio.google.com/app/api-keys?hl=ru" target="_blank" rel="noopener noreferrer">${t('api.visitStudio')}</a>. ${t('api.createApiKey')}</p>
               </div>
             </div>
           </div>
@@ -155,7 +156,7 @@ export class Tabs {
                 <p><a href="http://aistudio.google.com/app/api-keys?hl=ru" target="_blank" rel="noopener noreferrer">${t('api.visitStudio')}</a> ${t('api.createApiKey')}</p>
               </div>
             </div>
-            <button class="btn btn-secondary" id="btn-favorite-toggle" data-is-favorite="false">${t('common.addToFavorites')}</button>
+            <button class="btn btn-secondary" id="btn-favorite-toggle-${tabId}" data-is-favorite="false" style="display:none;">${t('common.addToFavorites')}</button>
           </div>
         `;
 
@@ -329,7 +330,7 @@ export class Tabs {
                 <p><a href="http://aistudio.google.com/app/api-keys?hl=ru" target="_blank" rel="noopener noreferrer">${t('api.visitStudio')}</a> ${t('api.createApiKey')}</p>
               </div>
             </div>
-            <button class="btn btn-secondary" id="btn-favorite-toggle" data-is-favorite="false">${t('common.addToFavorites')}</button>
+            <button class="btn btn-secondary" id="btn-favorite-toggle-${tabId}" data-is-favorite="false" style="display:none;">${t('common.addToFavorites')}</button>
           </div>
         `;
 

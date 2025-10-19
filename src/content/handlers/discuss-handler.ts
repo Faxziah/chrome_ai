@@ -52,6 +52,14 @@ export class DiscussHandler {
       
       this.updateChatUI();
       this.clearInput(chatInput);
+      
+      // Dispatch event для показа кнопки Favorites
+      const event = new CustomEvent('resultReady', { 
+        detail: { type: 'discuss' },
+        bubbles: true,
+        composed: true
+      });
+      this.shadowRoot.dispatchEvent(event);
     } catch (error) {
       console.error('Discuss error:', error);
       const base = t('errors.summarizeFailed');

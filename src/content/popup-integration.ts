@@ -82,6 +82,13 @@ export class PopupIntegration {
     // Sync favorite button state when popup is shown
     this.syncFavoriteButtonState();
 
+    // Listen for resultReady events from handlers
+    shadowRoot.addEventListener('resultReady', ((event: CustomEvent) => {
+      console.log('Result ready for type:', event.detail.type);
+      this.showFavoriteButton();
+      this.syncFavoriteButtonState();
+    }) as EventListener);
+
     shadowRoot.addEventListener('click', async (event: Event) => {
       const target = event.target as HTMLElement;
       const button = target.closest('.btn') as HTMLElement;
@@ -106,7 +113,7 @@ export class PopupIntegration {
         await this.handleCopyClick(event, 'translate');
       } else if (buttonId === 'btn-summarize') {
         await this.handleSummarizeClick(event);
-      } else if (buttonId === 'btn-favorite-toggle') {
+      } else if (buttonId.startsWith('btn-favorite-toggle-')) {
         await this.handleFavoriteToggleClick(event);
       } else if (buttonId === 'btn-send-chat') {
         await this.handleSendChatClick(event);
@@ -415,7 +422,16 @@ export class PopupIntegration {
     
     try {
       const selectedText = this.popupUI.getSelectedText();
-      if (!selectedText || selectedText.trim().length === 0) {
+      
+      // For discuss tab, check if there's a chat response instead of selected text
+      if (currentTab.id === 'discuss') {
+        const chatMessages = shadowRoot.querySelector('#chat-messages') as HTMLElement;
+        const hasResponse = chatMessages && chatMessages.children.length > 0;
+        if (!hasResponse) {
+          this.showToast(t('common.noResultToAddToFavorites'), 'error');
+          return;
+        }
+      } else if (!selectedText || selectedText.trim().length === 0) {
         this.showToast(t('common.noTextSelectedToSpeak'), 'error');
         return;
       }
@@ -443,7 +459,7 @@ export class PopupIntegration {
   ): Promise<void> {
     let prompt = '';
     let response = '';
-    let type: 'summarize' | 'rephrase' | 'translate' = 'summarize';
+    let type: 'summarize' | 'rephrase' | 'translate' | 'discuss' = 'summarize';
 
     switch (currentTab.id) {
       case 'summarize':
@@ -481,8 +497,23 @@ export class PopupIntegration {
         type = 'translate';
         break;
       case 'discuss':
-        this.showToast(t('common.cannotAddToFavoritesFromThisTab'), 'error');
-        return;
+        const chatMessages = shadowRoot.querySelector('#chat-messages') as HTMLElement;
+        if (!chatMessages || !chatMessages.textContent || chatMessages.children.length === 0) {
+          this.showToast(t('common.noResultToAddToFavorites'), 'error');
+          return;
+        }
+        // Получить последнее сообщение ассистента
+        const lastMessage = Array.from(chatMessages.children)
+          .reverse()
+          .find(el => el.classList.contains('assistant'));
+        if (!lastMessage) {
+          this.showToast(t('common.noResultToAddToFavorites'), 'error');
+          return;
+        }
+        prompt = 'Discuss this text';
+        response = lastMessage.textContent || '';
+        type = 'discuss';
+        break;
       default:
         this.showToast(t('common.cannotAddToFavoritesFromThisTab'), 'error');
         return;
@@ -528,12 +559,10 @@ export class PopupIntegration {
 
   private updateFavoriteButtonState(button: HTMLElement, isFavorite: boolean): void {
     if (isFavorite) {
-      button.id = 'btn-favorite-toggle';
       button.textContent = t('common.removeFromFavorites');
       button.className = 'btn btn-secondary favorite-active';
       button.dataset.isFavorite = 'true';
     } else {
-      button.id = 'btn-favorite-toggle';
       button.textContent = t('common.addToFavorites');
       button.className = 'btn btn-secondary';
       button.dataset.isFavorite = 'false';
@@ -545,10 +574,10 @@ export class PopupIntegration {
     const shadowRoot = this.popupUI.getShadowRoot();
     if (!shadowRoot) return;
 
-    const button = shadowRoot.querySelector('#btn-favorite-toggle') as HTMLElement;
+    const currentTab = this.popupUI.getCurrentTab();
+    const button = shadowRoot.querySelector(`#btn-favorite-toggle-${currentTab.id}`) as HTMLElement;
     if (!button) return;
 
-    const currentTab = this.popupUI.getCurrentTab();
     const selectedText = this.popupUI.getSelectedText();
     
     if (!selectedText || selectedText.trim().length === 0) {
@@ -558,7 +587,7 @@ export class PopupIntegration {
 
     let prompt = '';
     let response = '';
-    let type: 'summarize' | 'rephrase' | 'translate' = 'summarize';
+    let type: 'summarize' | 'rephrase' | 'translate' | 'discuss' = 'summarize';
 
     switch (currentTab.id) {
       case 'summarize':
@@ -596,8 +625,24 @@ export class PopupIntegration {
         type = 'translate';
         break;
       case 'discuss':
-        this.updateFavoriteButtonState(button, false);
-        return;
+        const chatMessages = shadowRoot.querySelector('#chat-messages') as HTMLElement;
+        if (!chatMessages || chatMessages.children.length === 0) {
+          this.updateFavoriteButtonState(button, false);
+          button.style.display = 'none';
+          return;
+        }
+        const lastMessage = Array.from(chatMessages.children)
+          .reverse()
+          .find(el => el.classList.contains('assistant'));
+        if (!lastMessage) {
+          this.updateFavoriteButtonState(button, false);
+          button.style.display = 'none';
+          return;
+        }
+        prompt = 'Discuss this text';
+        response = lastMessage.textContent || '';
+        type = 'discuss';
+        break;
       default:
         this.updateFavoriteButtonState(button, false);
         return;
@@ -619,6 +664,18 @@ export class PopupIntegration {
   private updateSpeechButtonsForLanguageChange(): void {
     if (!this.translateHandler) return;
     this.translateHandler.updateSpeechButtons();
+  }
+
+  public showFavoriteButton(): void {
+    const shadowRoot = this.popupUI.getShadowRoot();
+    if (!shadowRoot) return;
+    
+    const currentTab = this.popupUI.getCurrentTab();
+    const button = shadowRoot.querySelector(`#btn-favorite-toggle-${currentTab.id}`) as HTMLElement;
+    if (button) {
+      button.classList.add('show');
+      button.style.display = 'inline-flex';
+    }
   }
 
   private showApiKeyError(elementId: string): void {

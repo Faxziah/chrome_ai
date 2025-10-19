@@ -10,6 +10,12 @@ export class PopupUI {
   private isVisible: boolean = false;
   private tabsComponent: Tabs | null = null;
   private mode: 'mini' | 'full' = 'mini';
+  private isPinned: boolean = false;
+  private isDragging: boolean = false;
+  private dragStartX: number = 0;
+  private dragStartY: number = 0;
+  private popupStartX: number = 0;
+  private popupStartY: number = 0;
 
   constructor() {
     this.createPopupStructure();
@@ -30,7 +36,15 @@ export class PopupUI {
     // Добавляем Material Design CSS в Shadow DOM
     const materialDesignLink = document.createElement('link');
     materialDesignLink.rel = 'stylesheet';
-    materialDesignLink.href = chrome.runtime.getURL('styles/material-design.css');
+    
+    // Check if we're in a Chrome extension context
+    if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getURL) {
+      materialDesignLink.href = chrome.runtime.getURL('styles/material-design.css');
+    } else {
+      // Fallback for web context - use relative path
+      materialDesignLink.href = 'styles/material-design.css';
+    }
+    
     this.shadowRoot.appendChild(materialDesignLink);
 
     this.popupContainer = document.createElement('div');
@@ -59,7 +73,15 @@ export class PopupUI {
     // Load external CSS file
     const popupStyleLink = document.createElement('link');
     popupStyleLink.rel = 'stylesheet';
-    popupStyleLink.href = chrome.runtime.getURL('styles/popup-ui.css');
+    
+    // Check if we're in a Chrome extension context
+    if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getURL) {
+      popupStyleLink.href = chrome.runtime.getURL('styles/popup-ui.css');
+    } else {
+      // Fallback for web context - use relative path
+      popupStyleLink.href = 'styles/popup-ui.css';
+    }
+    
     this.shadowRoot.appendChild(popupStyleLink);
 
     const content = document.createElement('div');
@@ -105,8 +127,15 @@ export class PopupUI {
       });
     }
     
-    // Set position first, then show
+    // 1. Рендерить контент
+    // 2. Вычислить и установить позицию (БЕЗ показа)
     this.updatePosition(selectionRect);
+    // 3. Показать с плавной анимацией opacity
+    if (this.popupContainer) {
+      this.popupContainer.style.opacity = '1';
+      this.popupContainer.style.visibility = 'visible';
+    }
+    
     this.updateSelectedTextDisplay();
     this.setupEventListeners();
     
@@ -128,7 +157,7 @@ export class PopupUI {
   }
 
   public updatePosition(selectionRect: DOMRect): void {
-    if (!this.isVisible || !this.popupContainer) return;
+    if (!this.popupContainer) return;
 
     const visualViewport = window.visualViewport || {
       width: window.innerWidth,
@@ -155,8 +184,6 @@ export class PopupUI {
 
     // Set transform immediately to correct position
     this.popupContainer.style.transform = `translate(${position.left}px, ${position.top}px)`;
-    this.popupContainer.style.visibility = 'visible';
-    this.popupContainer.style.opacity = '1';
   }
 
   private calculateOptimalPosition(
@@ -190,7 +217,7 @@ export class PopupUI {
     this.abortController = new AbortController();
 
     document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') {
+      if (event.key === 'Escape' && !this.isPinned) {
         this.hide();
       }
     }, { capture: true, signal: this.abortController.signal });
@@ -215,7 +242,7 @@ export class PopupUI {
         target.hasAttribute('contenteditable')
       );
       
-      if (!clickedInside) {
+      if (!clickedInside && !this.isPinned) {
         this.hide();
       }
     }, { capture: true, signal: this.abortController.signal });
@@ -305,11 +332,22 @@ export class PopupUI {
     }
     
     this.mode = 'full';
+    
+    // Restore full size for full mode
+    if (this.popupContainer) {
+      this.popupContainer.style.minWidth = '320px';
+      this.popupContainer.style.width = 'auto';
+    }
+    
+    const headerHtml = this.renderPopupHeader();
     const tabsHtml = this.tabsComponent.render();
-    this.setContent(tabsHtml);
+    this.setContent(headerHtml + tabsHtml);
     
     // Re-attach event listeners for full mode
     this.tabsComponent.attachEventListeners(this.shadowRoot);
+    
+    // Setup drag and drop for header
+    this.setupDragAndDrop();
     
     // Don't set any tab here - let the click handler set the correct tab
     // when switching from mini mode to full mode
@@ -321,6 +359,13 @@ export class PopupUI {
     if (this.mode === 'mini' || !this.tabsComponent) return;
     
     this.mode = 'mini';
+    
+    // Set compact size for mini mode
+    if (this.popupContainer) {
+      this.popupContainer.style.minWidth = 'unset';
+      this.popupContainer.style.width = 'auto';
+    }
+    
     const tabsHtml = this.tabsComponent.renderMiniMode();
     this.setContent(tabsHtml);
     
@@ -343,6 +388,106 @@ export class PopupUI {
       return this.tabsComponent.getCurrentTab();
     }
     return { id: 'summarize', index: 0 };
+  }
+
+  private renderPopupHeader(): string {
+    return `
+      <div class="popup-header" id="popup-header">
+        <div class="popup-header-title">AI Text Tools</div>
+        <div class="popup-header-controls">
+          <button class="header-btn drag-handle" id="btn-drag-handle" title="${t('common.drag')}" aria-label="Drag popup">⋮⋮</button>
+          <button class="header-btn pin-btn" id="btn-pin" title="${t('common.pin')}" aria-label="Pin popup">📌</button>
+          <button class="header-btn close-btn" id="btn-close" title="${t('common.close')}" aria-label="Close popup">✕</button>
+        </div>
+      </div>
+    `;
+  }
+
+  private setupDragAndDrop(): void {
+    if (!this.shadowRoot) return;
+    
+    const header = this.shadowRoot.querySelector('#popup-header') as HTMLElement;
+    const dragHandle = this.shadowRoot.querySelector('#btn-drag-handle') as HTMLElement;
+    const pinBtn = this.shadowRoot.querySelector('#btn-pin') as HTMLElement;
+    const closeBtn = this.shadowRoot.querySelector('#btn-close') as HTMLElement;
+    
+    if (!header || !dragHandle || !pinBtn || !closeBtn) return;
+    
+    // Pin button handler
+    pinBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.isPinned = !this.isPinned;
+      pinBtn.classList.toggle('active', this.isPinned);
+      pinBtn.title = this.isPinned ? t('common.unpin') : t('common.pin');
+    });
+    
+    // Close button handler
+    closeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.hide();
+    });
+    
+    // Drag handlers - use drag handle instead of entire header
+    dragHandle.addEventListener('mousedown', (e) => {
+      if (this.isPinned) return;
+      
+      this.isDragging = true;
+      this.dragStartX = e.clientX;
+      this.dragStartY = e.clientY;
+      
+      const rect = this.popupContainer!.getBoundingClientRect();
+      this.popupStartX = rect.left;
+      this.popupStartY = rect.top;
+      
+      // Disable transitions during drag
+      const originalTransition = this.popupContainer!.style.transition;
+      this.popupContainer!.style.transition = 'none';
+      this.popupContainer!.classList.add('popup-dragging');
+      
+      const handleMouseMove = (e: MouseEvent) => {
+        if (!this.isDragging) return;
+        
+        const deltaX = e.clientX - this.dragStartX;
+        const deltaY = e.clientY - this.dragStartY;
+        
+        const popupRect = this.popupContainer!.getBoundingClientRect();
+        const popupWidth = popupRect.width;
+        const popupHeight = popupRect.height;
+        
+        const visualViewport = window.visualViewport || {
+          width: window.innerWidth,
+          height: window.innerHeight,
+          offsetTop: 0,
+          offsetLeft: 0
+        };
+        
+        let newX = this.popupStartX + deltaX;
+        let newY = this.popupStartY + deltaY;
+        
+        // Constrain to viewport bounds
+        const minX = 0;
+        const maxX = visualViewport.width - popupWidth;
+        const minY = 0;
+        const maxY = visualViewport.height - popupHeight;
+        
+        newX = Math.max(minX, Math.min(newX, maxX));
+        newY = Math.max(minY, Math.min(newY, maxY));
+        
+        this.popupContainer!.style.transform = `translate(${newX}px, ${newY}px)`;
+      };
+      
+      const handleMouseUp = () => {
+        this.isDragging = false;
+        this.popupContainer!.classList.remove('popup-dragging');
+        // Restore original transition
+        this.popupContainer!.style.transition = originalTransition;
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
+      
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+    });
   }
 
   public destroy(): void {

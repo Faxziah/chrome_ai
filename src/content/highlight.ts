@@ -17,7 +17,11 @@ export class HighlightManager {
   constructor() {
     this.geminiService = new GeminiService();
     this.storageService = new StorageService();
-    this.loadStyles();
+    
+    // Only load styles if we're in a browser environment
+    if (typeof document !== 'undefined') {
+      this.loadStyles();
+    }
   }
 
   private loadStyles(): void {
@@ -26,7 +30,15 @@ export class HighlightManager {
     const link = document.createElement('link');
     link.id = 'ai-highlight-styles';
     link.rel = 'stylesheet';
-    link.href = chrome.runtime.getURL('styles/highlight.css');
+    
+    // Check if we're in a Chrome extension context
+    if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getURL) {
+      link.href = chrome.runtime.getURL('styles/highlight.css');
+    } else {
+      // Fallback for web context - use relative path
+      link.href = 'styles/highlight.css';
+    }
+    
     document.head.appendChild(link);
   }
 
