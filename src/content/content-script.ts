@@ -40,6 +40,10 @@ function handleSelectionChange(): void {
 function showPopupIfTextSelected(): void {
   const selectedText = getSelectedText();
   
+  if (popupUI.isRecentlyClosed()) {
+    return;
+  }
+  
   if (!isValidSelection(selectedText, 1)) {
     popupUI.hide();
     return;
@@ -97,9 +101,21 @@ function handleVisualViewportChange(): void {
 }
 
 document.addEventListener('mouseup', (event) => {
+  // Check if click is inside the popup's shadow DOM
+  const path = event.composedPath();
+  const clickedInsidePopup = path.some(el => el instanceof HTMLElement && el.id === 'ai-text-tools-popup-host');
+  if (clickedInsidePopup) {
+    return;
+  }
+  
   // Игнорировать клики по UI элементам
   const target = event.target as HTMLElement;
   if (target.closest('button') || target.closest('input') || target.closest('textarea')) {
+    return;
+  }
+  
+  // Check if popup was recently closed
+  if (popupUI.isRecentlyClosed()) {
     return;
   }
   

@@ -18,6 +18,7 @@ export class PopupUI {
   private popupStartY: number = 0;
   private currentPosition: { x: number; y: number } | null = null;
   private wasManuallyPositioned: boolean = false;
+  private recentlyClosed: boolean = false;
 
   constructor() {
     this.createPopupStructure();
@@ -94,9 +95,7 @@ export class PopupUI {
   public async show(selectedText: string, selectionRect: DOMRect): Promise<void> {
     this.selectedText = selectedText;
     this.isVisible = true;
-    this.wasManuallyPositioned = false;
-    this.currentPosition = null;
-    
+
     // Initialize tabs if not already created
     if (!this.tabsComponent) {
       this.tabsComponent = new Tabs([
@@ -122,7 +121,8 @@ export class PopupUI {
       }
       
       this.tabsComponent.attachEventListeners(this.shadowRoot!);
-      
+      this.setupMiniModeDragAndDrop();
+
       // Listen for tab changes
       this.tabsComponent.addEventListener('tabChange', (event: any) => {
         this.updateSelectedTextDisplay();
@@ -148,14 +148,22 @@ export class PopupUI {
 
   public hide(): void {
     this.isVisible = false;
+    this.recentlyClosed = true;
+    setTimeout(() => {
+      this.recentlyClosed = false;
+    }, 200);
     if (this.popupContainer) {
       this.popupContainer.style.opacity = '0';
       this.popupContainer.style.visibility = 'hidden';
       this.popupContainer.style.transform = '';
     }
     this.cleanupEventListeners();
-    
+
     document.dispatchEvent(new CustomEvent('popupHidden'));
+  }
+
+  public isRecentlyClosed(): boolean {
+    return this.recentlyClosed;
   }
 
   public updatePosition(selectionRect: DOMRect): void {
@@ -232,8 +240,10 @@ export class PopupUI {
     document.addEventListener('pointerdown', (event) => {
       const path = event.composedPath();
       const clickedInside = path.some(el => el === this.popupContainer || (el instanceof HTMLElement && this.popupContainer?.contains(el)));
-      
-      if (!clickedInside && !this.isPinned) {
+      const target = event.target as HTMLElement;
+      const isInteractive = target.closest('button, input, textarea, select');
+
+      if (!clickedInside && !this.isPinned && !isInteractive) {
         this.hide();
       }
     }, { capture: true, signal: this.abortController.signal });
@@ -363,7 +373,8 @@ export class PopupUI {
     
     // Re-attach event listeners for mini mode
     this.tabsComponent.attachEventListeners(this.shadowRoot!);
-    
+    this.setupMiniModeDragAndDrop();
+
     // Keep current tab active
     const currentTab = this.tabsComponent.getCurrentTab();
     this.tabsComponent.setTab(currentTab.id);
@@ -414,6 +425,7 @@ export class PopupUI {
     
     // Close button handler
     closeBtn.addEventListener('click', (e) => {
+      e.preventDefault();
       e.stopPropagation();
       this.hide();
     });
@@ -492,6 +504,95 @@ export class PopupUI {
     this.shadowRoot = null;
     this.popupContainer = null;
     this.tabsComponent = null;
+  }
+
+  private setupMiniModeDragAndDrop(): void {
+    if (!this.shadowRoot) return;
+
+    const dragBtn = this.shadowRoot.querySelector('#btn-mini-drag') as HTMLElement;
+    const pinBtn = this.shadowRoot.querySelector('#btn-mini-pin') as HTMLElement;
+    const closeBtn = this.shadowRoot.querySelector('#btn-mini-close') as HTMLElement;
+
+    if (!dragBtn || !pinBtn || !closeBtn) return;
+
+    // Pin button handler
+    pinBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.isPinned = !this.isPinned;
+      pinBtn.classList.toggle('active', this.isPinned);
+      pinBtn.title = this.isPinned ? t('common.unpin') : t('common.pin');
+    });
+
+    // Close button handler
+    closeBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      this.hide();
+    });
+
+    // Drag handlers
+    dragBtn.addEventListener('mousedown', (e) => {
+      if (this.isPinned) return;
+
+      this.isDragging = true;
+      this.dragStartX = e.clientX;
+      this.dragStartY = e.clientY;
+
+      const rect = this.popupContainer!.getBoundingClientRect();
+      this.popupStartX = rect.left;
+      this.popupStartY = rect.top;
+
+      // Disable transitions during drag
+      const originalTransition = this.popupContainer!.style.transition;
+      this.popupContainer!.style.transition = 'none';
+      this.popupContainer!.classList.add('popup-dragging');
+
+      const handleMouseMove = (e: MouseEvent) => {
+        if (!this.isDragging) return;
+
+        const deltaX = e.clientX - this.dragStartX;
+        const deltaY = e.clientY - this.dragStartY;
+
+        const popupRect = this.popupContainer!.getBoundingClientRect();
+        const popupWidth = popupRect.width;
+        const popupHeight = popupRect.height;
+
+        const visualViewport = window.visualViewport || {
+          width: window.innerWidth,
+          height: window.innerHeight,
+          offsetTop: 0,
+          offsetLeft: 0
+        };
+
+        let newX = this.popupStartX + deltaX;
+        let newY = this.popupStartY + deltaY;
+
+        // Constrain to viewport bounds
+        const minX = 0;
+        const maxX = visualViewport.width - popupWidth;
+        const minY = 0;
+        const maxY = visualViewport.height - popupHeight;
+
+        newX = Math.max(minX, Math.min(newX, maxX));
+        newY = Math.max(minY, Math.min(newY, maxY));
+
+        this.popupContainer!.style.transform = `translate(${newX}px, ${newY}px)`;
+        this.currentPosition = { x: newX, y: newY };
+      };
+
+      const handleMouseUp = () => {
+        this.isDragging = false;
+        this.wasManuallyPositioned = true;
+        this.popupContainer!.classList.remove('popup-dragging');
+        // Restore original transition
+        this.popupContainer!.style.transition = originalTransition;
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
+
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+    });
   }
 
   private renderMiniHeader(): string {
