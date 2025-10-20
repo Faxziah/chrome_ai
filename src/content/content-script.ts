@@ -136,7 +136,14 @@ document.addEventListener('keyup', (event) => {
   if (event.key === 'Shift' || event.key === 'Control' || event.key === 'Alt' || event.key === 'Meta') {
     return;
   }
-  
+
+  // Проверяем, что событие не происходит внутри попапа
+  const path = event.composedPath();
+  const isInsidePopup = path.some(el => el instanceof HTMLElement && el.id === 'ai-text-tools-popup-host');
+  if (isInsidePopup) {
+    return;
+  }
+
   // Небольшая задержка для завершения выделения
   setTimeout(() => {
     handleSelectionChange();
