@@ -30,13 +30,10 @@ export class ClipboardHandler {
     }
   }
 
-  public static showCopyFeedback(button: HTMLElement, duration: number = 2000): void {
-    const originalText = button.textContent;
-    button.textContent = '✓ Copied!';
+  public static showCopyFeedback(button: HTMLElement, duration: number = 500): void {
     button.classList.add('copied');
     
     setTimeout(() => {
-      button.textContent = originalText;
       button.classList.remove('copied');
     }, duration);
   }

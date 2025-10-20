@@ -629,7 +629,6 @@ textarea:focus {
 .result-text {
   line-height: 1.6;
   color: var(--popup-text);
-  white-space: pre-wrap;
   word-wrap: break-word;
 }
 
@@ -741,7 +740,6 @@ textarea:focus {
 #summary-result .result-text {
   max-height: 150px;
   overflow-y: auto;
-  white-space: pre-wrap;
   word-break: break-word;
 }
 
@@ -846,7 +844,6 @@ textarea:focus {
 #translate-result .result-text {
   max-height: 150px;
   overflow-y: auto;
-  white-space: pre-wrap;
   word-break: break-word;
   line-height: 1.6;
 }

@@ -245,13 +245,7 @@ export class PopupUI {
       const target = event.target as HTMLElement;
       const isInteractive = target.closest('button, input, textarea, select');
 
-      console.log('path', path)
-      console.log('clickedInside', clickedInside)
-      console.log('target', target)
-      console.log('isInteractive', isInteractive)
-      console.log('this.isPinned', this.isPinned)
       if (!clickedInside && !this.isPinned && !isInteractive) {
-        console.log('hide')
         this.hide();
       }
     }, { capture: true, signal: this.abortController.signal });

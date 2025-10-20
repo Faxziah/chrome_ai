@@ -113,7 +113,7 @@ export class GeminiService {
       });
 
       const result = await model.generateContentStream({
-        contents: [{ parts: [{ text: prompt }] }] as any,
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
         generationConfig: {
           temperature: config?.temperature || 0.7,
           maxOutputTokens: config?.maxTokens || 2048,

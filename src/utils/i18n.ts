@@ -296,9 +296,9 @@ const translations: LocaleData = {
     'contextMenu.discuss': 'Обсудить текст',
     
     // Status messages for handlers
-    'status.translating': 'Переводим...',
-    'status.rephrasing': 'Перефразируем...',
-    'status.summarizing': 'Резюмируем...',
+    'status.translating': 'Перевожу...',
+    'status.rephrasing': 'Перефразирую...',
+    'status.summarizing': 'Резюмирую...',
     
     // API Errors
     'api.missingKey': 'API ключ отсутствует или недействителен. Настройте ваш Gemini API ключ.',
