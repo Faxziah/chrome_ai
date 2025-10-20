@@ -184,7 +184,7 @@ export class Tabs {
             <div class="api-key-error-template" id="api-key-error-summarize" style="display: none;">
               <div class="api-key-error">
                 <p>${t('api.missingKey')}</p>
-                <p><a href="http://aistudio.google.com/app/api-keys?hl=ru" target="_blank" rel="noopener noreferrer">${t('api.visitStudio')}</a>${t('api.createApiKey')}</p>
+                <p><a href="http://aistudio.google.com/app/api-keys?hl=ru" target="_blank" rel="noopener noreferrer">${t('api.visitStudio')}</a> ${t('api.createApiKey')}</p>
               </div>
             </div>
           </div>
@@ -205,7 +205,7 @@ export class Tabs {
             <div class="api-key-error-template" id="api-key-error-discuss" style="display: none;">
               <div class="api-key-error">
                 <p>${t('api.missingKey')}</p>
-                <p><a href="http://aistudio.google.com/app/api-keys?hl=ru" target="_blank" rel="noopener noreferrer">${t('api.visitStudio')}</a>. ${t('api.createApiKey')}</p>
+                <p><a href="http://aistudio.google.com/app/api-keys?hl=ru" target="_blank" rel="noopener noreferrer">${t('api.visitStudio')}</a> ${t('api.createApiKey')}</p>
               </div>
             </div>
           </div>
@@ -235,7 +235,7 @@ export class Tabs {
             <div class="api-key-error-template" id="api-key-error-rephrase" style="display: none;">
               <div class="api-key-error">
                 <p>${t('api.missingKey')}</p>
-                <p><a href="http://aistudio.google.com/app/api-keys?hl=ru" target="_blank" rel="noopener noreferrer">${t('api.visitStudio')}</a>${t('api.createApiKey')}</p>
+                <p><a href="http://aistudio.google.com/app/api-keys?hl=ru" target="_blank" rel="noopener noreferrer">${t('api.visitStudio')}</a> ${t('api.createApiKey')}</p>
               </div>
             </div>
           </div>
@@ -277,7 +277,7 @@ export class Tabs {
             <div class="api-key-error-template" id="api-key-error-translate" style="display: none;">
               <div class="api-key-error">
                 <p>${t('api.missingKey')}</p>
-                <p><a href="http://aistudio.google.com/app/api-keys?hl=ru" target="_blank" rel="noopener noreferrer">${t('api.visitStudio')}</a>${t('api.createApiKey')}</p>
+                <p><a href="http://aistudio.google.com/app/api-keys?hl=ru" target="_blank" rel="noopener noreferrer">${t('api.visitStudio')}</a> ${t('api.createApiKey')}</p>
               </div>
             </div>
           </div>

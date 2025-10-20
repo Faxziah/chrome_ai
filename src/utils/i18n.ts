@@ -90,7 +90,7 @@ const translations: LocaleData = {
     // API Errors
     'api.missingKey': 'API key is missing or invalid. Please configure your Gemini API key.',
     'api.visitStudio': 'Visit Google AI Studio',
-    'api.createApiKey': 'Go to this link and click "Create API key"',
+    'api.createApiKey': 'and click "Create API key"',
     'api.modelUnavailable': 'Model is not available for current API version. Choose another model in settings.',
     
     // Error messages
@@ -332,7 +332,7 @@ const translations: LocaleData = {
     // API Errors
     'api.missingKey': 'API ключ отсутствует или недействителен. Настройте ваш Gemini API ключ.',
     'api.visitStudio': 'Посетите Google AI Studio',
-    'api.createApiKey': 'Перейдите по ссылке и нажмите "Создать API ключ"',
+    'api.createApiKey': 'и нажмите "Создать API ключ"',
     'api.modelUnavailable': 'Модель недоступна для текущей версии API. Выберите другую модель в настройках.',
     
     // Error messages
