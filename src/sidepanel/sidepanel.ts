@@ -158,25 +158,68 @@ class SidePanelApp {
   }
 
   private showApiWarning(): void {
-    const warningElement = document.getElementById('api-warning') as HTMLDivElement;
-    if (warningElement) {
-      warningElement.classList.add('show');
+    const apiSetupContainer = document.getElementById('api-setup-container') as HTMLDivElement;
+    const mainTabs = document.getElementById('main-tabs') as HTMLDivElement;
+    const content = document.querySelector('.content') as HTMLDivElement;
+    
+    if (apiSetupContainer) {
+      apiSetupContainer.style.display = 'block';
+    }
+    if (mainTabs) {
+      mainTabs.style.display = 'none';
+    }
+    if (content) {
+      content.style.display = 'none';
     }
   }
 
   private hideApiWarning(): void {
-    const warningElement = document.getElementById('api-warning') as HTMLDivElement;
-    if (warningElement) {
-      warningElement.classList.remove('show');
+    const apiSetupContainer = document.getElementById('api-setup-container') as HTMLDivElement;
+    const mainTabs = document.getElementById('main-tabs') as HTMLDivElement;
+    const content = document.querySelector('.content') as HTMLDivElement;
+    
+    if (apiSetupContainer) {
+      apiSetupContainer.style.display = 'none';
+    }
+    if (mainTabs) {
+      mainTabs.style.display = 'flex';
+    }
+    if (content) {
+      content.style.display = 'flex';
     }
   }
 
   private setupApiWarningHandlers(): void {
-    const openOptionsBtn = document.getElementById('open-options');
-    if (openOptionsBtn) {
-      openOptionsBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        chrome.runtime.openOptionsPage();
+    const saveApiKeyBtn = document.getElementById('save-api-key');
+    const apiKeyInput = document.getElementById('api-key-input') as HTMLInputElement;
+    
+    if (saveApiKeyBtn && apiKeyInput) {
+      saveApiKeyBtn.addEventListener('click', async () => {
+        const apiKey = apiKeyInput.value.trim();
+        if (!apiKey) {
+          this.showStatus('Please enter your API key', 'error');
+          return;
+        }
+
+        try {
+          await this.storageService.setApiKey(apiKey);
+          this.showStatus('API key saved successfully!', 'success');
+          this.hideApiWarning();
+          // Reload the app to show the main interface
+          setTimeout(() => {
+            this.initializeApp();
+          }, 1000);
+        } catch (error) {
+          console.error('Error saving API key:', error);
+          this.showStatus('Error saving API key', 'error');
+        }
+      });
+
+      // Allow saving with Enter key
+      apiKeyInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          saveApiKeyBtn.click();
+        }
       });
     }
   }

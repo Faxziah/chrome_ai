@@ -56,7 +56,7 @@ const translations: LocaleData = {
     'highlight.clearButtonTitle': 'Remove all highlights from the page',
     
     // Side Panel
-    'sidepanel.title': 'AI Text Tools',
+    'sidepanel.title': 'Text Tuner - AI Sidebar',
     'sidepanel.highlightKeywords': 'Highlight Keywords',
     'sidepanel.historyTitle': 'Operation History',
     'sidepanel.favoritesTitle': 'Favorites',
@@ -64,6 +64,17 @@ const translations: LocaleData = {
     'sidepanel.searchHistory': 'Search history...',
     'sidepanel.searchFavorites': 'Search favorites...',
     'sidepanel.clearAll': 'Clear All',
+    
+    // API Setup
+    'apiSetup.unlockProductivity': 'The Last Click to Unlock',
+    'apiSetup.productivity': 'Productivity',
+    'apiSetup.howToGetKey': 'How to get an API key?',
+    'apiSetup.step1': 'Open the Gemini Console',
+    'apiSetup.step2': 'Click the "Create API key" button',
+    'apiSetup.step3': 'Copy the generated token and paste it below',
+    'apiSetup.apiKeyLabel': 'API Key',
+    'apiSetup.apiKeyPlaceholder': 'Paste your Gemini API key here.',
+    'apiSetup.saveButton': 'Save API Key',
     
     // Context menu
     'contextMenu.summarize': 'Summarize text',
@@ -119,7 +130,7 @@ const translations: LocaleData = {
     // Options page
     'options.title': 'AI Text Tools - Settings',
     'options.languageSettings': 'Language Settings',
-    'options.apiSettings': '🔑 API Settings',
+    'options.apiSettings': 'API Settings',
     'options.geminiApiKey': 'Gemini API key:',
     'options.apiKeyPlaceholder': 'Enter your API key',
     'options.getApiKey': 'Get API key at',
@@ -280,7 +291,7 @@ const translations: LocaleData = {
     'highlight.clearButtonTitle': 'Удалить все подсветки со страницы',
     
     // Side Panel
-    'sidepanel.title': 'AI Text Tools',
+    'sidepanel.title': 'Text Tuner - AI Sidebar',
     'sidepanel.highlightKeywords': 'Подсветить ключевые предложения',
     'sidepanel.historyTitle': 'История операций',
     'sidepanel.favoritesTitle': 'Избранное',
@@ -288,6 +299,17 @@ const translations: LocaleData = {
     'sidepanel.searchHistory': 'Поиск в истории...',
     'sidepanel.searchFavorites': 'Поиск в избранном...',
     'sidepanel.clearAll': 'Очистить все',
+    
+    // API Setup
+    'apiSetup.unlockProductivity': 'Последний клик для разблокировки',
+    'apiSetup.productivity': 'Продуктивности',
+    'apiSetup.howToGetKey': 'Как получить API ключ?',
+    'apiSetup.step1': 'Откройте Gemini Console',
+    'apiSetup.step2': 'Нажмите кнопку "Create API key"',
+    'apiSetup.step3': 'Скопируйте сгенерированный токен и вставьте ниже',
+    'apiSetup.apiKeyLabel': 'API Ключ',
+    'apiSetup.apiKeyPlaceholder': 'Вставьте ваш Gemini API ключ здесь.',
+    'apiSetup.saveButton': 'Сохранить API Ключ',
     
     // Context menu
     'contextMenu.summarize': 'Резюмировать текст',
@@ -343,7 +365,7 @@ const translations: LocaleData = {
     // Options page
     'options.title': 'AI Text Tools - Настройки',
     'options.languageSettings': 'Настройки языка',
-    'options.apiSettings': '🔑 Настройки API',
+    'options.apiSettings': 'Настройки API',
     'options.geminiApiKey': 'Gemini API ключ:',
     'options.apiKeyPlaceholder': 'Введите ваш API ключ',
     'options.getApiKey': 'Получите API ключ на',
@@ -489,7 +511,7 @@ const translations: LocaleData = {
     'highlight.clearButtonTitle': 'Alle Hervorhebungen von der Seite entfernen',
     
     // Side Panel
-    'sidepanel.title': 'AI Text Tools',
+    'sidepanel.title': 'Text Tuner - AI Sidebar',
     'sidepanel.highlightKeywords': 'Schlüsselsätze hervorheben',
     'sidepanel.historyTitle': 'Vorgangsverlauf',
     'sidepanel.favoritesTitle': 'Favoriten',
@@ -497,6 +519,17 @@ const translations: LocaleData = {
     'sidepanel.searchHistory': 'Verlauf durchsuchen...',
     'sidepanel.searchFavorites': 'Favoriten durchsuchen...',
     'sidepanel.clearAll': 'Alle löschen',
+    
+    // API Setup
+    'apiSetup.unlockProductivity': 'Der letzte Klick zur Freischaltung',
+    'apiSetup.productivity': 'Produktivität',
+    'apiSetup.howToGetKey': 'Wie erhält man einen API-Schlüssel?',
+    'apiSetup.step1': 'Öffnen Sie die Gemini Console',
+    'apiSetup.step2': 'Klicken Sie auf "Create API key"',
+    'apiSetup.step3': 'Kopieren Sie den generierten Token und fügen Sie ihn unten ein',
+    'apiSetup.apiKeyLabel': 'API-Schlüssel',
+    'apiSetup.apiKeyPlaceholder': 'Fügen Sie Ihren Gemini API-Schlüssel hier ein.',
+    'apiSetup.saveButton': 'API-Schlüssel speichern',
     
     // API Errors
     'api.missingKey': 'API-Schlüssel fehlt oder ist ungültig. Bitte konfigurieren Sie Ihren Gemini API-Schlüssel.',
@@ -534,7 +567,7 @@ const translations: LocaleData = {
     // Options page
     'options.title': 'AI Text Tools - Einstellungen',
     'options.languageSettings': 'Spracheinstellungen',
-    'options.apiSettings': '🔑 API-Einstellungen',
+    'options.apiSettings': 'API-Einstellungen',
     'options.geminiApiKey': 'Gemini API-Schlüssel:',
     'options.apiKeyPlaceholder': 'Geben Sie Ihren API-Schlüssel ein',
     'options.getApiKey': 'API-Schlüssel erhalten bei',
@@ -680,7 +713,7 @@ const translations: LocaleData = {
     'highlight.clearButtonTitle': 'Supprimer tous les surlignages de la page',
     
     // Side Panel
-    'sidepanel.title': 'AI Text Tools',
+    'sidepanel.title': 'Text Tuner - AI Sidebar',
     'sidepanel.highlightKeywords': 'Surligner les phrases clés',
     'sidepanel.historyTitle': 'Historique des opérations',
     'sidepanel.favoritesTitle': 'Favoris',
@@ -688,6 +721,17 @@ const translations: LocaleData = {
     'sidepanel.searchHistory': 'Rechercher dans l\'historique...',
     'sidepanel.searchFavorites': 'Rechercher dans les favoris...',
     'sidepanel.clearAll': 'Tout effacer',
+    
+    // API Setup
+    'apiSetup.unlockProductivity': 'Le dernier clic pour débloquer',
+    'apiSetup.productivity': 'Productivité',
+    'apiSetup.howToGetKey': 'Comment obtenir une clé API ?',
+    'apiSetup.step1': 'Ouvrez la Gemini Console',
+    'apiSetup.step2': 'Cliquez sur "Create API key"',
+    'apiSetup.step3': 'Copiez le token généré et collez-le ci-dessous',
+    'apiSetup.apiKeyLabel': 'Clé API',
+    'apiSetup.apiKeyPlaceholder': 'Collez votre clé API Gemini ici.',
+    'apiSetup.saveButton': 'Enregistrer la clé API',
     
     // API Errors
     'api.missingKey': 'Clé API manquante ou invalide. Veuillez configurer votre clé API Gemini.',
@@ -725,7 +769,7 @@ const translations: LocaleData = {
     // Options page
     'options.title': 'AI Text Tools - Paramètres',
     'options.languageSettings': 'Paramètres de langue',
-    'options.apiSettings': '🔑 Paramètres API',
+    'options.apiSettings': 'Paramètres API',
     'options.geminiApiKey': 'Clé API Gemini :',
     'options.apiKeyPlaceholder': 'Entrez votre clé API',
     'options.getApiKey': 'Obtenir la clé API sur',
@@ -871,7 +915,7 @@ const translations: LocaleData = {
     'highlight.clearButtonTitle': '从页面删除所有高亮',
     
     // Side Panel
-    'sidepanel.title': 'AI文本工具',
+    'sidepanel.title': 'Text Tuner - AI Sidebar',
     'sidepanel.highlightKeywords': '高亮关键句子',
     'sidepanel.historyTitle': '操作历史',
     'sidepanel.favoritesTitle': '收藏夹',
@@ -879,6 +923,17 @@ const translations: LocaleData = {
     'sidepanel.searchHistory': '搜索历史记录...',
     'sidepanel.searchFavorites': '搜索收藏夹...',
     'sidepanel.clearAll': '清除全部',
+    
+    // API Setup
+    'apiSetup.unlockProductivity': '解锁的最后一步',
+    'apiSetup.productivity': '生产力',
+    'apiSetup.howToGetKey': '如何获取API密钥？',
+    'apiSetup.step1': '打开Gemini Console',
+    'apiSetup.step2': '点击"Create API key"按钮',
+    'apiSetup.step3': '复制生成的令牌并粘贴到下方',
+    'apiSetup.apiKeyLabel': 'API密钥',
+    'apiSetup.apiKeyPlaceholder': '在此粘贴您的Gemini API密钥。',
+    'apiSetup.saveButton': '保存API密钥',
     
     // API Errors
     'api.missingKey': 'API密钥缺失或无效。请配置您的Gemini API密钥。',
@@ -916,7 +971,7 @@ const translations: LocaleData = {
     // Options page
     'options.title': 'AI文本工具 - 设置',
     'options.languageSettings': '语言设置',
-    'options.apiSettings': '🔑 API设置',
+    'options.apiSettings': 'API设置',
     'options.geminiApiKey': 'Gemini API密钥：',
     'options.apiKeyPlaceholder': '输入您的API密钥',
     'options.getApiKey': '在以下位置获取API密钥',

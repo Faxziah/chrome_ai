@@ -38,6 +38,11 @@
             flex-direction: column;
             overflow: hidden;
         }
+
+        .md-tabs {
+            display: flex;
+            gap: 8px;
+        }
         
         .tab-content {
             display: none;
@@ -287,15 +292,147 @@
         .api-warning a:hover {
             color: #b71c1c;
         }
+
+        /* API Setup Styles */
+        .api-setup-container {
+            margin: 16px 0;
+        }
+
+        .api-setup-card {
+            background: #2a2a2a;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #404040;
+            height: 100vh;
+        }
+
+        .api-setup-header {
+            margin-bottom: 20px;
+        }
+
+        .api-setup-header h2 {
+            color: white;
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+            display: inline;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #4CAF50, #2196F3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .api-setup-content {
+            color: #e0e0e0;
+        }
+
+        .api-setup-instructions {
+            margin: 0 0 16px 0;
+            font-size: 14px;
+            color: #b0b0b0;
+        }
+
+        .api-setup-steps {
+            margin: 0 0 24px 0;
+            padding-left: 20px;
+            color: #e0e0e0;
+        }
+
+        .api-setup-steps li {
+            margin-bottom: 8px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .api-link {
+            color: #64B5F6;
+            text-decoration: underline;
+            transition: color 0.2s;
+        }
+
+        .api-link:hover {
+            color: #90CAF9;
+        }
+
+        .api-input-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .api-input-label {
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .api-key-input {
+            background: #1a1a1a;
+            border: 1px solid #404040;
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: white;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .api-key-input:focus {
+            outline: none;
+            border-color: #64B5F6;
+            box-shadow: 0 0 0 2px rgba(100, 181, 246, 0.2);
+        }
+
+        .api-key-input::placeholder {
+            color: #888;
+        }
+
+        .api-save-btn {
+            background: linear-gradient(135deg, #4CAF50, #2196F3);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .api-save-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+        }
+
+        .api-save-btn:active {
+            transform: translateY(0);
+        }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1 data-i18n="sidepanel.title">AI Text Tools</h1>
-        <div class="api-warning" id="api-warning">
-            ⚠️ API ключ не настроен! <a href="https://aistudio.google.com/app/api-keys" id="open-options">Настройте API ключ</a> для использования расширения.
+        <h1 data-i18n="apiSetup.howToGetKey">How to get an API key?</h1>
+        <div class="api-setup-container" id="api-setup-container">
+            <div class="api-setup-card">
+                <div class="api-setup-content">
+                    <ol class="api-setup-steps">
+                        <li><span data-i18n="apiSetup.step1">Open the Gemini Console</span> <a href="https://aistudio.google.com/app/api-keys" target="_blank" class="api-link">Gemini Console</a></li>
+                        <li data-i18n="apiSetup.step2">Click the "Create API key" button</li>
+                        <li data-i18n="apiSetup.step3">Copy the generated token and paste it below</li>
+                    </ol>
+                    <div class="api-input-container">
+                        <input type="password" id="api-key-input" class="api-key-input" data-i18n-placeholder="apiSetup.apiKeyPlaceholder" placeholder="Paste your Gemini API key here.">
+                        <button id="save-api-key" class="api-save-btn" data-i18n="apiSetup.saveButton">Save</button>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="md-tabs">
+        <div class="md-tabs" id="main-tabs" style="display: none;">
             <button id="highlight-tab" class="md-tab active" data-i18n="common.highlight">Highlight</button>
             <button id="history-tab" class="md-tab" data-i18n="common.history">History</button>
             <button id="favorites-tab" class="md-tab" data-i18n="common.favorites">Favorites</button>
