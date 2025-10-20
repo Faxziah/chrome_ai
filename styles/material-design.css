@@ -111,8 +111,7 @@ body {
   align-items: center;
   justify-content: center;
   gap: var(--md-spacing-sm);
-  padding: 8px 12px;
-  height: 36px;
+  height: 26px;
   border: none;
   border-radius: var(--md-radius-small);
   font-family: var(--md-font-family), sans-serif;
@@ -124,7 +123,6 @@ body {
   transition: all var(--md-transition-fast);
   position: relative;
   overflow: hidden;
-  height: 36px;
   line-height: 1;
   text-decoration: none;
   outline: none;
@@ -432,7 +430,6 @@ body {
 @media (max-width: 480px) {
   .md-button {
     width: 100%;
-    margin-bottom: var(--md-spacing-sm);
   }
   
   .md-card {

@@ -15,12 +15,17 @@ class SidePanelApp {
   private readonly storageService: StorageService;
   private readonly historyService: HistoryService;
   private readonly favoritesService: FavoritesService;
-  private currentTab: string = 'highlight';
+  private historyClickHandler: (event: Event) => void;
+  private favoritesClickHandler: (event: Event) => void;
 
   constructor() {
     this.storageService = new StorageService();
     this.historyService = new HistoryService(this.storageService);
     this.favoritesService = new FavoritesService(this.storageService);
+    
+    // Bind event handlers once
+    this.historyClickHandler = this.handleHistoryClick.bind(this);
+    this.favoritesClickHandler = this.handleFavoritesClick.bind(this);
     
     // Initialize language
     this.initializeLanguage();
@@ -107,8 +112,6 @@ class SidePanelApp {
   }
 
   private async switchTab(tabId: string): Promise<void> {
-    this.currentTab = tabId;
-    
     const tabs = document.querySelectorAll('.md-tab');
     const tabContents = document.querySelectorAll('.md-tab-content');
     
@@ -374,7 +377,6 @@ class SidePanelApp {
     try {
       await this.historyService.clearHistory();
       await this.renderHistory([]);
-      this.showStatus(t('status.historyCleared'), 'success');
     } catch (error) {
       console.error('Error clearing history:', error);
       this.showStatus(t('status.errorClearingHistory'), 'error');
@@ -385,7 +387,6 @@ class SidePanelApp {
     try {
       await this.favoritesService.clearAllFavorites();
       this.renderFavorites([]);
-      this.showStatus(t('status.favoritesCleared'), 'success');
     } catch (error) {
       console.error('Error clearing favorites:', error);
       this.showStatus(t('status.errorClearingFavorites'), 'error');
@@ -408,10 +409,10 @@ class SidePanelApp {
     if (!historyList) return;
 
     // Remove existing listeners to avoid duplicates
-    historyList.removeEventListener('click', this.handleHistoryClick);
+    historyList.removeEventListener('click', this.historyClickHandler);
     
     // Add new listener
-    historyList.addEventListener('click', this.handleHistoryClick.bind(this));
+    historyList.addEventListener('click', this.historyClickHandler);
   }
 
   private setupFavoritesEventListeners(): void {
@@ -419,10 +420,10 @@ class SidePanelApp {
     if (!favoritesList) return;
 
     // Remove existing listeners to avoid duplicates
-    favoritesList.removeEventListener('click', this.handleFavoritesClick);
+    favoritesList.removeEventListener('click', this.favoritesClickHandler);
     
     // Add new listener
-    favoritesList.addEventListener('click', this.handleFavoritesClick.bind(this));
+    favoritesList.addEventListener('click', this.favoritesClickHandler);
   }
 
   private async handleHistoryClick(event: Event): Promise<void> {
@@ -510,7 +511,6 @@ class SidePanelApp {
     try {
       await this.historyService.removeFromHistory(itemId);
       await this.loadHistory();
-      this.showStatus(t('status.itemRemovedFromHistory'), 'success');
     } catch (error) {
       console.error('Error deleting history item:', error);
       this.showStatus(t('status.errorRemovingItem'), 'error');
@@ -539,6 +539,12 @@ class SidePanelApp {
 
   private async showItemDetails(itemId: string, type: 'history' | 'favorites'): Promise<void> {
     try {
+      // Check if modal already exists
+      const existingModal = document.querySelector('.modal-overlay');
+      if (existingModal) {
+        return;
+      }
+
       let item;
       if (type === 'history') {
         const history = await this.historyService.getHistory();
@@ -570,14 +576,6 @@ class SidePanelApp {
             <div class="detail-section">
               <h4>${t('common.result')}</h4>
               <div class="detail-content">${this.escapeHtml(item.response)}</div>
-            </div>
-            <div class="detail-section">
-              <h4>${t('common.metadata')}</h4>
-              <div class="detail-meta">
-                <p><strong>${t('common.type')}:</strong> ${this.getTypeLabel(item.type)}</p>
-                <p><strong>${t('common.timestamp')}:</strong> ${new Date(item.timestamp).toLocaleString()}</p>
-                <p><strong>${t('common.id')}:</strong> ${item.id}</p>
-              </div>
             </div>
           </div>
         </div>
