@@ -87,10 +87,8 @@
 }
 
 .popup-content {
-  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
 }
 
 .popup-header {
@@ -118,12 +116,13 @@
 /* Popup Header Styles */
 .popup-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: end;
   align-items: center;
   padding: 8px 12px;
   border-bottom: 1px solid var(--popup-border);
   background: #f8f9fa;
-  cursor: move; /* Для перетаскивания */
+  cursor: move;
+  border-radius: 12px;
 }
 
 .popup-header.pinned {
@@ -196,7 +195,7 @@
 }
 
 button {
-  padding: 8px 16px;
+  padding: 10px;
   border: none;
   border-radius: 6px;
   font-size: 14px;
@@ -248,8 +247,6 @@ button:active {
 .tabs {
   position: relative;
   display: flex;
-  gap: var(--spacing-xs);
-  padding: var(--spacing-sm) var(--spacing-sm) 0;
   overflow-x: auto;
   scrollbar-width: thin;
   scrollbar-color: #888 #f1f1f1;
@@ -279,7 +276,7 @@ button:active {
   position: relative;
   display: flex;
   gap: 2px;
-  padding: 4px;
+  padding: 5px;
   justify-content: center;
   align-items: center;
   border-bottom: 1px solid var(--popup-border);
@@ -291,8 +288,8 @@ button:active {
   appearance: none;
   background: transparent;
   border: 0;
-  width: 28px;
-  height: 28px;
+  width: 14px;
+  height: 14px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -372,7 +369,7 @@ button:active {
 }
 
 .tab-panel {
-  padding: var(--spacing-lg);
+  padding: var(--spacing-sm);
   animation: fadeIn 0.2s ease;
 }
 
@@ -383,7 +380,7 @@ button:active {
 .tab-content {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
+  gap: var(--spacing-sm);
 }
 
 /* Form Element Styles */
@@ -424,10 +421,6 @@ textarea:focus {
 
 .select {
   cursor: pointer;
-  padding-right: var(--spacing-xl);
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><path fill="%235f6368" d="M6 9L1 4h10z"/></svg>');
-  background-repeat: no-repeat;
-  background-position: right var(--spacing-md) center;
 }
 
 .chat-input {
@@ -675,10 +668,6 @@ textarea:focus {
     --popup-border: rgba(255, 255, 255, 0.12);
     --input-border: rgba(255, 255, 255, 0.24);
     --secondary-color: #9aa0a6;
-  }
-  
-  .select {
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><path fill="%239aa0a6" d="M6 9L1 4h10z"/></svg>');
   }
 
   .mini-tabs {

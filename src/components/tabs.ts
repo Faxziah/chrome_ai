@@ -139,7 +139,6 @@ export class Tabs {
           <div class="tab-content">
             <div class="selected-text-display">${t('common.selectedText')}</div>
             <div class="style-selector">
-              <label>${t('rephrase.style')}</label>
               <select class="select" id="rephrase-style">
                 <option value="casual" selected>${t('rephrase.casual')}</option>
                 <option value="formal">${t('rephrase.formal')}</option>
@@ -311,14 +310,11 @@ export class Tabs {
                   <option value="cy">Welsh</option>
                   <option value="zu">Zulu</option>
                 </select>
+                <button class="btn btn-icon" id="btn-speak-source" aria-label="${t('translate.speakOriginal')}" title="${t('translate.speakOriginal')}">🔊</button>
               </div>
             </div>
-            <div class="speak-source-container">
-              <button class="btn btn-icon" id="btn-speak-source" aria-label="${t('translate.speakOriginal')}" title="${t('translate.speakOriginal')}">🔊 ${t('translate.speakOriginal')}</button>
-            </div>
-            <div class="action-buttons">
-              <button class="btn btn-primary" id="btn-translate">${t('common.translate')}</button>
-            </div>
+
+            <button class="btn btn-primary" id="btn-translate">${t('common.translate')}</button>
             <div class="result-container" id="translate-result" hidden>
               <div class="result-header">
                 <span class="result-label">${t('translate.translation')}</span>

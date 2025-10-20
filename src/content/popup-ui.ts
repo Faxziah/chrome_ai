@@ -58,8 +58,6 @@ export class PopupUI {
       opacity: 0;
       visibility: hidden;
       will-change: transform;
-      max-width: 400px;
-      min-width: 320px;
       background: white;
       border-radius: 12px;
       box-shadow: 0 8px 32px rgba(0,0,0,0.15);
