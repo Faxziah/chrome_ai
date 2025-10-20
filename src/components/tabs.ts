@@ -1,6 +1,83 @@
 import { TabConfig, TabChangeEvent } from '../types';
 import { t } from '../utils/i18n';
 
+const LANGUAGES = [
+  { code: 'en', name: 'English' },
+  { code: 'af', name: 'Afrikaans' },
+  { code: 'sq', name: 'Shqip' },
+  { code: 'am', name: 'አማርኛ' },
+  { code: 'ar', name: 'العربية' },
+  { code: 'az', name: 'Azərbaycan' },
+  { code: 'eu', name: 'Euskera' },
+  { code: 'be', name: 'Беларуская' },
+  { code: 'bn', name: 'বাংলা' },
+  { code: 'bs', name: 'Bosanski' },
+  { code: 'bg', name: 'Български' },
+  { code: 'ca', name: 'Català' },
+  { code: 'zh', name: '中文' },
+  { code: 'hr', name: 'Hrvatski' },
+  { code: 'cs', name: 'Čeština' },
+  { code: 'da', name: 'Dansk' },
+  { code: 'nl', name: 'Nederlands' },
+  { code: 'et', name: 'Eesti' },
+  { code: 'fi', name: 'Suomi' },
+  { code: 'fr', name: 'Français' },
+  { code: 'gl', name: 'Galego' },
+  { code: 'ka', name: 'ქართული' },
+  { code: 'de', name: 'Deutsch' },
+  { code: 'el', name: 'Ελληνικά' },
+  { code: 'gu', name: 'ગુજરાતી' },
+  { code: 'he', name: 'עברית' },
+  { code: 'hi', name: 'हिन्दी' },
+  { code: 'hu', name: 'Magyar' },
+  { code: 'is', name: 'Íslenska' },
+  { code: 'ga', name: 'Gaeilge' },
+  { code: 'it', name: 'Italiano' },
+  { code: 'ja', name: '日本語' },
+  { code: 'kn', name: 'ಕನ್ನಡ' },
+  { code: 'km', name: 'ខ្មែរ' },
+  { code: 'ko', name: '한국어' },
+  { code: 'lo', name: 'ລາວ' },
+  { code: 'lv', name: 'Latviešu' },
+  { code: 'lt', name: 'Lietuvių' },
+  { code: 'mk', name: 'Македонски' },
+  { code: 'ml', name: 'മലയാളം' },
+  { code: 'mt', name: 'Malti' },
+  { code: 'mr', name: 'मराठी' },
+  { code: 'my', name: 'မြန်မာ' },
+  { code: 'ne', name: 'नेपाली' },
+  { code: 'no', name: 'Norsk' },
+  { code: 'pa', name: 'ਪੰਜਾਬੀ' },
+  { code: 'fa', name: 'فارسی' },
+  { code: 'pl', name: 'Polski' },
+  { code: 'pt', name: 'Português' },
+  { code: 'ro', name: 'Română' },
+  { code: 'ru', name: 'Русский' },
+  { code: 'si', name: 'සිංහල' },
+  { code: 'sk', name: 'Slovenčina' },
+  { code: 'sl', name: 'Slovenščina' },
+  { code: 'es', name: 'Español' },
+  { code: 'sr', name: 'Српски' },
+  { code: 'sw', name: 'Kiswahili' },
+  { code: 'sv', name: 'Svenska' },
+  { code: 'ta', name: 'தமிழ்' },
+  { code: 'te', name: 'తెలుగు' },
+  { code: 'th', name: 'ไทย' },
+  { code: 'tr', name: 'Türkçe' },
+  { code: 'uk', name: 'Українська' },
+  { code: 'ur', name: 'اردو' },
+  { code: 'vi', name: 'Tiếng Việt' },
+  { code: 'cy', name: 'Cymraeg' },
+  { code: 'zu', name: 'IsiZulu' }
+];
+
+const generateLanguageOptions = (excludeCode?: string): string => {
+  return LANGUAGES
+    .filter(lang => lang.code !== excludeCode)
+    .map(lang => `<option value="${lang.code}">${lang.name}</option>`)
+    .join('');
+};
+
 export class Tabs {
   private currentTabIndex: number = 0;
   private tabs: TabConfig[];
@@ -172,143 +249,12 @@ export class Tabs {
               <div class="language-row">
                 <select class="select" id="source-language">
                   <option value="auto" selected>${t('translate.autoDetect')}</option>
-                  <option value="en">English</option>
-                  <option value="af">Afrikaans</option>
-                  <option value="sq">Albanian</option>
-                  <option value="am">Amharic</option>
-                  <option value="ar">Arabic</option>
-                  <option value="az">Azerbaijani</option>
-                  <option value="eu">Basque</option>
-                  <option value="be">Belarusian</option>
-                  <option value="bn">Bengali</option>
-                  <option value="bs">Bosnian</option>
-                  <option value="bg">Bulgarian</option>
-                  <option value="ca">Catalan</option>
-                  <option value="zh">Chinese</option>
-                  <option value="hr">Croatian</option>
-                  <option value="cs">Czech</option>
-                  <option value="da">Danish</option>
-                  <option value="nl">Dutch</option>
-                  <option value="et">Estonian</option>
-                  <option value="fi">Finnish</option>
-                  <option value="fr">French</option>
-                  <option value="gl">Galician</option>
-                  <option value="ka">Georgian</option>
-                  <option value="de">German</option>
-                  <option value="el">Greek</option>
-                  <option value="gu">Gujarati</option>
-                  <option value="he">Hebrew</option>
-                  <option value="hi">Hindi</option>
-                  <option value="hu">Hungarian</option>
-                  <option value="is">Icelandic</option>
-                  <option value="ga">Irish</option>
-                  <option value="it">Italian</option>
-                  <option value="ja">Japanese</option>
-                  <option value="kn">Kannada</option>
-                  <option value="km">Khmer</option>
-                  <option value="ko">Korean</option>
-                  <option value="lo">Lao</option>
-                  <option value="lv">Latvian</option>
-                  <option value="lt">Lithuanian</option>
-                  <option value="mk">Macedonian</option>
-                  <option value="ml">Malayalam</option>
-                  <option value="mt">Maltese</option>
-                  <option value="mr">Marathi</option>
-                  <option value="my">Burmese</option>
-                  <option value="ne">Nepali</option>
-                  <option value="no">Norwegian</option>
-                  <option value="pa">Punjabi</option>
-                  <option value="fa">Persian</option>
-                  <option value="pl">Polish</option>
-                  <option value="pt">Portuguese</option>
-                  <option value="ro">Romanian</option>
-                  <option value="ru">Russian</option>
-                  <option value="si">Sinhala</option>
-                  <option value="sk">Slovak</option>
-                  <option value="sl">Slovenian</option>
-                  <option value="es">Spanish</option>
-                  <option value="sr">Serbian</option>
-                  <option value="sw">Swahili</option>
-                  <option value="sv">Swedish</option>
-                  <option value="ta">Tamil</option>
-                  <option value="te">Telugu</option>
-                  <option value="th">Thai</option>
-                  <option value="tr">Turkish</option>
-                  <option value="uk">Ukrainian</option>
-                  <option value="ur">Urdu</option>
-                  <option value="vi">Vietnamese</option>
-                  <option value="cy">Welsh</option>
-                  <option value="zu">Zulu</option>
+                  ${generateLanguageOptions()}
                 </select>
                 <button class="btn btn-icon" id="btn-swap-languages" aria-label="${t('translate.swapLanguages')}">⇄</button>
                 <select class="select" id="target-language">
                   <option value="en" selected>${t('language.english')}</option>
-                  <option value="af">Afrikaans</option>
-                  <option value="sq">Albanian</option>
-                  <option value="am">Amharic</option>
-                  <option value="ar">Arabic</option>
-                  <option value="az">Azerbaijani</option>
-                  <option value="eu">Basque</option>
-                  <option value="be">Belarusian</option>
-                  <option value="bn">Bengali</option>
-                  <option value="bs">Bosnian</option>
-                  <option value="bg">Bulgarian</option>
-                  <option value="ca">Catalan</option>
-                  <option value="zh">Chinese</option>
-                  <option value="hr">Croatian</option>
-                  <option value="cs">Czech</option>
-                  <option value="da">Danish</option>
-                  <option value="nl">Dutch</option>
-                  <option value="et">Estonian</option>
-                  <option value="fi">Finnish</option>
-                  <option value="fr">French</option>
-                  <option value="gl">Galician</option>
-                  <option value="ka">Georgian</option>
-                  <option value="de">German</option>
-                  <option value="el">Greek</option>
-                  <option value="gu">Gujarati</option>
-                  <option value="he">Hebrew</option>
-                  <option value="hi">Hindi</option>
-                  <option value="hu">Hungarian</option>
-                  <option value="is">Icelandic</option>
-                  <option value="ga">Irish</option>
-                  <option value="it">Italian</option>
-                  <option value="ja">Japanese</option>
-                  <option value="kn">Kannada</option>
-                  <option value="km">Khmer</option>
-                  <option value="ko">Korean</option>
-                  <option value="lo">Lao</option>
-                  <option value="lv">Latvian</option>
-                  <option value="lt">Lithuanian</option>
-                  <option value="mk">Macedonian</option>
-                  <option value="ml">Malayalam</option>
-                  <option value="mt">Maltese</option>
-                  <option value="mr">Marathi</option>
-                  <option value="my">Burmese</option>
-                  <option value="ne">Nepali</option>
-                  <option value="no">Norwegian</option>
-                  <option value="pa">Punjabi</option>
-                  <option value="fa">Persian</option>
-                  <option value="pl">Polish</option>
-                  <option value="pt">Portuguese</option>
-                  <option value="ro">Romanian</option>
-                  <option value="ru">Russian</option>
-                  <option value="si">Sinhala</option>
-                  <option value="sk">Slovak</option>
-                  <option value="sl">Slovenian</option>
-                  <option value="es">Spanish</option>
-                  <option value="sr">Serbian</option>
-                  <option value="sw">Swahili</option>
-                  <option value="sv">Swedish</option>
-                  <option value="ta">Tamil</option>
-                  <option value="te">Telugu</option>
-                  <option value="th">Thai</option>
-                  <option value="tr">Turkish</option>
-                  <option value="uk">Ukrainian</option>
-                  <option value="ur">Urdu</option>
-                  <option value="vi">Vietnamese</option>
-                  <option value="cy">Welsh</option>
-                  <option value="zu">Zulu</option>
+                  ${generateLanguageOptions('en')}
                 </select>
                 <button class="btn btn-icon" id="btn-speak-source" aria-label="${t('translate.speakOriginal')}" title="${t('translate.speakOriginal')}">🔊</button>
               </div>
