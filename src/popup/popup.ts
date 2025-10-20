@@ -2,28 +2,15 @@ import { GeminiService } from '../services/gemini-api';
 import { StorageService } from '../services/storage';
 import { HistoryService } from '../services/history';
 import { FavoritesService } from '../services/favorites';
-import { Summarizer } from '../components/summarizer';
-import { Rephraser } from '../components/rephraser';
-import { Translator } from '../components/translator';
 import { Chat, ChatMessage } from '../components/chat';
 import { ActionType } from '../types';
 import { setLocale } from '../utils/i18n';
-
-// Material Design Utils (будет доступен глобально после загрузки скрипта)
-declare global {
-  interface Window {
-    MaterialDesignUtils: any;
-  }
-}
 
 class PopupApp {
   private readonly geminiService: GeminiService;
   private readonly storageService: StorageService;
   private readonly historyService: HistoryService;
   private readonly favoritesService: FavoritesService;
-  private readonly summarizer: Summarizer;
-  private readonly rephraser: Rephraser;
-  private readonly translator: Translator;
   private readonly chat: Chat;
   private currentTab: string = 'highlight';
   private lastAssistantMessageId: string | null = null;
@@ -36,9 +23,6 @@ class PopupApp {
     
     // Initialize language
     this.initializeLanguage();
-    this.summarizer = new Summarizer(this.geminiService, this.historyService);
-    this.rephraser = new Rephraser(this.geminiService, this.historyService);
-    this.translator = new Translator(this.geminiService, this.historyService);
     this.chat = new Chat(this.geminiService, this.storageService, this.favoritesService);
     
     this.initializeApp().catch(console.error);
@@ -237,10 +221,6 @@ class PopupApp {
     }
   }
 
-  private generateId(): string {
-    return `msg_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
-  }
-
   private async sendMessage(): Promise<void> {
     const chatInput = document.getElementById('chat-input') as HTMLTextAreaElement;
     const sendBtn = document.getElementById('send-btn') as HTMLButtonElement;
@@ -380,27 +360,6 @@ class PopupApp {
         chrome.runtime.openOptionsPage();
       });
     }
-  }
-
-  private async getSelectedTextFromActiveTab(): Promise<string | null> {
-    return new Promise((resolve) => {
-      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        if (tabs[0]?.id) {
-          chrome.tabs.sendMessage(tabs[0].id, { action: ActionType.GET_SELECTED_TEXT }, (response) => {
-            if (chrome.runtime.lastError) {
-              console.error('Error getting selected text:', chrome.runtime.lastError.message);
-              resolve(null);
-            } else if (response?.success) {
-              resolve(response.text);
-            } else {
-              resolve(null);
-            }
-          });
-        } else {
-          resolve(null);
-        }
-      });
-    });
   }
 
   private sendMessageToContentScript(action: string): void {
@@ -726,7 +685,6 @@ class PopupApp {
     }
   }
 }
-
 
 document.addEventListener('DOMContentLoaded', () => {
   (window as any).popupApp = new PopupApp();

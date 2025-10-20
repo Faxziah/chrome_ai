@@ -51,7 +51,6 @@ export class DiscussHandler {
       });
       
       this.updateChatUI();
-      this.clearInput(chatInput);
       
       // Dispatch event для показа кнопки Favorites
       const event = new CustomEvent('resultReady', { 
@@ -101,8 +100,8 @@ export class DiscussHandler {
         <div class="message-header">
           <span class="message-role">${message.role === 'user' ? t('chat.user') : t('chat.ai')}</span>
         </div>
-        <div class="message-content">${message.content}</div>
         <div class="message-time">${new Date(message.timestamp || Date.now()).toLocaleTimeString()}</div>
+        <div class="message-content">${message.content.replace(/\n/g, '<br>')}</div>
       </div>
     `).join('');
 
@@ -147,8 +146,8 @@ export class DiscussHandler {
       const errorMessage = document.createElement('div');
       errorMessage.className = 'chat-message error';
       errorMessage.innerHTML = `
-        <div class="message-content">${message}</div>
         <div class="message-time">${new Date().toLocaleTimeString()}</div>
+        <div class="message-content">${message}</div>
       `;
       chatMessages.appendChild(errorMessage);
       chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -161,8 +160,4 @@ export class DiscussHandler {
     input.disabled = false;
   }
 
-  private clearInput(input: HTMLTextAreaElement): void {
-    input.value = '';
-    input.focus();
-  }
 }

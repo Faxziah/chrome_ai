@@ -157,8 +157,17 @@ export class PopupIntegration {
     if (tabsComponent) {
       tabsComponent.addEventListener('tabChange', () => {
         this.syncFavoriteButtonState();
+        this.setupChatInputListener();
       });
     }
+
+    // Setup chat input listener immediately
+    this.setupChatInputListener();
+    
+    // Listen for popup full mode switch
+    document.addEventListener('popupFullModeSwitched', () => {
+      this.setupChatInputListener();
+    });
   }
 
   private async handleRephraseClick(event: Event): Promise<void> {
@@ -411,7 +420,21 @@ export class PopupIntegration {
         }
       }
 
-      await this.discussHandler.handleSendMessage(chatInput.value);
+      // Получаем выделенный текст
+      const selectedText = this.popupUI.getSelectedText();
+      
+      // Формируем полное сообщение: выделенный текст + вопрос пользователя
+      const fullMessage = selectedText 
+        ? `${selectedText}\n\n${chatInput.value}`
+        : chatInput.value;
+
+      console.log('fullMessage', fullMessage)
+
+      // Очищаем поле ввода после отправки
+      chatInput.value = '';
+
+      await this.discussHandler.handleSendMessage(fullMessage);
+      chatInput.focus();
     } catch (error) {
       if (this.abortController?.signal.aborted) {
         console.log('Chat operation was cancelled');
@@ -808,6 +831,26 @@ export class PopupIntegration {
     if (this.toastTimer) {
       clearTimeout(this.toastTimer);
       this.toastTimer = null;
+    }
+  }
+
+  private setupChatInputListener(): void {
+    const shadowRoot = this.popupUI.getShadowRoot();
+    if (!shadowRoot) return;
+
+    const chatInput = shadowRoot.querySelector('#chat-input') as HTMLTextAreaElement;
+    if (chatInput) {
+      // Remove existing listener to avoid duplicates
+      chatInput.removeEventListener('keydown', this.handleChatInputKeydown);
+      // Add new listener
+      chatInput.addEventListener('keydown', this.handleChatInputKeydown.bind(this));
+    }
+  }
+
+  private async handleChatInputKeydown(event: KeyboardEvent): Promise<void> {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      await this.handleSendChatClick(event);
     }
   }
 }

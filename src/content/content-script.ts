@@ -133,7 +133,7 @@ document.addEventListener('mouseup', (event) => {
 
 document.addEventListener('keyup', (event) => {
   // Обработка завершения выделения с клавиатуры
-  if (event.key === 'Shift' || event.key === 'Control' || event.key === 'Alt' || event.key === 'Meta') {
+  if (event.key === 'Shift' || event.key === 'Control' || event.key === 'Alt' || event.key === 'Meta' || event.key === 'Enter') {
     return;
   }
 

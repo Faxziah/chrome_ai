@@ -68,6 +68,7 @@ export class PopupUI {
       font-size: 14px;
       color: #333;
       border: 1px solid rgba(0,0,0,0.1);
+      max-width: 500px;
     `;
 
     // Load external CSS file
@@ -365,6 +366,9 @@ export class PopupUI {
     // when switching from mini mode to full mode
     
     this.updateSelectedTextDisplay();
+    
+    // Dispatch event for popup integration to setup chat input listener
+    document.dispatchEvent(new CustomEvent('popupFullModeSwitched'));
   }
 
   public getCurrentTab(): { id: string; index: number } {
