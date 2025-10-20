@@ -61,6 +61,12 @@ export class DiscussHandler {
       });
       this.shadowRoot.dispatchEvent(event);
     } catch (error) {
+      if ((error as Error).message?.includes('Could not establish connection') || 
+          (error as Error).message?.includes('Receiving end does not exist') ||
+          (error as Error).message?.includes('ACTION COMPLETED')) {
+        console.log('System message, not showing to user:', (error as Error).message);
+        return;
+      }
       console.error('Discuss error:', error);
       const base = t('errors.summarizeFailed');
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
@@ -92,6 +98,9 @@ export class DiscussHandler {
     const messages = this.chat.getMessages();
     chatMessages.innerHTML = messages.map(message => `
       <div class="chat-message ${message.role}">
+        <div class="message-header">
+          <span class="message-role">${message.role === 'user' ? t('chat.user') : t('chat.ai')}</span>
+        </div>
         <div class="message-content">${message.content}</div>
         <div class="message-time">${new Date(message.timestamp || Date.now()).toLocaleTimeString()}</div>
       </div>

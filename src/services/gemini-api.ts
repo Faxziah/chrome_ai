@@ -1,6 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { ApiConfig, GeminiResponse, StreamChunk } from '../types';
 import { validateApiKey } from './utils';
+import { jsonrepair } from 'jsonrepair'
 
 export class GeminiService {
   private genAI: GoogleGenerativeAI | null = null;
@@ -44,6 +45,8 @@ export class GeminiService {
           maxOutputTokens: config?.maxTokens || 2048,
         }
       });
+
+      console.error('results', result);
       const response = result.response;
       const text = response.text();
 
@@ -57,6 +60,21 @@ export class GeminiService {
       };
     } catch (error: any) {
       console.error('Error generating content:', error);
+      console.error('Error details:', {
+        status: error.status,
+        statusText: error.statusText,
+        message: error.message,
+        response: error.response?.data
+      });
+      
+      // Handle 400 errors for bad request
+      if (error.status === 400 || error.message?.includes('400') || error.message?.includes('Bad Request')) {
+        throw new Error(
+          'Некорректный запрос к API. ' +
+          'Проверьте формат запроса и параметры. ' +
+          `Детали: ${error.message || 'Неизвестная ошибка'}`
+        );
+      }
       
       // Handle 404 errors for model not found
       if (error.message?.includes('404') || error.message?.includes('not found')) {
@@ -95,7 +113,7 @@ export class GeminiService {
       });
 
       const result = await model.generateContentStream({
-        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        contents: [{ parts: [{ text: prompt }] }] as any,
         generationConfig: {
           temperature: config?.temperature || 0.7,
           maxOutputTokens: config?.maxTokens || 2048,
@@ -121,6 +139,21 @@ export class GeminiService {
 
     } catch (error: any) {
       console.error('Error streaming content:', error);
+      console.error('Error details:', {
+        status: error.status,
+        statusText: error.statusText,
+        message: error.message,
+        response: error.response?.data
+      });
+      
+      // Handle 400 errors for bad request
+      if (error.status === 400 || error.message?.includes('400') || error.message?.includes('Bad Request')) {
+        throw new Error(
+          'Некорректный запрос к API. ' +
+          'Проверьте формат запроса и параметры. ' +
+          `Детали: ${error.message || 'Неизвестная ошибка'}`
+        );
+      }
       
       // Проверка на 404 ошибку модели
       if (error.message?.includes('404') || error.message?.includes('not found')) {

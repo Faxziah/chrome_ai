@@ -57,6 +57,15 @@ export class SummarizeHandler {
       await this.saveToHistory(selectedText, result);
     } catch (error) {
       console.error('Summarize error:', error);
+      
+      // Фильтруем системные ошибки
+      if (error instanceof Error && 
+          (error.message.includes('Could not establish connection') ||
+           error.message.includes('Receiving end does not exist') ||
+           error.message.includes('ACTION COMPLETED'))) {
+        return;
+      }
+      
       const base = t('errors.summarizeFailed');
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       const reason = t('errors.withReason', { reason: errorMessage });

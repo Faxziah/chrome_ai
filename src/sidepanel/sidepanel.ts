@@ -259,6 +259,9 @@ class SidePanelApp {
         <div class="item-header">
           <span class="item-type ${item.type}">${this.getTypeLabel(item.type)}</span>
           <div class="item-actions">
+            <button class="action-btn view-btn" data-action="view-item" data-id="${item.id}">
+              ${t('common.view')}
+            </button>
             <button class="action-btn favorite-btn ${item.isFavorite ? 'favorited' : ''}" data-action="toggle-favorite" data-id="${item.id}">
               ⭐
             </button>
@@ -296,6 +299,9 @@ class SidePanelApp {
         <div class="item-header">
           <span class="item-type ${item.type}">${this.getTypeLabel(item.type)}</span>
           <div class="item-actions">
+            <button class="action-btn view-btn" data-action="view-item" data-id="${item.id}">
+              ${t('common.view')}
+            </button>
             <button class="action-btn favorite-btn favorited" data-action="remove-favorite" data-id="${item.id}">
               ⭐
             </button>
@@ -433,6 +439,9 @@ class SidePanelApp {
     event.stopPropagation();
 
     switch (action) {
+      case 'view-item':
+        await this.showItemDetails(itemId, 'history');
+        break;
       case 'toggle-favorite':
         await this.toggleFavorite(itemId);
         break;
@@ -456,6 +465,9 @@ class SidePanelApp {
     event.stopPropagation();
 
     switch (action) {
+      case 'view-item':
+        await this.showItemDetails(itemId, 'favorites');
+        break;
       case 'remove-favorite':
         await this.removeFromFavorites(itemId);
         break;
@@ -522,6 +534,82 @@ class SidePanelApp {
     } catch (error) {
       console.error('Error deleting favorite item:', error);
       this.showStatus(t('common.failedToRemoveFromFavorites'), 'error');
+    }
+  }
+
+  private async showItemDetails(itemId: string, type: 'history' | 'favorites'): Promise<void> {
+    try {
+      let item;
+      if (type === 'history') {
+        const history = await this.historyService.getHistory();
+        item = history.find(h => h.id === itemId);
+      } else {
+        const favorites = await this.favoritesService.getFavorites();
+        item = favorites.find(f => f.id === itemId);
+      }
+
+      if (!item) {
+        this.showStatus(t('common.itemNotFound'), 'error');
+        return;
+      }
+
+      // Create modal overlay
+      const modal = document.createElement('div');
+      modal.className = 'modal-overlay';
+      modal.innerHTML = `
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3>${t('common.view')} - ${this.getTypeLabel(item.type)}</h3>
+            <button class="modal-close" aria-label="Close">✕</button>
+          </div>
+          <div class="modal-body">
+            <div class="detail-section">
+              <h4>${t('common.originalText')}</h4>
+              <div class="detail-content">${this.escapeHtml(item.prompt)}</div>
+            </div>
+            <div class="detail-section">
+              <h4>${t('common.result')}</h4>
+              <div class="detail-content">${this.escapeHtml(item.response)}</div>
+            </div>
+            <div class="detail-section">
+              <h4>${t('common.metadata')}</h4>
+              <div class="detail-meta">
+                <p><strong>${t('common.type')}:</strong> ${this.getTypeLabel(item.type)}</p>
+                <p><strong>${t('common.timestamp')}:</strong> ${new Date(item.timestamp).toLocaleString()}</p>
+                <p><strong>${t('common.id')}:</strong> ${item.id}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.body.appendChild(modal);
+
+      // Add event listeners
+      const closeBtn = modal.querySelector('.modal-close');
+      const overlay = modal.querySelector('.modal-overlay');
+      
+      const closeModal = () => {
+        document.body.removeChild(modal);
+      };
+
+      closeBtn?.addEventListener('click', closeModal);
+      overlay?.addEventListener('click', (e) => {
+        if (e.target === overlay) closeModal();
+      });
+
+      // Close on Escape
+      const handleEscape = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          closeModal();
+          document.removeEventListener('keydown', handleEscape);
+        }
+      };
+      document.addEventListener('keydown', handleEscape);
+
+    } catch (error) {
+      console.error('Error showing item details:', error);
+      this.showStatus(t('common.errorLoadingDetails'), 'error');
     }
   }
 }

@@ -99,14 +99,17 @@ export class Tabs {
             <button class="btn btn-primary" id="btn-summarize">${t('common.resume')}</button>
             <div class="result-container" id="summary-result" hidden>
               <div class="result-text" id="summary-text"></div>
+              <div class="result-actions">
+                <button class="btn btn-secondary" id="btn-copy-summary">${t('common.copy')}</button>
+                <button class="btn btn-favorite" id="btn-favorite-toggle-${tabId}" data-is-favorite="false" style="display:none;">${t('common.addToFavorites')}</button>
+              </div>
             </div>
             <div class="api-key-error-template" id="api-key-error-summarize" style="display: none;">
               <div class="api-key-error">
                 <p>${t('api.missingKey')}</p>
-                <p><a href="http://aistudio.google.com/app/api-keys?hl=ru" target="_blank" rel="noopener noreferrer">${t('api.visitStudio')}</a> ${t('api.createApiKey')}</p>
+                <p><a href="http://aistudio.google.com/app/api-keys?hl=ru" target="_blank" rel="noopener noreferrer">${t('api.visitStudio')}</a>${t('api.createApiKey')}</p>
               </div>
             </div>
-            <button class="btn btn-secondary" id="btn-favorite-toggle-${tabId}" data-is-favorite="false" style="display:none;">${t('common.addToFavorites')}</button>
           </div>
         `;
 
@@ -121,7 +124,7 @@ export class Tabs {
                 <button class="btn btn-icon" id="btn-send-chat" aria-label="${t('chat.sendMessage')}">➤</button>
               </div>
             </div>
-            <button class="btn btn-secondary" id="btn-favorite-toggle-${tabId}" data-is-favorite="false" style="display:none;">${t('common.addToFavorites')}</button>
+            <button class="btn btn-favorite" id="btn-favorite-toggle-${tabId}" data-is-favorite="false" style="display:none;">${t('common.addToFavorites')}</button>
             <div class="api-key-error-template" id="api-key-error-discuss" style="display: none;">
               <div class="api-key-error">
                 <p>${t('api.missingKey')}</p>
@@ -148,15 +151,17 @@ export class Tabs {
             <button class="btn btn-primary" id="btn-rephrase">${t('common.rephrase')}</button>
             <div class="result-container" id="rephrase-result" hidden>
               <div class="result-text" id="rephrase-text"></div>
-              <button class="btn btn-secondary" id="btn-copy-rephrase">${t('common.copy')}</button>
+              <div class="result-actions">
+                <button class="btn btn-secondary" id="btn-copy-rephrase">${t('common.copy')}</button>
+                <button class="btn btn-favorite" id="btn-favorite-toggle-${tabId}" data-is-favorite="false" style="display:none;">${t('common.addToFavorites')}</button>
+              </div>
             </div>
             <div class="api-key-error-template" id="api-key-error-rephrase" style="display: none;">
               <div class="api-key-error">
                 <p>${t('api.missingKey')}</p>
-                <p><a href="http://aistudio.google.com/app/api-keys?hl=ru" target="_blank" rel="noopener noreferrer">${t('api.visitStudio')}</a> ${t('api.createApiKey')}</p>
+                <p><a href="http://aistudio.google.com/app/api-keys?hl=ru" target="_blank" rel="noopener noreferrer">${t('api.visitStudio')}</a>${t('api.createApiKey')}</p>
               </div>
             </div>
-            <button class="btn btn-secondary" id="btn-favorite-toggle-${tabId}" data-is-favorite="false" style="display:none;">${t('common.addToFavorites')}</button>
           </div>
         `;
 
@@ -322,15 +327,17 @@ export class Tabs {
                 </div>
               </div>
               <div class="result-text" id="translate-text"></div>
-              <button class="btn btn-secondary" id="btn-copy-translate">${t('common.copy')}</button>
+              <div class="result-actions">
+                <button class="btn btn-secondary" id="btn-copy-translate">${t('common.copy')}</button>
+                <button class="btn btn-favorite" id="btn-favorite-toggle-${tabId}" data-is-favorite="false" style="display:none;">${t('common.addToFavorites')}</button>
+              </div>
             </div>
             <div class="api-key-error-template" id="api-key-error-translate" style="display: none;">
               <div class="api-key-error">
                 <p>${t('api.missingKey')}</p>
-                <p><a href="http://aistudio.google.com/app/api-keys?hl=ru" target="_blank" rel="noopener noreferrer">${t('api.visitStudio')}</a> ${t('api.createApiKey')}</p>
+                <p><a href="http://aistudio.google.com/app/api-keys?hl=ru" target="_blank" rel="noopener noreferrer">${t('api.visitStudio')}</a>${t('api.createApiKey')}</p>
               </div>
             </div>
-            <button class="btn btn-secondary" id="btn-favorite-toggle-${tabId}" data-is-favorite="false" style="display:none;">${t('common.addToFavorites')}</button>
           </div>
         `;
 

@@ -111,7 +111,8 @@ body {
   align-items: center;
   justify-content: center;
   gap: var(--md-spacing-sm);
-  padding: 10px 16px;
+  padding: 8px 12px;
+  height: 36px;
   border: none;
   border-radius: var(--md-radius-small);
   font-family: var(--md-font-family), sans-serif;
@@ -170,7 +171,6 @@ body {
   background-color: transparent;
   color: var(--md-primary);
   border: 1px solid var(--md-primary);
-  height: 36px;
   line-height: 1;
 }
 
@@ -183,7 +183,6 @@ body {
   background-color: transparent;
   color: var(--md-primary);
   border: 1px solid var(--md-primary);
-  height: 36px;
   line-height: 1;
 }
 
@@ -195,7 +194,6 @@ body {
 .md-button--danger {
   background-color: var(--md-error);
   color: white;
-  height: 36px;
   line-height: 1;
 }
 

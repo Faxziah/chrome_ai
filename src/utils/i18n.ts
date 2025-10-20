@@ -12,6 +12,15 @@ const translations: LocaleData = {
     'common.addToFavorites': '★ Add to Favorites',
     'common.removeFromFavorites': '★ Remove from Favorites',
     'common.copy': '📋 Copy',
+    'common.view': 'View',
+    'common.originalText': 'Original Text',
+    'common.result': 'Result',
+    'common.metadata': 'Metadata',
+    'common.type': 'Type',
+    'common.timestamp': 'Timestamp',
+    'common.id': 'ID',
+    'common.itemNotFound': 'Item not found',
+    'common.errorLoadingDetails': 'Error loading details',
     'common.translate': 'Translate',
     'common.summarize': 'Summarize',
     'common.rephrase': 'Rephrase',
@@ -104,6 +113,8 @@ const translations: LocaleData = {
     // Chat
     'chat.placeholder': 'Ask about this text...',
     'chat.sendMessage': 'Send message',
+    'chat.user': 'User',
+    'chat.ai': 'AI',
     
     // Options page
     'options.title': 'AI Text Tools - Settings',
@@ -126,7 +137,7 @@ const translations: LocaleData = {
     'options.resetToDefault': 'Reset to default',
     'options.keyboardShortcuts': '⌨️ Keyboard Shortcuts',
     'options.currentShortcuts': 'Current keyboard shortcuts:',
-    'options.highlightKeywords': 'Highlight keywords:',
+    'options.highlightKeywords': 'Highlight key sentences:',
     'options.clearHighlight': 'Clear highlight:',
     'options.changeShortcuts': 'Change shortcuts',
     'options.dataManagement': '📊 Data Management',
@@ -225,6 +236,15 @@ const translations: LocaleData = {
     'common.addToFavorites': '★ Добавить в избранное',
     'common.removeFromFavorites': '★ Убрать из избранного',
     'common.copy': '📋 Копировать',
+    'common.view': 'Просмотр',
+    'common.originalText': 'Исходный текст',
+    'common.result': 'Результат',
+    'common.metadata': 'Метаданные',
+    'common.type': 'Тип',
+    'common.timestamp': 'Время',
+    'common.id': 'ID',
+    'common.itemNotFound': 'Элемент не найден',
+    'common.errorLoadingDetails': 'Ошибка загрузки деталей',
     'common.translate': 'Перевести',
     'common.summarize': 'Резюмировать',
     'common.rephrase': 'Перефразировать',
@@ -261,7 +281,7 @@ const translations: LocaleData = {
     
     // Side Panel
     'sidepanel.title': 'AI Text Tools',
-    'sidepanel.highlightKeywords': 'Подсветить ключевые слова',
+    'sidepanel.highlightKeywords': 'Подсветить ключевые предложения',
     'sidepanel.historyTitle': 'История операций',
     'sidepanel.favoritesTitle': 'Избранное',
     'sidepanel.allTypes': 'Все типы',
@@ -294,7 +314,7 @@ const translations: LocaleData = {
     'errors.highlightParsingFailed': 'Не удалось разобрать ответ ИИ',
     'errors.noTextFound': 'На странице не найдено текста для подсветки',
     'errors.noKeywordsFound': 'Не найдено ключевых слов для подсветки',
-    'errors.emptyResponse': 'Пустой ответ от ИИ',
+    'errors.emptyResponse': 'Некорректный ответ от ИИ',
     'errors.noValidJson': 'Не найден корректный JSON в ответе',
     'errors.withReason': 'Причина: {{reason}}',
     
@@ -317,6 +337,8 @@ const translations: LocaleData = {
     // Chat
     'chat.placeholder': 'Спросите об этом тексте...',
     'chat.sendMessage': 'Отправить сообщение',
+    'chat.user': 'Пользователь',
+    'chat.ai': 'ИИ',
     
     // Options page
     'options.title': 'AI Text Tools - Настройки',
@@ -339,7 +361,7 @@ const translations: LocaleData = {
     'options.resetToDefault': 'Сбросить к умолчанию',
     'options.keyboardShortcuts': '⌨️ Горячие клавиши',
     'options.currentShortcuts': 'Текущие сочетания клавиш:',
-    'options.highlightKeywords': 'Подсветка ключевых слов:',
+    'options.highlightKeywords': 'Подсветка ключевых предложений:',
     'options.clearHighlight': 'Очистить подсветку:',
     'options.changeShortcuts': 'Изменить сочетания',
     'options.dataManagement': '📊 Управление данными',
@@ -438,6 +460,7 @@ const translations: LocaleData = {
     'common.addToFavorites': '★ Zu Favoriten hinzufügen',
     'common.removeFromFavorites': '★ Aus Favoriten entfernen',
     'common.copy': '📋 Kopieren',
+    'common.view': 'Anzeigen',
     'common.translate': 'Übersetzen',
     'common.summarize': 'Zusammenfassen',
     'common.rephrase': 'Umschreiben',
@@ -467,7 +490,7 @@ const translations: LocaleData = {
     
     // Side Panel
     'sidepanel.title': 'AI Text Tools',
-    'sidepanel.highlightKeywords': 'Schlüsselwörter hervorheben',
+    'sidepanel.highlightKeywords': 'Schlüsselsätze hervorheben',
     'sidepanel.historyTitle': 'Vorgangsverlauf',
     'sidepanel.favoritesTitle': 'Favoriten',
     'sidepanel.allTypes': 'Alle Typen',
@@ -505,6 +528,8 @@ const translations: LocaleData = {
     // Chat
     'chat.placeholder': 'Fragen Sie über diesen Text...',
     'chat.sendMessage': 'Nachricht senden',
+    'chat.user': 'Benutzer',
+    'chat.ai': 'KI',
     
     // Options page
     'options.title': 'AI Text Tools - Einstellungen',
@@ -527,7 +552,7 @@ const translations: LocaleData = {
     'options.resetToDefault': 'Auf Standard zurücksetzen',
     'options.keyboardShortcuts': '⌨️ Tastenkürzel',
     'options.currentShortcuts': 'Aktuelle Tastenkürzel:',
-    'options.highlightKeywords': 'Schlüsselwörter hervorheben:',
+    'options.highlightKeywords': 'Schlüsselsätze hervorheben:',
     'options.clearHighlight': 'Hervorhebung löschen:',
     'options.changeShortcuts': 'Tastenkürzel ändern',
     'options.dataManagement': '📊 Datenverwaltung',
@@ -626,6 +651,7 @@ const translations: LocaleData = {
     'common.addToFavorites': '★ Ajouter aux favoris',
     'common.removeFromFavorites': '★ Retirer des favoris',
     'common.copy': '📋 Copier',
+    'common.view': 'Voir',
     'common.translate': 'Traduire',
     'common.summarize': 'Résumer',
     'common.rephrase': 'Reformuler',
@@ -655,7 +681,7 @@ const translations: LocaleData = {
     
     // Side Panel
     'sidepanel.title': 'AI Text Tools',
-    'sidepanel.highlightKeywords': 'Surligner les mots-clés',
+    'sidepanel.highlightKeywords': 'Surligner les phrases clés',
     'sidepanel.historyTitle': 'Historique des opérations',
     'sidepanel.favoritesTitle': 'Favoris',
     'sidepanel.allTypes': 'Tous les types',
@@ -693,6 +719,8 @@ const translations: LocaleData = {
     // Chat
     'chat.placeholder': 'Posez des questions sur ce texte...',
     'chat.sendMessage': 'Envoyer le message',
+    'chat.user': 'Utilisateur',
+    'chat.ai': 'IA',
     
     // Options page
     'options.title': 'AI Text Tools - Paramètres',
@@ -715,7 +743,7 @@ const translations: LocaleData = {
     'options.resetToDefault': 'Réinitialiser par défaut',
     'options.keyboardShortcuts': '⌨️ Raccourcis clavier',
     'options.currentShortcuts': 'Raccourcis clavier actuels :',
-    'options.highlightKeywords': 'Surligner les mots-clés :',
+    'options.highlightKeywords': 'Surligner les phrases clés :',
     'options.clearHighlight': 'Effacer le surlignage :',
     'options.changeShortcuts': 'Modifier les raccourcis',
     'options.dataManagement': '📊 Gestion des données',
@@ -814,6 +842,7 @@ const translations: LocaleData = {
     'common.addToFavorites': '★ 添加到收藏夹',
     'common.removeFromFavorites': '★ 从收藏夹移除',
     'common.copy': '📋 复制',
+    'common.view': '查看',
     'common.translate': '翻译',
     'common.summarize': '总结',
     'common.rephrase': '改写',
@@ -843,7 +872,7 @@ const translations: LocaleData = {
     
     // Side Panel
     'sidepanel.title': 'AI文本工具',
-    'sidepanel.highlightKeywords': '高亮关键词',
+    'sidepanel.highlightKeywords': '高亮关键句子',
     'sidepanel.historyTitle': '操作历史',
     'sidepanel.favoritesTitle': '收藏夹',
     'sidepanel.allTypes': '所有类型',
@@ -881,6 +910,8 @@ const translations: LocaleData = {
     // Chat
     'chat.placeholder': '询问关于此文本的问题...',
     'chat.sendMessage': '发送消息',
+    'chat.user': '用户',
+    'chat.ai': 'AI',
     
     // Options page
     'options.title': 'AI文本工具 - 设置',
@@ -903,7 +934,7 @@ const translations: LocaleData = {
     'options.resetToDefault': '重置为默认',
     'options.keyboardShortcuts': '⌨️ 键盘快捷键',
     'options.currentShortcuts': '当前键盘快捷键：',
-    'options.highlightKeywords': '高亮关键词：',
+    'options.highlightKeywords': '高亮关键句子：',
     'options.clearHighlight': '清除高亮：',
     'options.changeShortcuts': '更改快捷键',
     'options.dataManagement': '📊 数据管理',

@@ -133,7 +133,7 @@ export class HighlightManager {
     try {
       // Load saved API configuration
       const apiConfig = await this.storageService.getApiConfig();
-      
+      console.error('test', 123)
       const response = await this.geminiService.generateContent(prompt, {
         model: apiConfig?.model || 'gemini-2.5-flash',
         temperature: apiConfig?.temperature || 0.7,
@@ -143,31 +143,14 @@ export class HighlightManager {
       if (!response.text || response.text.trim() === '') {
         throw new Error(t('errors.emptyResponse'));
       }
-      
-      const jsonMatch = response.text.match(/```json\s*([\s\S]*?)```/) || response.text.match(/\{[\s\S]*\}/);
-      
-      if (jsonMatch) {
-        let jsonString = jsonMatch[1] || jsonMatch[0];
-        
-        try {
-          // Попытка парсинга как есть
-          const data = JSON.parse(jsonString);
-          return { sentences: data.sentences || [] };
-        } catch (error) {
-          console.log('JSON parse failed, attempting repair...');
-          try {
-            // Используем jsonrepair для исправления
-            const repairedJson = jsonrepair(jsonString);
-            const data = JSON.parse(repairedJson);
-            return { sentences: data.sentences || [] };
-          } catch (repairError) {
-            console.error('JSON repair failed:', repairError);
-            throw new Error(t('errors.highlightParsingFailed'));
-          }
-        }
-      } else {
-        throw new Error(t('errors.noValidJson'));
-      }
+
+      console.error('response', response)
+      const parsedTextRegExpMatchArray: RegExpMatchArray | null = response.text.match(/```json\s*([\s\S]*?)\s*```/);
+      const parsedText = parsedTextRegExpMatchArray ? parsedTextRegExpMatchArray[1].trim() : '';
+      const data: any = jsonrepair(parsedText)
+
+      return { sentences: data.sentences || [] }
+
     } catch (error) {
       console.error('Error parsing Gemini response:', error);
       throw error;

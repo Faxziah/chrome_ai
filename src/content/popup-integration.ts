@@ -113,6 +113,8 @@ export class PopupIntegration {
         await this.handleCopyClick(event, 'translate');
       } else if (buttonId === 'btn-summarize') {
         await this.handleSummarizeClick(event);
+      } else if (buttonId === 'btn-copy-summary') {
+        await this.handleCopyClick(event, 'summary');
       } else if (buttonId.startsWith('btn-favorite-toggle-')) {
         await this.handleFavoriteToggleClick(event);
       } else if (buttonId === 'btn-send-chat') {
@@ -200,6 +202,12 @@ export class PopupIntegration {
         console.log('Rephrase operation was cancelled');
         return;
       }
+      if ((error as Error).message?.includes('Could not establish connection') || 
+          (error as Error).message?.includes('Receiving end does not exist') ||
+          (error as Error).message?.includes('ACTION COMPLETED')) {
+        console.log('System message, not showing to user:', (error as Error).message);
+        return;
+      }
       console.error('Rephrase error:', error);
       if (error instanceof Error && error.message === 'MODEL_NOT_AVAILABLE') {
         this.showModelUnavailableError('rephrase-text');
@@ -211,14 +219,14 @@ export class PopupIntegration {
   }
 
 
-  private async handleCopyClick(event: Event, type: 'rephrase' | 'translate'): Promise<void> {
+  private async handleCopyClick(event: Event, type: 'rephrase' | 'translate' | 'summary'): Promise<void> {
     event.preventDefault();
     event.stopPropagation();
 
     const shadowRoot = this.popupUI.getShadowRoot();
     if (!shadowRoot) return;
 
-    const resultElementId = type === 'rephrase' ? 'rephrase-text' : 'translate-text';
+    const resultElementId = type === 'summary' ? 'summary-text' : (type === 'rephrase' ? 'rephrase-text' : 'translate-text');
     await ClipboardHandler.handleCopyClick(event, shadowRoot, resultElementId);
   }
 
@@ -262,6 +270,12 @@ export class PopupIntegration {
     } catch (error) {
       if (this.abortController?.signal.aborted) {
         console.log('Translation operation was cancelled');
+        return;
+      }
+      if ((error as Error).message?.includes('Could not establish connection') || 
+          (error as Error).message?.includes('Receiving end does not exist') ||
+          (error as Error).message?.includes('ACTION COMPLETED')) {
+        console.log('System message, not showing to user:', (error as Error).message);
         return;
       }
       console.error('Translation error:', error);
@@ -351,6 +365,12 @@ export class PopupIntegration {
         console.log('Summarize operation was cancelled');
         return;
       }
+      if ((error as Error).message?.includes('Could not establish connection') || 
+          (error as Error).message?.includes('Receiving end does not exist') ||
+          (error as Error).message?.includes('ACTION COMPLETED')) {
+        console.log('System message, not showing to user:', (error as Error).message);
+        return;
+      }
       console.error('Summarize error:', error);
       if (error instanceof Error && error.message === 'MODEL_NOT_AVAILABLE') {
         this.showModelUnavailableError('summary-text');
@@ -395,6 +415,12 @@ export class PopupIntegration {
     } catch (error) {
       if (this.abortController?.signal.aborted) {
         console.log('Chat operation was cancelled');
+        return;
+      }
+      if ((error as Error).message?.includes('Could not establish connection') || 
+          (error as Error).message?.includes('Receiving end does not exist') ||
+          (error as Error).message?.includes('ACTION COMPLETED')) {
+        console.log('System message, not showing to user:', (error as Error).message);
         return;
       }
       console.error('Chat error:', error);
@@ -560,11 +586,12 @@ export class PopupIntegration {
   private updateFavoriteButtonState(button: HTMLElement, isFavorite: boolean): void {
     if (isFavorite) {
       button.textContent = t('common.removeFromFavorites');
-      button.className = 'btn btn-secondary favorite-active';
+      button.classList.remove('favorite-active');
+      button.classList.add('favorite-active');
       button.dataset.isFavorite = 'true';
     } else {
       button.textContent = t('common.addToFavorites');
-      button.className = 'btn btn-secondary';
+      button.classList.remove('favorite-active');
       button.dataset.isFavorite = 'false';
       button.dataset.sourceId = '';
     }

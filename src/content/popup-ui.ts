@@ -16,6 +16,8 @@ export class PopupUI {
   private dragStartY: number = 0;
   private popupStartX: number = 0;
   private popupStartY: number = 0;
+  private currentPosition: { x: number; y: number } | null = null;
+  private wasManuallyPositioned: boolean = false;
 
   constructor() {
     this.createPopupStructure();
@@ -94,6 +96,8 @@ export class PopupUI {
   public async show(selectedText: string, selectionRect: DOMRect): Promise<void> {
     this.selectedText = selectedText;
     this.isVisible = true;
+    this.wasManuallyPositioned = false;
+    this.currentPosition = null;
     
     // Initialize tabs if not already created
     if (!this.tabsComponent) {
@@ -158,6 +162,11 @@ export class PopupUI {
 
   public updatePosition(selectionRect: DOMRect): void {
     if (!this.popupContainer) return;
+
+    if (this.wasManuallyPositioned && this.currentPosition) {
+      this.popupContainer.style.transform = `translate(${this.currentPosition.x}px, ${this.currentPosition.y}px)`;
+      return;
+    }
 
     const visualViewport = window.visualViewport || {
       width: window.innerWidth,
@@ -225,22 +234,6 @@ export class PopupUI {
     document.addEventListener('pointerdown', (event) => {
       const path = event.composedPath();
       const clickedInside = path.some(el => el === this.popupContainer || (el instanceof HTMLElement && this.popupContainer?.contains(el)));
-      
-      // Исключения для интерактивных элементов
-      const target = event.target as HTMLElement;
-      const isInteractiveElement = target && (
-        target.tagName === 'TEXTAREA' ||
-        target.tagName === 'INPUT' ||
-        target.tagName === 'BUTTON' ||
-        target.tagName === 'SELECT' ||
-        target.closest('button') ||
-        target.closest('textarea') ||
-        target.closest('input') ||
-        target.closest('select') ||
-        target.closest('.chat-input') ||
-        target.closest('.chat-messages') ||
-        target.hasAttribute('contenteditable')
-      );
       
       if (!clickedInside && !this.isPinned) {
         this.hide();
@@ -366,8 +359,9 @@ export class PopupUI {
       this.popupContainer.style.width = 'auto';
     }
     
+    const miniHeaderHtml = this.renderMiniHeader();
     const tabsHtml = this.tabsComponent.renderMiniMode();
-    this.setContent(tabsHtml);
+    this.setContent(miniHeaderHtml + tabsHtml);
     
     // Re-attach event listeners for mini mode
     this.tabsComponent.attachEventListeners(this.shadowRoot!);
@@ -393,7 +387,6 @@ export class PopupUI {
   private renderPopupHeader(): string {
     return `
       <div class="popup-header" id="popup-header">
-        <div class="popup-header-title">AI Text Tools</div>
         <div class="popup-header-controls">
           <button class="header-btn drag-handle" id="btn-drag-handle" title="${t('common.drag')}" aria-label="Drag popup">⋮⋮</button>
           <button class="header-btn pin-btn" id="btn-pin" title="${t('common.pin')}" aria-label="Pin popup">📌</button>
@@ -474,10 +467,12 @@ export class PopupUI {
         newY = Math.max(minY, Math.min(newY, maxY));
         
         this.popupContainer!.style.transform = `translate(${newX}px, ${newY}px)`;
+        this.currentPosition = { x: newX, y: newY };
       };
       
       const handleMouseUp = () => {
         this.isDragging = false;
+        this.wasManuallyPositioned = true;
         this.popupContainer!.classList.remove('popup-dragging');
         // Restore original transition
         this.popupContainer!.style.transition = originalTransition;
@@ -499,5 +494,15 @@ export class PopupUI {
     this.shadowRoot = null;
     this.popupContainer = null;
     this.tabsComponent = null;
+  }
+
+  private renderMiniHeader(): string {
+    return `
+      <div class="mini-header">
+        <button class="mini-header-btn" id="btn-mini-drag" title="${t('common.drag')}">⋮⋮</button>
+        <button class="mini-header-btn" id="btn-mini-pin" title="${t('common.pin')}">📌</button>
+        <button class="mini-header-btn" id="btn-mini-close" title="${t('common.close')}">✕</button>
+      </div>
+    `;
   }
 }
