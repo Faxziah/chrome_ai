@@ -45,13 +45,17 @@ function showPopupIfTextSelected(): void {
   }
   
   if (!isValidSelection(selectedText, 1)) {
-    popupUI.hide();
+    if (!popupUI.getIsPinned()) {
+      popupUI.hide();
+    }
     return;
   }
 
   const selectionRect = getSelectionRect();
   if (!selectionRect) {
-    popupUI.hide();
+    if (!popupUI.getIsPinned()) {
+      popupUI.hide();
+    }
     return;
   }
 
@@ -73,7 +77,9 @@ function schedulePositionUpdate(): void {
     
     const freshSelectionRect = getSelectionRect();
     if (!freshSelectionRect) {
-      popupUI.hide();
+      if (!popupUI.getIsPinned()) {
+        popupUI.hide();
+      }
       lastSelectionRect = null;
       positionUpdateScheduled = false;
       return;

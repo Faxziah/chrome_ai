@@ -68,7 +68,6 @@ export class PopupUI {
       font-size: 14px;
       color: #333;
       border: 1px solid rgba(0,0,0,0.1);
-      transition: opacity 0.2s ease, transform 0.2s ease;
     `;
 
     // Load external CSS file
@@ -147,17 +146,19 @@ export class PopupUI {
   }
 
   public hide(): void {
-    this.isVisible = false;
-    this.recentlyClosed = true;
-    setTimeout(() => {
-      this.recentlyClosed = false;
-    }, 200);
+
+    console.log(222)
     if (this.popupContainer) {
       this.popupContainer.style.opacity = '0';
       this.popupContainer.style.visibility = 'hidden';
       this.popupContainer.style.transform = '';
     }
+
+    this.isVisible = false;
+    this.recentlyClosed = false;
+
     this.cleanupEventListeners();
+    console.log(333)
 
     document.dispatchEvent(new CustomEvent('popupHidden'));
   }
@@ -243,7 +244,13 @@ export class PopupUI {
       const target = event.target as HTMLElement;
       const isInteractive = target.closest('button, input, textarea, select');
 
+      console.log('path', path)
+      console.log('clickedInside', clickedInside)
+      console.log('target', target)
+      console.log('isInteractive', isInteractive)
+      console.log('this.isPinned', this.isPinned)
       if (!clickedInside && !this.isPinned && !isInteractive) {
+        console.log('hide')
         this.hide();
       }
     }, { capture: true, signal: this.abortController.signal });
@@ -309,6 +316,10 @@ export class PopupUI {
     return this.shadowRoot;
   }
 
+  public getIsPinned(): boolean {
+    return this.isPinned;
+  }
+
   public triggerAction(action: string): void {
     if (this.tabsComponent) {
       // Switch to the appropriate tab and trigger the action
@@ -354,36 +365,6 @@ export class PopupUI {
     // when switching from mini mode to full mode
     
     this.updateSelectedTextDisplay();
-  }
-
-  public switchToMiniMode(): void {
-    if (this.mode === 'mini' || !this.tabsComponent) return;
-    
-    this.mode = 'mini';
-    
-    // Set compact size for mini mode
-    if (this.popupContainer) {
-      this.popupContainer.style.minWidth = 'unset';
-      this.popupContainer.style.width = 'auto';
-    }
-    
-    const miniHeaderHtml = this.renderMiniHeader();
-    const tabsHtml = this.tabsComponent.renderMiniMode();
-    this.setContent(miniHeaderHtml + tabsHtml);
-    
-    // Re-attach event listeners for mini mode
-    this.tabsComponent.attachEventListeners(this.shadowRoot!);
-    this.setupMiniModeDragAndDrop();
-
-    // Keep current tab active
-    const currentTab = this.tabsComponent.getCurrentTab();
-    this.tabsComponent.setTab(currentTab.id);
-    
-    this.updateSelectedTextDisplay();
-  }
-
-  public getMode(): 'mini' | 'full' {
-    return this.mode;
   }
 
   public getCurrentTab(): { id: string; index: number } {
@@ -432,7 +413,6 @@ export class PopupUI {
     
     // Drag handlers - use drag handle instead of entire header
     dragHandle.addEventListener('mousedown', (e) => {
-      if (this.isPinned) return;
       
       this.isDragging = true;
       this.dragStartX = e.clientX;
@@ -532,8 +512,7 @@ export class PopupUI {
 
     // Drag handlers
     dragBtn.addEventListener('mousedown', (e) => {
-      if (this.isPinned) return;
-
+      
       this.isDragging = true;
       this.dragStartX = e.clientX;
       this.dragStartY = e.clientY;
@@ -593,15 +572,5 @@ export class PopupUI {
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
     });
-  }
-
-  private renderMiniHeader(): string {
-    return `
-      <div class="mini-header">
-        <button class="mini-header-btn" id="btn-mini-drag" title="${t('common.drag')}">⋮⋮</button>
-        <button class="mini-header-btn" id="btn-mini-pin" title="${t('common.pin')}">📌</button>
-        <button class="mini-header-btn" id="btn-mini-close" title="${t('common.close')}">✕</button>
-      </div>
-    `;
   }
 }
