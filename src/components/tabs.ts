@@ -100,7 +100,7 @@ export class Tabs {
             <div class="result-container" id="summary-result" hidden>
               <div class="result-text" id="summary-text"></div>
               <div class="result-actions">
-                <button class="btn btn-secondary" id="btn-copy-summary">${t('common.copy')}</button>
+                <button class="btn btn-secondary" id="btn-copy-summary" style="display:none;">${t('common.copy')}</button>
                 <button class="btn btn-favorite" id="btn-favorite-toggle-${tabId}" data-is-favorite="false" style="display:none;">${t('common.addToFavorites')}</button>
               </div>
             </div>
@@ -151,7 +151,7 @@ export class Tabs {
             <div class="result-container" id="rephrase-result" hidden>
               <div class="result-text" id="rephrase-text"></div>
               <div class="result-actions">
-                <button class="btn btn-secondary" id="btn-copy-rephrase">${t('common.copy')}</button>
+                <button class="btn btn-secondary" id="btn-copy-rephrase" style="display:none;">${t('common.copy')}</button>
                 <button class="btn btn-favorite" id="btn-favorite-toggle-${tabId}" data-is-favorite="false" style="display:none;">${t('common.addToFavorites')}</button>
               </div>
             </div>
@@ -324,7 +324,7 @@ export class Tabs {
               </div>
               <div class="result-text" id="translate-text"></div>
               <div class="result-actions">
-                <button class="btn btn-secondary" id="btn-copy-translate">${t('common.copy')}</button>
+                <button class="btn btn-secondary" id="btn-copy-translate" style="display:none;">${t('common.copy')}</button>
                 <button class="btn btn-favorite" id="btn-favorite-toggle-${tabId}" data-is-favorite="false" style="display:none;">${t('common.addToFavorites')}</button>
               </div>
             </div>

@@ -721,10 +721,16 @@ export class PopupIntegration {
     if (!shadowRoot) return;
     
     const currentTab = this.popupUI.getCurrentTab();
-    const button = shadowRoot.querySelector(`#btn-favorite-toggle-${currentTab.id}`) as HTMLElement;
-    if (button) {
-      button.classList.add('show');
-      button.style.display = 'inline-flex';
+    const favoriteButton = shadowRoot.querySelector(`#btn-favorite-toggle-${currentTab.id}`) as HTMLElement;
+    const copyButton = shadowRoot.querySelector(`#btn-copy-${currentTab.id}`) as HTMLElement;
+    
+    if (favoriteButton) {
+      favoriteButton.classList.add('show');
+      favoriteButton.style.display = 'inline-flex';
+    }
+    
+    if (copyButton) {
+      copyButton.style.display = 'inline-flex';
     }
   }
 
