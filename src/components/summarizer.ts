@@ -69,7 +69,7 @@ ${text}
     const originalLength = text.length;
     const maxLength = config?.maxLength || Math.max(100, Math.floor(originalLength * 0.3));
     const style = config?.style || 'brief';
-    const language = config?.language || 'Russian';
+    const language = config?.language || 'English';
 
     const prompt = this.buildPrompt(text, maxLength, style, language);
 
@@ -111,7 +111,7 @@ ${text}
           text,
           {
             style: config?.style || 'brief',
-            language: config?.language || 'Russian',
+            language: config?.language || 'English',
             maxLength: config?.maxLength,
             compressionRatio
           }

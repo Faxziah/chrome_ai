@@ -245,10 +245,10 @@ export class StorageService {
   async getLanguage(): Promise<string | null> {
     try {
       const result = await chrome.storage.local.get(StorageService.STORAGE_KEYS.LANGUAGE);
-      return result[StorageService.STORAGE_KEYS.LANGUAGE] || 'ru';
+      return result[StorageService.STORAGE_KEYS.LANGUAGE] || 'en';
     } catch (error) {
       console.error('Error getting language:', error);
-      return 'ru';
+      return 'en';
     }
   }
 

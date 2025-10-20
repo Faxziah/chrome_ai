@@ -51,6 +51,9 @@ class SidePanelApp {
         this.hideApiWarning();
       } else {
         this.showApiWarning();
+        // Setup API warning handlers when showing the warning
+        this.setupApiWarningHandlers();
+        this.localizeElements();
         return;
       }
 
@@ -202,16 +205,22 @@ class SidePanelApp {
         }
 
         try {
-          await this.storageService.setApiKey(apiKey);
-          this.showStatus('API key saved successfully!', 'success');
-          this.hideApiWarning();
-          // Reload the app to show the main interface
-          setTimeout(() => {
-            this.initializeApp();
-          }, 1000);
+          const success = await this.storageService.setApiKey(apiKey);
+
+          if (success) {
+            this.showStatus('API key saved successfully!', 'success');
+            this.hideApiWarning();
+            // Reload the app to show the main interface
+            setTimeout(() => {
+              this.initializeApp();
+            }, 1000);
+          } else {
+            this.showStatus('Failed to save API key', 'error');
+          }
         } catch (error) {
           console.error('Error saving API key:', error);
-          this.showStatus('Error saving API key', 'error');
+          const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+          this.showStatus(`Error saving API key: ${errorMessage}`, 'error');
         }
       });
 

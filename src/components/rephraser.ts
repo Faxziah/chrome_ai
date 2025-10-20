@@ -33,7 +33,7 @@ export class Rephraser {
         throw new Error('Text cannot be empty');
       }
 
-      const { style, preserveMeaning = true, language = 'Russian' } = config;
+      const { style, preserveMeaning = true, language = 'English' } = config;
       const originalLength = text.length;
 
       const prompt = this.buildPrompt(text, style, preserveMeaning, language);
@@ -132,7 +132,7 @@ export class Rephraser {
         throw new Error('Text cannot be empty');
       }
 
-      const { style, preserveMeaning = true, language = 'Russian' } = config;
+      const { style, preserveMeaning = true, language = 'English' } = config;
       const originalLength = text.length;
 
       const prompt = this.buildPrompt(text, style, preserveMeaning, language);

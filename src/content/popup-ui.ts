@@ -342,8 +342,8 @@ export class PopupUI {
     
     // Restore full size for full mode
     if (this.popupContainer) {
-      this.popupContainer.style.minWidth = '320px';
-      this.popupContainer.style.width = 'auto';
+      this.popupContainer.style.maxWidth = 'auto';
+      this.popupContainer.style.width = '500px';
     }
     
     const headerHtml = this.renderPopupHeader();

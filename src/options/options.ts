@@ -122,7 +122,7 @@ class OptionsPage {
     const apiKey = apiKeyInput.value.trim();
 
     if (!apiKey) {
-      this.showStatus('api-status', 'Введите API ключ', 'error');
+      this.showStatus('api-status', t('status.enterApiKey'), 'error');
       return;
     }
 
@@ -131,11 +131,11 @@ class OptionsPage {
       if (success) {
         this.showStatus('api-status', 'API ключ успешно сохранен', 'success');
       } else {
-        this.showStatus('api-status', 'Ошибка при сохранении API ключа', 'error');
+        this.showStatus('api-status', t('status.errorSavingApiKey'), 'error');
       }
     } catch (error) {
       console.error('Error saving API key:', error);
-      this.showStatus('api-status', 'Ошибка при сохранении API ключа', 'error');
+      this.showStatus('api-status', t('status.errorSavingApiKey'), 'error');
     }
   }
 
@@ -144,27 +144,27 @@ class OptionsPage {
     const apiKey = apiKeyInput.value.trim();
 
     if (!apiKey) {
-      this.showStatus('api-status', 'Введите API ключ для проверки', 'error');
+      this.showStatus('api-status', t('status.enterApiKeyToTest'), 'error');
       return;
     }
 
     try {
-      this.showStatus('api-status', 'Проверка API ключа...', 'success');
+      this.showStatus('api-status', t('status.testingApiKey'), 'success');
       
       const geminiService = new GeminiService(apiKey);
       const isValid = await geminiService.testConnection();
 
       if (isValid) {
-        this.showStatus('api-status', 'API ключ действителен', 'success');
+        this.showStatus('api-status', t('status.apiKeyValid'), 'success');
       } else {
-        this.showStatus('api-status', 'API ключ недействителен или недоступен', 'error');
+        this.showStatus('api-status', t('status.apiKeyInvalid'), 'error');
       }
     } catch (error) {
       console.error('Error testing API key:', error);
       if (error instanceof Error && error.message.includes('Invalid API key format')) {
-        this.showStatus('api-status', 'Неверный формат API ключа', 'error');
+        this.showStatus('api-status', t('status.invalidApiKeyFormat'), 'error');
       } else {
-        this.showStatus('api-status', 'Ошибка при проверке API ключа. Проверьте подключение к интернету', 'error');
+        this.showStatus('api-status', t('status.errorTestingApiKey'), 'error');
       }
     }
   }
@@ -175,10 +175,10 @@ class OptionsPage {
     
     if (apiKeyInput.type === 'password') {
       apiKeyInput.type = 'text';
-      toggleBtn.textContent = 'Скрыть';
+      toggleBtn.textContent = t('status.hide');
     } else {
       apiKeyInput.type = 'password';
-      toggleBtn.textContent = 'Показать';
+      toggleBtn.textContent = t('status.show');
     }
   }
 
@@ -187,7 +187,7 @@ class OptionsPage {
       await chrome.tabs.create({ url: 'chrome://extensions/shortcuts' });
     } catch (error) {
       console.error('Error opening shortcuts page:', error);
-      this.showStatus('api-status', 'Ошибка при открытии страницы горячих клавиш', 'error');
+      this.showStatus('api-status', t('status.errorOpeningShortcuts'), 'error');
     }
   }
 
@@ -257,13 +257,13 @@ class OptionsPage {
       
       const success = await this.storageService.setApiConfig(config);
       if (success) {
-        this.showStatus('gemini-config-status', 'Настройки модели сохранены', 'success');
+        this.showStatus('gemini-config-status', t('status.modelSettingsSaved'), 'success');
       } else {
-        this.showStatus('gemini-config-status', 'Ошибка при сохранении настроек', 'error');
+        this.showStatus('gemini-config-status', t('status.errorSavingSettings'), 'error');
       }
     } catch (error) {
       console.error('Error saving Gemini config:', error);
-      this.showStatus('gemini-config-status', 'Ошибка при сохранении настроек', 'error');
+      this.showStatus('gemini-config-status', t('status.errorSavingSettings'), 'error');
     }
   }
 
@@ -278,13 +278,13 @@ class OptionsPage {
       const success = await this.storageService.setApiConfig(defaultConfig);
       if (success) {
         await this.loadGeminiConfig();
-        this.showStatus('gemini-config-status', 'Настройки сброшены к умолчанию', 'success');
+        this.showStatus('gemini-config-status', t('status.settingsResetToDefault'), 'success');
       } else {
-        this.showStatus('gemini-config-status', 'Ошибка при сбросе настроек', 'error');
+        this.showStatus('gemini-config-status', t('status.errorResettingSettings'), 'error');
       }
     } catch (error) {
       console.error('Error resetting Gemini config:', error);
-      this.showStatus('gemini-config-status', 'Ошибка при сбросе настроек', 'error');
+      this.showStatus('gemini-config-status', t('status.errorResettingSettings'), 'error');
     }
   }
 
