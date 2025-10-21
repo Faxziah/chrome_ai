@@ -278,23 +278,115 @@ export class HighlightManager {
   }
 
   private highlightTexts(searchTexts: string[]): void {
-    console.error('searchTexts', searchTexts);
+    console.log('Ищем предложения:', searchTexts);
 
-    // Собираем все текстовые узлы
-    const textNodes = this.getAllTextNodes();
-    console.log('Total text nodes found:', textNodes.length);
+    // Удаляем старые выделения
+    this.removeExistingHighlights();
 
-    // Создаем виртуальное представление всего текста с mapping'ом
-    const textMapping = this.createTextMapping(textNodes);
-    console.log('Text mapping created:', textMapping.fullText.length);
+    // Проходим по всем текстовым узлам на странице
+    const walker = document.createTreeWalker(
+      document.body,
+      NodeFilter.SHOW_TEXT,
+      null
+    );
 
-    const combinedRegex = this.buildCombinedRegex(searchTexts);
-    if (!combinedRegex) {
-      return;
+    const textNodes: Text[] = [];
+    let node;
+    while (node = walker.nextNode()) {
+      textNodes.push(node as Text);
     }
 
-    // Ищем совпадения в полном тексте
-    this.highlightMatchesInMapping(textMapping, combinedRegex);
+    console.log('Найдено текстовых узлов:', textNodes.length);
+
+    // Для каждого искомого предложения
+    searchTexts.forEach(sentence => {
+      this.highlightSentenceInTextNodes(sentence, textNodes);
+    });
+  }
+
+  private highlightSentenceInTextNodes(sentence: string, textNodes: Text[]): void {
+    const normalizedSentence = this.normalizeText(sentence);
+
+    textNodes.forEach(textNode => {
+      const nodeText = textNode.textContent || '';
+      const normalizedNodeText = this.normalizeText(nodeText);
+
+      // Ищем предложение в тексте узла
+      if (normalizedNodeText.includes(normalizedSentence)) {
+        this.highlightInNode(textNode, normalizedSentence, nodeText);
+      }
+    });
+  }
+
+  private highlightInNode(textNode: Text, searchText: string, originalText: string): void {
+    const normalizedOriginal = this.normalizeText(originalText);
+    const startIndex = normalizedOriginal.indexOf(searchText);
+
+    if (startIndex === -1) return;
+
+    // Находим соответствующие позиции в оригинальном тексте
+    let actualStart = 0;
+    let actualEnd = 0;
+    let normalizedPos = 0;
+
+    // Сопоставляем позиции в нормализованном и оригинальном тексте
+    for (let i = 0; i < originalText.length; i++) {
+      if (normalizedPos === startIndex) {
+        actualStart = i;
+      }
+      if (normalizedPos === startIndex + searchText.length) {
+        actualEnd = i;
+        break;
+      }
+
+      // Учитываем только символы, которые не удаляются при нормализации
+      const char = originalText[i];
+      if (char !== '\u00A0' && !/[\u2013\u2014]/.test(char)) {
+        normalizedPos++;
+      }
+    }
+
+    if (actualEnd === 0) {
+      actualEnd = originalText.length;
+    }
+
+    const before = originalText.substring(0, actualStart);
+    const highlighted = originalText.substring(actualStart, actualEnd);
+    const after = originalText.substring(actualEnd);
+
+    const parent = textNode.parentNode;
+    if (!parent) return;
+
+    const beforeNode = document.createTextNode(before);
+    const highlightNode = document.createElement('mark');
+    highlightNode.className = 'search-highlight';
+    highlightNode.textContent = highlighted;
+    const afterNode = document.createTextNode(after);
+
+    parent.insertBefore(beforeNode, textNode);
+    parent.insertBefore(highlightNode, textNode);
+    parent.insertBefore(afterNode, textNode);
+    parent.removeChild(textNode);
+  }
+
+  private normalizeText(text: string): string {
+    return text
+      .toLowerCase()
+      .replace(/\u00A0/g, ' ')      // неразрывный пробел -> обычный
+      .replace(/[\u2013\u2014]/g, '-') // тире -> дефис
+      .replace(/\s+/g, ' ')         // множественные пробелы -> один
+      .trim();
+  }
+
+  private removeExistingHighlights(): void {
+    const existingHighlights = document.querySelectorAll('mark.search-highlight');
+    existingHighlights.forEach(highlight => {
+      const parent = highlight.parentNode;
+      if (!parent) return;
+
+      const textNode = document.createTextNode(highlight.textContent || '');
+      parent.replaceChild(textNode, highlight);
+    });
   }
 
   private createTextMapping(textNodes: Text[]): TextMapping {
