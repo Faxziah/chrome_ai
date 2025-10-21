@@ -326,12 +326,14 @@ export class PopupUI {
         this.tabsComponent.setTab('translate');
       } else if (action === 'discuss') {
         this.tabsComponent.setTab('discuss');
+      } else if (action === 'highlight') {
+        this.tabsComponent.setTab('highlight');
       }
     }
   }
 
   public switchToFullMode(): void {
-    if (this.mode === 'full' || !this.tabsComponent) return;
+    if (this.mode === 'full') return;
     
     if (!this.shadowRoot) {
       console.error('Shadow root not available');
@@ -345,6 +347,15 @@ export class PopupUI {
       this.popupContainer.style.maxWidth = 'auto';
       this.popupContainer.style.width = '500px';
     }
+    
+    // Create new tabs component with Highlight for full mode
+    this.tabsComponent = new Tabs([
+      { id: 'summarize', label: t('common.resume') },
+      { id: 'rephrase', label: t('common.rephrase') },
+      { id: 'translate', label: t('common.translate') },
+      { id: 'discuss', label: t('common.discuss') },
+      { id: 'highlight', label: t('common.highlight') }
+    ]);
     
     const headerHtml = this.renderPopupHeader();
     const tabsHtml = this.tabsComponent.render();

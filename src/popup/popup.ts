@@ -12,7 +12,7 @@ class PopupApp {
   private readonly historyService: HistoryService;
   private readonly favoritesService: FavoritesService;
   private readonly chat: Chat;
-  private currentTab: string = 'highlight';
+  private currentTab: string = 'chat';
   private lastAssistantMessageId: string | null = null;
 
   constructor() {
@@ -94,9 +94,24 @@ class PopupApp {
       favoriteBtn.addEventListener('click', () => this.addToFavorites());
     }
 
+    const summarizeBtn = document.getElementById('summarize-btn') as HTMLButtonElement;
+    const rephraseBtn = document.getElementById('rephrase-btn') as HTMLButtonElement;
+    const translateBtn = document.getElementById('translate-btn') as HTMLButtonElement;
     const highlightBtn = document.getElementById('highlight-btn') as HTMLButtonElement;
     const viewHistoryBtn = document.getElementById('view-history-btn') as HTMLButtonElement;
     const viewFavoritesBtn = document.getElementById('view-favorites-btn') as HTMLButtonElement;
+
+    if (summarizeBtn) {
+      summarizeBtn.addEventListener('click', () => this.sendMessageToContentScript(ActionType.SUMMARIZE));
+    }
+
+    if (rephraseBtn) {
+      rephraseBtn.addEventListener('click', () => this.sendMessageToContentScript(ActionType.REPHRASE));
+    }
+
+    if (translateBtn) {
+      translateBtn.addEventListener('click', () => this.sendMessageToContentScript(ActionType.TRANSLATE));
+    }
 
     if (highlightBtn) {
       highlightBtn.addEventListener('click', () => this.sendMessageToContentScript(ActionType.HIGHLIGHT_KEYWORDS));

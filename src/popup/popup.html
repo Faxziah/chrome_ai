@@ -445,16 +445,51 @@
             ⚠️ API ключ не настроен! <a href="https://aistudio.google.com/app/api-keys" id="open-options">Настройте API ключ</a> для использования расширения.
         </div>
         <div class="md-tabs">
-            <button id="highlight-tab" class="md-tab active">Highlight</button>
+            <button id="chat-tab" class="md-tab active">Chat</button>
+            <button id="summarize-tab" class="md-tab">Summarize</button>
+            <button id="rephrase-tab" class="md-tab">Rephrase</button>
+            <button id="translate-tab" class="md-tab">Translate</button>
+            <button id="highlight-tab" class="md-tab">Highlight</button>
             <button id="history-tab" class="md-tab">History</button>
             <button id="favorites-tab" class="md-tab">Favorites</button>
         </div>
     </div>
     
     <div class="content">
-        <div id="highlight-content" class="md-tab-content active">
+        <div id="chat-content" class="md-tab-content active">
+            <div class="chat-container">
+                <div id="chat-messages" class="chat-messages"></div>
+                <div class="chat-input-container">
+                    <div class="chat-input-wrapper">
+                        <textarea id="chat-input" class="chat-input" placeholder="Type your message..."></textarea>
+                        <button id="send-btn" class="send-btn">Send</button>
+                    </div>
+                    <button id="favorite-btn" class="favorite-btn" style="display: none;">⭐ Add to Favorites</button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="summarize-content" class="md-tab-content">
             <div style="padding: 16px;">
-                <button id="highlight-btn" class="md-button md-button--primary">Highlight Keywords</button>
+                <button id="summarize-btn" class="md-button md-button--primary">Summarize</button>
+            </div>
+        </div>
+        
+        <div id="rephrase-content" class="md-tab-content">
+            <div style="padding: 16px;">
+                <button id="rephrase-btn" class="md-button md-button--primary">Rephrase</button>
+            </div>
+        </div>
+        
+        <div id="translate-content" class="md-tab-content">
+            <div style="padding: 16px;">
+                <button id="translate-btn" class="md-button md-button--primary">Translate</button>
+            </div>
+        </div>
+        
+        <div id="highlight-content" class="md-tab-content">
+            <div style="padding: 16px;">
+                <button id="highlight-btn" class="md-button md-button--primary">Highlight key sentences</button>
             </div>
         </div>
         

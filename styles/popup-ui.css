@@ -352,20 +352,9 @@ button:active {
 
 .tab.is-active {
   color: var(--primary-color);
+  border-bottom: 2px solid var(--primary-color);
 }
 
-.tabs__indicator {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  height: var(--indicator-thickness);
-  width: 0;
-  background: var(--primary-color);
-  border-radius: 2px 2px 0 0;
-  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-              width 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-              left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
 
 .tab-panel {
   padding: var(--spacing-sm);

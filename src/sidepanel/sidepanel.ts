@@ -76,10 +76,6 @@ class SidePanelApp {
       });
     });
 
-    const highlightBtn = document.getElementById('highlight-btn') as HTMLButtonElement;
-    if (highlightBtn) {
-      highlightBtn.addEventListener('click', () => this.sendMessageToContentScript(ActionType.HIGHLIGHT_KEYWORDS));
-    }
 
     // History and Favorites event listeners
     const historyFilter = document.getElementById('history-filter') as HTMLSelectElement;
@@ -138,6 +134,11 @@ class SidePanelApp {
       await this.loadHistory();
     } else if (tabId === 'favorites') {
       await this.loadFavorites();
+    }
+    
+    // Load history by default when the app starts
+    if (tabId === 'history' || !tabId) {
+      await this.loadHistory();
     }
   }
 

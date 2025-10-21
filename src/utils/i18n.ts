@@ -44,6 +44,9 @@ const translations: LocaleData = {
     'common.miniT': 'T',
     'common.miniD': 'D',
     'common.highlight': 'Highlight',
+    'common.highlightKeySentences': 'Highlight key sentences',
+    'common.highlightCompleted': 'Highlighting completed',
+    'common.processing': 'Processing...',
     'common.history': 'History',
     'common.favorites': 'Favorites',
     'common.pin': 'Pin popup',
@@ -287,6 +290,9 @@ const translations: LocaleData = {
     'common.miniT': 'Т',
     'common.miniD': 'О',
     'common.highlight': 'Выделение',
+    'common.highlightKeySentences': 'Выделить ключевые предложения',
+    'common.highlightCompleted': 'Выделение завершено',
+    'common.processing': 'Обработка...',
     'common.history': 'История',
     'common.favorites': 'Избранное',
     'common.pin': 'Закрепить попап',
@@ -521,6 +527,10 @@ const translations: LocaleData = {
     'common.miniR': 'U',
     'common.miniT': 'Ü',
     'common.miniD': 'D',
+    'common.highlight': 'Hervorheben',
+    'common.highlightKeySentences': 'Schlüsselsätze hervorheben',
+    'common.highlightCompleted': 'Hervorhebung abgeschlossen',
+    'common.processing': 'Verarbeitung...',
     
     // Highlight
     'highlight.clearButton': 'Hervorhebungen löschen',
@@ -730,6 +740,10 @@ const translations: LocaleData = {
     'common.miniR': 'P',
     'common.miniT': 'T',
     'common.miniD': 'D',
+    'common.highlight': 'Surligner',
+    'common.highlightKeySentences': 'Surligner les phrases clés',
+    'common.highlightCompleted': 'Surlignage terminé',
+    'common.processing': 'Traitement...',
     
     // Highlight
     'highlight.clearButton': 'Effacer les surlignages',
@@ -939,6 +953,10 @@ const translations: LocaleData = {
     'common.miniR': '改',
     'common.miniT': '翻',
     'common.miniD': '讨',
+    'common.highlight': '高亮',
+    'common.highlightKeySentences': '高亮关键句子',
+    'common.highlightCompleted': '高亮完成',
+    'common.processing': '处理中...',
     
     // Highlight
     'highlight.clearButton': '清除高亮',

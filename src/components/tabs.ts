@@ -125,7 +125,6 @@ export class Tabs {
     return `
       <nav class="tabs tabs--secondary" role="tablist" aria-label="AI Text Tools">
         ${tabsHtml}
-        <span class="tabs__indicator" aria-hidden="true"></span>
       </nav>
       ${panelsHtml}
     `;
@@ -283,6 +282,13 @@ export class Tabs {
           </div>
         `;
 
+      case 'highlight':
+        return `
+          <div class="tab-content">
+            <button class="btn btn-primary" id="btn-highlight">${t('common.highlightKeySentences')}</button>
+          </div>
+        `;
+
       default:
         return '<div class="tab-content">Unknown tab</div>';
     }
@@ -342,7 +348,6 @@ export class Tabs {
     const tabButtons = shadowRoot.querySelectorAll('.tab');
     const miniTabButtons = shadowRoot.querySelectorAll('.mini-tab');
     const panels = shadowRoot.querySelectorAll('.tab-panel');
-    const indicator = shadowRoot.querySelector('.tabs__indicator') as HTMLElement;
 
     // Update tab buttons
     tabButtons.forEach((button, i) => {
@@ -370,15 +375,6 @@ export class Tabs {
       }
     });
 
-    // Update indicator position
-    if (indicator) {
-      const activeButton = tabButtons[index] as HTMLElement;
-      const buttonRect = activeButton.getBoundingClientRect();
-      const containerRect = this.rootElement.getBoundingClientRect();
-      
-      indicator.style.left = `${buttonRect.left - containerRect.left}px`;
-      indicator.style.width = `${buttonRect.width}px`;
-    }
 
     // Focus active tab if requested
     if (focus) {

@@ -119,6 +119,8 @@ export class PopupIntegration {
         await this.handleFavoriteToggleClick(event);
       } else if (buttonId === 'btn-send-chat') {
         await this.handleSendChatClick(event);
+      } else if (buttonId === 'btn-highlight') {
+        await this.handleHighlightClick(event);
       }
     });
 
@@ -235,7 +237,8 @@ export class PopupIntegration {
     const shadowRoot = this.popupUI.getShadowRoot();
     if (!shadowRoot) return;
 
-    const resultElementId = type === 'summary' ? 'summary-text' : (type === 'rephrase' ? 'rephrase-text' : 'translate-text');
+    const resultElementId = type === 'summary' ? 'summary-text' : 
+                           (type === 'rephrase' ? 'rephrase-text' : 'translate-text');
     await ClipboardHandler.handleCopyClick(event, shadowRoot, resultElementId);
   }
 
@@ -383,6 +386,49 @@ export class PopupIntegration {
       console.error('Summarize error:', error);
       if (error instanceof Error && error.message === 'MODEL_NOT_AVAILABLE') {
         this.showModelUnavailableError('summary-text');
+      }
+    } finally {
+      this.isProcessing = false;
+      this.abortController = null;
+    }
+  }
+
+  private async handleHighlightClick(event: Event): Promise<void> {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (this.isProcessing) return;
+    this.isProcessing = true;
+    this.abortController = new AbortController();
+
+    try {
+      if (!this.apiKeyValid) {
+        this.showApiKeyError('highlight-text');
+        return;
+      }
+
+      const shadowRoot = this.popupUI.getShadowRoot();
+      const button = shadowRoot?.querySelector('#btn-highlight') as HTMLButtonElement;
+
+      if (button) {
+        button.disabled = true;
+        button.textContent = t('common.processing');
+
+        try {
+          // Send message to content script to highlight keywords
+          const response = await chrome.runtime.sendMessage({ action: 'HIGHLIGHT_KEYWORDS' });
+          if (response?.success) {
+            this.showToast(t('common.highlightCompleted'), 'success');
+          } else {
+            this.showToast(t('errors.highlightFailed'), 'error');
+          }
+        } catch (error) {
+          console.error('Highlight error:', error);
+          this.showToast(t('errors.highlightFailed'), 'error');
+        } finally {
+          button.disabled = false;
+          button.textContent = t('common.highlightKeySentences');
+        }
       }
     } finally {
       this.isProcessing = false;
