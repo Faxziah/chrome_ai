@@ -294,12 +294,16 @@ export class PopupUI {
 
   private updateSelectedTextDisplay(): void {
     if (this.shadowRoot) {
-      const selectedTextDisplay = this.shadowRoot.querySelector('.tab-panel:not([hidden]) .selected-text-display');
-      if (selectedTextDisplay) {
-        selectedTextDisplay.textContent = this.selectedText.length > 200 
-          ? this.selectedText.substring(0, 200) + '...' 
-          : this.selectedText;
-      }
+      // Update ALL selected-text-display elements in ALL tab panels (both visible and hidden)
+      const selectedTextDisplays = this.shadowRoot.querySelectorAll('.selected-text-display');
+      
+      selectedTextDisplays.forEach(display => {
+        if (display) {
+          display.textContent = this.selectedText.length > 200 
+            ? this.selectedText.substring(0, 200) + '...' 
+            : this.selectedText;
+        }
+      });
     }
   }
 
