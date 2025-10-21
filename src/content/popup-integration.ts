@@ -630,8 +630,7 @@ export class PopupIntegration {
             // Находим позицию исходного текста и берем только то, что после него
             const originalTextIndex = text.indexOf(selectedText);
             if (originalTextIndex !== -1) {
-              text = text.substring(originalTextIndex + selectedText.length).trim();
-              text = 'User\t' + text;
+              text = 'User\t' + text.substring(originalTextIndex + selectedText.length).trim();
             }
           }
 
@@ -804,7 +803,27 @@ export class PopupIntegration {
 
     const currentTab = this.popupUI.getCurrentTab();
     const favoriteButton = shadowRoot.querySelector(`#btn-favorite-toggle-${currentTab.id}`) as HTMLElement;
-    const copyButton = shadowRoot.querySelector(`#btn-copy-${currentTab.id}`) as HTMLElement;
+    
+    // Get the correct copy button ID based on tab type
+    let copyButtonId: string;
+    switch (currentTab.id) {
+      case 'summarize':
+        copyButtonId = 'btn-copy-summary';
+        break;
+      case 'rephrase':
+        copyButtonId = 'btn-copy-rephrase';
+        break;
+      case 'translate':
+        copyButtonId = 'btn-copy-translate';
+        break;
+      case 'discuss':
+        copyButtonId = 'btn-copy-discuss';
+        break;
+      default:
+        copyButtonId = `btn-copy-${currentTab.id}`;
+    }
+    
+    const copyButton = shadowRoot.querySelector(`#${copyButtonId}`) as HTMLElement;
 
     if (favoriteButton) {
       favoriteButton.classList.add('show');

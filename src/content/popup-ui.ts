@@ -1,5 +1,6 @@
 import { Tabs } from '../components/tabs';
 import { t } from '../utils/i18n';
+import { StorageService } from '../services/storage';
 
 export class PopupUI {
   private hostElement: HTMLDivElement | null = null;
@@ -18,9 +19,11 @@ export class PopupUI {
   private popupStartY: number = 0;
   private currentPosition: { x: number; y: number } | null = null;
   private wasManuallyPositioned: boolean = false;
+  private storageService: StorageService;
   private recentlyClosed: boolean = false;
 
   constructor() {
+    this.storageService = new StorageService();
     this.createPopupStructure();
   }
 
@@ -98,12 +101,8 @@ export class PopupUI {
 
     // Initialize tabs if not already created
     if (!this.tabsComponent) {
-      this.tabsComponent = new Tabs([
-        { id: 'summarize', label: t('common.resume') },
-        { id: 'rephrase', label: t('common.rephrase') },
-        { id: 'translate', label: t('common.translate') },
-        { id: 'discuss', label: t('common.discuss') }
-      ]);
+      const miniTabs = await this.getMiniPopupTabs();
+      this.tabsComponent = new Tabs(miniTabs);
       
       // Start with mini mode
       this.mode = 'mini';
@@ -353,13 +352,14 @@ export class PopupUI {
     }
     
     // Create new tabs component with Highlight for full mode
-    this.tabsComponent = new Tabs([
+    const fullTabs = [
       { id: 'summarize', label: t('common.resume') },
       { id: 'rephrase', label: t('common.rephrase') },
       { id: 'translate', label: t('common.translate') },
       { id: 'discuss', label: t('common.discuss') },
       { id: 'highlight', label: t('common.highlight') }
-    ]);
+    ];
+    this.tabsComponent = new Tabs(fullTabs);
     
     const headerHtml = this.renderPopupHeader();
     const tabsHtml = this.tabsComponent.render();
@@ -376,6 +376,12 @@ export class PopupUI {
     
     this.updateSelectedTextDisplay();
     
+    // Update position after switching to full mode to prevent going off-screen
+    const selectionRect = this.getCurrentSelectionRect();
+    if (selectionRect) {
+      this.updatePosition(selectionRect);
+    }
+    
     // Dispatch event for popup integration to setup chat input listener
     document.dispatchEvent(new CustomEvent('popupFullModeSwitched'));
   }
@@ -385,6 +391,29 @@ export class PopupUI {
       return this.tabsComponent.getCurrentTab();
     }
     return { id: 'summarize', index: 0 };
+  }
+
+  private getCurrentSelectionRect(): DOMRect | null {
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0 || selection.isCollapsed) {
+      return null;
+    }
+    
+    const range = selection.getRangeAt(0);
+    return range.getBoundingClientRect();
+  }
+
+  private async getMiniPopupTabs(): Promise<Array<{ id: string; label: string }>> {
+    const enabledTabs = await this.storageService.getMiniPopupTabs();
+    const allTabs = [
+      { id: 'summarize', label: t('common.resume') },
+      { id: 'rephrase', label: t('common.rephrase') },
+      { id: 'translate', label: t('common.translate') },
+      { id: 'discuss', label: t('common.discuss') },
+      { id: 'highlight', label: t('common.highlight') }
+    ];
+    
+    return allTabs.filter(tab => enabledTabs.includes(tab.id));
   }
 
   private renderPopupHeader(): string {

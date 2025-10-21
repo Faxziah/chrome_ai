@@ -14,6 +14,25 @@ export class Rephraser {
     this.storageService = storageService || new StorageService();
   }
 
+  private getLanguageName(languageCode: string): string {
+    const languageMap: Record<string, string> = {
+      'en': 'English',
+      'ru': 'Russian',
+      'de': 'German',
+      'fr': 'French',
+      'zh': 'Chinese',
+      'es': 'Spanish',
+      'it': 'Italian',
+      'pt': 'Portuguese',
+      'ja': 'Japanese',
+      'ko': 'Korean',
+      'ar': 'Arabic',
+      'hi': 'Hindi'
+    };
+    
+    return languageMap[languageCode] || 'English';
+  }
+
   // Overload for simple style-based rephrasing
   async rephrase(text: string, style: string): Promise<RephraserResult>;
   // Overload for config-based rephrasing
@@ -33,7 +52,11 @@ export class Rephraser {
         throw new Error('Text cannot be empty');
       }
 
-      const { style, preserveMeaning = true, language = 'English' } = config;
+      const { style, preserveMeaning = true } = config;
+      
+      // Get user's interface language
+      const userLanguage = await this.storageService.getLanguage();
+      const language = this.getLanguageName(userLanguage!);
       const originalLength = text.length;
 
       const prompt = this.buildPrompt(text, style, preserveMeaning, language);
@@ -132,7 +155,11 @@ export class Rephraser {
         throw new Error('Text cannot be empty');
       }
 
-      const { style, preserveMeaning = true, language = 'English' } = config;
+      const { style, preserveMeaning = true } = config;
+      
+      // Get user's interface language
+      const userLanguage = await this.storageService.getLanguage();
+      const language = this.getLanguageName(userLanguage!);
       const originalLength = text.length;
 
       const prompt = this.buildPrompt(text, style, preserveMeaning, language);

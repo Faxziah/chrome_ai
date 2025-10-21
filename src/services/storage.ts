@@ -7,7 +7,8 @@ export class StorageService {
     HISTORY: 'chat_history',
     FAVORITES: 'favorites',
     API_CONFIG: 'api_config',
-    LANGUAGE: 'interface_language'
+    LANGUAGE: 'interface_language',
+    MINI_POPUP_TABS: 'mini_popup_tabs'
   } as const;
 
   public static readonly HISTORY_LIMIT = 20;
@@ -264,12 +265,25 @@ export class StorageService {
     }
   }
 
-  async clearAllData(): Promise<boolean> {
+  async getMiniPopupTabs(): Promise<string[]> {
     try {
-      await chrome.storage.local.clear();
+      const result = await chrome.storage.local.get(StorageService.STORAGE_KEYS.MINI_POPUP_TABS);
+      const tabs = result[StorageService.STORAGE_KEYS.MINI_POPUP_TABS] || ['summarize', 'rephrase', 'translate', 'discuss', 'highlight'];
+      return Array.isArray(tabs) ? tabs : ['summarize', 'rephrase', 'translate', 'discuss', 'highlight'];
+    } catch (error) {
+      console.error('Error getting mini popup tabs:', error);
+      return ['summarize', 'rephrase', 'translate', 'discuss', 'highlight'];
+    }
+  }
+
+  async setMiniPopupTabs(tabs: string[]): Promise<boolean> {
+    try {
+      await chrome.storage.local.set({
+        [StorageService.STORAGE_KEYS.MINI_POPUP_TABS]: tabs
+      });
       return true;
     } catch (error) {
-      console.error('Error clearing all data:', error);
+      console.error('Error setting mini popup tabs:', error);
       return false;
     }
   }

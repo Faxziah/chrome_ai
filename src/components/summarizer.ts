@@ -31,6 +31,25 @@ export class Summarizer {
     return this.summarizeInternal(text, config);
   }
 
+  private getLanguageName(languageCode: string): string {
+    const languageMap: Record<string, string> = {
+      'en': 'English',
+      'ru': 'Russian',
+      'de': 'German',
+      'fr': 'French',
+      'zh': 'Chinese',
+      'es': 'Spanish',
+      'it': 'Italian',
+      'pt': 'Portuguese',
+      'ja': 'Japanese',
+      'ko': 'Korean',
+      'ar': 'Arabic',
+      'hi': 'Hindi'
+    };
+    
+    return languageMap[languageCode] || 'English';
+  }
+
   private buildPrompt(text: string, maxLength: number, style: string, language: string): string {
     const styleInstructions: Record<string, string> = {
       'brief': 'краткое резюме в 2-3 предложениях',
@@ -69,7 +88,10 @@ ${text}
     const originalLength = text.length;
     const maxLength = config?.maxLength || Math.max(100, Math.floor(originalLength * 0.3));
     const style = config?.style || 'brief';
-    const language = config?.language || 'English';
+    
+    // Get user's interface language
+    const userLanguage = await this.storageService.getLanguage();
+    const language = this.getLanguageName(userLanguage!);
 
     const prompt = this.buildPrompt(text, maxLength, style, language);
 
