@@ -1,7 +1,6 @@
 import { StorageService } from '../services/storage';
 import { HistoryService } from '../services/history';
 import { FavoritesService } from '../services/favorites';
-import { ActionType } from '../types';
 import { setLocale, t } from '../utils/i18n';
 
 // Material Design Utils (будет доступен глобально после загрузки скрипта)
@@ -60,6 +59,9 @@ class SidePanelApp {
       this.setupEventListeners();
       this.setupApiWarningHandlers();
       this.localizeElements();
+      
+      // Load history by default
+      await this.loadHistory();
     } catch (error) {
       console.error('Initialization error:', error);
       this.showStatus(t('status.errorSavingSettings'), 'error');
@@ -108,6 +110,26 @@ class SidePanelApp {
     if (clearFavoritesBtn) {
       clearFavoritesBtn.addEventListener('click', () => this.clearFavorites());
     }
+
+    // Listen for storage changes to update content in real-time
+    chrome.storage.onChanged.addListener((changes, namespace) => {
+      if (namespace === 'local') {
+        if (changes.chat_history) {
+          // History was updated, reload if we're on history tab
+          const historyTab = document.getElementById('history-tab');
+          if (historyTab?.classList.contains('active')) {
+            this.loadHistory();
+          }
+        }
+        if (changes.favorites) {
+          // Favorites were updated, reload if we're on favorites tab
+          const favoritesTab = document.getElementById('favorites-tab');
+          if (favoritesTab?.classList.contains('active')) {
+            this.loadFavorites();
+          }
+        }
+      }
+    });
   }
 
   private async switchTab(tabId: string): Promise<void> {
@@ -327,7 +349,7 @@ class SidePanelApp {
           </div>
         </div>
         <div class="item-content">${this.escapeHtml(this.truncateText(item.prompt, 100))}</div>
-        <div class="item-result">${this.escapeHtml(this.truncateText(item.response, 150))}</div>
+        <div class="item-result">${item.type === 'discuss' ? this.formatMarkdown(this.truncateText(item.response, 150)) : this.escapeHtml(this.truncateText(item.response, 150))}</div>
         <div class="item-meta">${new Date(item.timestamp).toLocaleString()}</div>
       </div>
     `).join('');
@@ -367,7 +389,7 @@ class SidePanelApp {
           </div>
         </div>
         <div class="item-content">${this.escapeHtml(this.truncateText(item.prompt, 100))}</div>
-        <div class="item-result">${this.escapeHtml(this.truncateText(item.response, 150))}</div>
+        <div class="item-result">${item.type === 'discuss' ? this.formatMarkdown(this.truncateText(item.response, 150)) : this.escapeHtml(this.truncateText(item.response, 150))}</div>
         <div class="item-meta">${new Date(item.timestamp).toLocaleString()}</div>
       </div>
     `).join('');
@@ -455,6 +477,15 @@ class SidePanelApp {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+  }
+
+  private formatMarkdown(text: string): string {
+    // Простое форматирование markdown для отображения
+    return text
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // **bold**
+      .replace(/\*(.*?)\*/g, '<em>$1</em>') // *italic*
+      .replace(/\n/g, '<br>') // Переносы строк
+      .replace(/\n\n/g, '<br><br>'); // Двойные переносы строк
   }
 
   private setupHistoryEventListeners(): void {
@@ -628,7 +659,7 @@ class SidePanelApp {
             </div>
             <div class="detail-section">
               <h4>${t('common.result')}</h4>
-              <div class="detail-content">${this.escapeHtml(item.response)}</div>
+              <div class="detail-content">${item.type === 'discuss' ? this.formatMarkdown(item.response) : this.escapeHtml(item.response)}</div>
             </div>
           </div>
         </div>

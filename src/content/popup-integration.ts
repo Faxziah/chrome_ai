@@ -50,7 +50,7 @@ export class PopupIntegration {
         console.log('API key not found. User needs to configure in options.');
         this.apiKeyValid = false;
       }
-      
+
       this.speechManager = new SpeechSynthesisManager();
       if (!this.speechManager.isSupported()) {
         console.warn('Speech synthesis not supported');
@@ -92,11 +92,11 @@ export class PopupIntegration {
     shadowRoot.addEventListener('click', async (event: Event) => {
       const target = event.target as HTMLElement;
       const button = target.closest('.btn') as HTMLElement;
-      
+
       if (!button) return;
 
       const buttonId = button.id;
-      
+
       if (buttonId === 'btn-rephrase') {
         await this.handleRephraseClick(event);
       } else if (buttonId === 'btn-copy-rephrase') {
@@ -115,6 +115,8 @@ export class PopupIntegration {
         await this.handleSummarizeClick(event);
       } else if (buttonId === 'btn-copy-summary') {
         await this.handleCopyClick(event, 'summary');
+      } else if (buttonId === 'btn-copy-discuss') {
+        await this.handleCopyClick(event, 'discuss');
       } else if (buttonId.startsWith('btn-favorite-toggle-')) {
         await this.handleFavoriteToggleClick(event);
       } else if (buttonId === 'btn-send-chat') {
@@ -136,13 +138,13 @@ export class PopupIntegration {
     // Event listeners for language changes to update speech buttons
     const sourceLanguageSelect = shadowRoot.querySelector('#source-language') as HTMLSelectElement;
     const targetLanguageSelect = shadowRoot.querySelector('#target-language') as HTMLSelectElement;
-    
+
     if (sourceLanguageSelect) {
       sourceLanguageSelect.addEventListener('change', () => {
         this.updateSpeechButtonsForLanguageChange();
       });
     }
-    
+
     if (targetLanguageSelect) {
       targetLanguageSelect.addEventListener('change', () => {
         this.updateSpeechButtonsForLanguageChange();
@@ -165,7 +167,7 @@ export class PopupIntegration {
 
     // Setup chat input listener immediately
     this.setupChatInputListener();
-    
+
     // Listen for popup full mode switch
     document.addEventListener('popupFullModeSwitched', () => {
       this.setupChatInputListener();
@@ -213,7 +215,7 @@ export class PopupIntegration {
         console.log('Rephrase operation was cancelled');
         return;
       }
-      if ((error as Error).message?.includes('Could not establish connection') || 
+      if ((error as Error).message?.includes('Could not establish connection') ||
           (error as Error).message?.includes('Receiving end does not exist') ||
           (error as Error).message?.includes('ACTION COMPLETED')) {
         console.log('System message, not showing to user:', (error as Error).message);
@@ -230,15 +232,26 @@ export class PopupIntegration {
   }
 
 
-  private async handleCopyClick(event: Event, type: 'rephrase' | 'translate' | 'summary'): Promise<void> {
+  private async handleCopyClick(event: Event, type: 'rephrase' | 'translate' | 'summary' | 'discuss'): Promise<void> {
     event.preventDefault();
     event.stopPropagation();
 
     const shadowRoot = this.popupUI.getShadowRoot();
     if (!shadowRoot) return;
 
-    const resultElementId = type === 'summary' ? 'summary-text' : 
-                           (type === 'rephrase' ? 'rephrase-text' : 'translate-text');
+    let resultElementId: string;
+    if (type === 'summary') {
+      resultElementId = 'summary-text';
+    } else if (type === 'rephrase') {
+      resultElementId = 'rephrase-text';
+    } else if (type === 'translate') {
+      resultElementId = 'translate-text';
+    } else if (type === 'discuss') {
+      resultElementId = 'chat-messages';
+    } else {
+      return;
+    }
+
     await ClipboardHandler.handleCopyClick(event, shadowRoot, resultElementId);
   }
 
@@ -284,7 +297,7 @@ export class PopupIntegration {
         console.log('Translation operation was cancelled');
         return;
       }
-      if ((error as Error).message?.includes('Could not establish connection') || 
+      if ((error as Error).message?.includes('Could not establish connection') ||
           (error as Error).message?.includes('Receiving end does not exist') ||
           (error as Error).message?.includes('ACTION COMPLETED')) {
         console.log('System message, not showing to user:', (error as Error).message);
@@ -377,7 +390,7 @@ export class PopupIntegration {
         console.log('Summarize operation was cancelled');
         return;
       }
-      if ((error as Error).message?.includes('Could not establish connection') || 
+      if ((error as Error).message?.includes('Could not establish connection') ||
           (error as Error).message?.includes('Receiving end does not exist') ||
           (error as Error).message?.includes('ACTION COMPLETED')) {
         console.log('System message, not showing to user:', (error as Error).message);
@@ -447,7 +460,7 @@ export class PopupIntegration {
     try {
       const shadowRoot = this.popupUI.getShadowRoot();
       const chatInput = shadowRoot?.querySelector('#chat-input') as HTMLTextAreaElement;
-      
+
       if (!chatInput || !chatInput.value.trim()) {
         this.showToast(t('common.noTextSelected'), 'error');
         return;
@@ -468,13 +481,11 @@ export class PopupIntegration {
 
       // Получаем выделенный текст
       const selectedText = this.popupUI.getSelectedText();
-      
+
       // Формируем полное сообщение: выделенный текст + вопрос пользователя
-      const fullMessage = selectedText 
+      const fullMessage = selectedText
         ? `${selectedText}\n\n${chatInput.value}`
         : chatInput.value;
-
-      console.log('fullMessage', fullMessage)
 
       // Очищаем поле ввода после отправки
       chatInput.value = '';
@@ -486,7 +497,7 @@ export class PopupIntegration {
         console.log('Chat operation was cancelled');
         return;
       }
-      if ((error as Error).message?.includes('Could not establish connection') || 
+      if ((error as Error).message?.includes('Could not establish connection') ||
           (error as Error).message?.includes('Receiving end does not exist') ||
           (error as Error).message?.includes('ACTION COMPLETED')) {
         console.log('System message, not showing to user:', (error as Error).message);
@@ -514,10 +525,10 @@ export class PopupIntegration {
 
     const button = event.target as HTMLElement;
     const currentTab = this.popupUI.getCurrentTab();
-    
+
     try {
       const selectedText = this.popupUI.getSelectedText();
-      
+
       // For discuss tab, check if there's a chat response instead of selected text
       if (currentTab.id === 'discuss') {
         const chatMessages = shadowRoot.querySelector('#chat-messages') as HTMLElement;
@@ -532,7 +543,7 @@ export class PopupIntegration {
       }
 
       const isCurrentlyFavorite = button.dataset.isFavorite === 'true';
-      
+
       if (isCurrentlyFavorite) {
         await this.handleRemoveFromFavorites(button);
       } else {
@@ -547,9 +558,9 @@ export class PopupIntegration {
   }
 
   private async handleAddToFavorites(
-    button: HTMLElement, 
-    currentTab: any, 
-    shadowRoot: ShadowRoot, 
+    button: HTMLElement,
+    currentTab: any,
+    shadowRoot: ShadowRoot,
     selectedText: string
   ): Promise<void> {
     let prompt = '';
@@ -597,16 +608,41 @@ export class PopupIntegration {
           this.showToast(t('common.noResultToAddToFavorites'), 'error');
           return;
         }
-        // Получить последнее сообщение ассистента
-        const lastMessage = Array.from(chatMessages.children)
-          .reverse()
-          .find(el => el.classList.contains('assistant'));
-        if (!lastMessage) {
+        // Получить весь диалог
+        const allMessages = Array.from(chatMessages.children);
+        if (allMessages.length === 0) {
           this.showToast(t('common.noResultToAddToFavorites'), 'error');
           return;
         }
-        prompt = 'Discuss this text';
-        response = lastMessage.textContent || '';
+
+        // Собрать весь диалог без префиксов ролей и исходного текста
+        const fullDialogue = allMessages.map(message => {
+          const isUser = message.classList.contains('user');
+          const isAi = message.classList.contains('assistant');
+          let text = message.textContent.trim() || '';
+
+          if (isAi) {
+            text = text.replace('AI', '\tAI\t') + '\t';
+          }
+
+          // Убираем исходный текст из первого сообщения пользователя
+          if (isUser && text.includes(selectedText)) {
+            // Находим позицию исходного текста и берем только то, что после него
+            const originalTextIndex = text.indexOf(selectedText);
+            if (originalTextIndex !== -1) {
+              text = text.substring(originalTextIndex + selectedText.length).trim();
+              text = 'User\t' + text;
+            }
+          }
+
+          return text;
+        }).filter(text => text.trim().length > 0)
+          .join('\t')
+          .replace(/\n/g, '')
+          .replace(/\t/g, '\n');
+
+        prompt = selectedText;
+        response = fullDialogue;
         type = 'discuss';
         break;
       default:
@@ -637,14 +673,14 @@ export class PopupIntegration {
 
   private async handleRemoveFromFavorites(button: HTMLElement): Promise<void> {
     const sourceId = button.dataset.sourceId;
-    
+
     if (!sourceId) {
       this.showToast(t('common.noFavoriteIdFound'), 'error');
       return;
     }
 
     const success = await this.favoritesService.removeBySourceId(sourceId);
-    
+
     if (success) {
       this.updateFavoriteButtonState(button, false);
     } else {
@@ -675,7 +711,7 @@ export class PopupIntegration {
     if (!button) return;
 
     const selectedText = this.popupUI.getSelectedText();
-    
+
     if (!selectedText || selectedText.trim().length === 0) {
       this.updateFavoriteButtonState(button, false);
       return;
@@ -746,14 +782,14 @@ export class PopupIntegration {
 
     const sourceId = this.storageService.generateSourceId(type, prompt, response);
     const isFavorite = await this.favoritesService.isFavoriteBySourceId(sourceId);
-    
+
     if (isFavorite) {
       const found = await this.favoritesService.findBySourceId(sourceId);
       if (found) {
         button.dataset.sourceId = found.metadata?.sourceId || sourceId;
       }
     }
-    
+
     this.updateFavoriteButtonState(button, isFavorite);
   }
 
@@ -765,16 +801,16 @@ export class PopupIntegration {
   public showFavoriteButton(): void {
     const shadowRoot = this.popupUI.getShadowRoot();
     if (!shadowRoot) return;
-    
+
     const currentTab = this.popupUI.getCurrentTab();
     const favoriteButton = shadowRoot.querySelector(`#btn-favorite-toggle-${currentTab.id}`) as HTMLElement;
     const copyButton = shadowRoot.querySelector(`#btn-copy-${currentTab.id}`) as HTMLElement;
-    
+
     if (favoriteButton) {
       favoriteButton.classList.add('show');
       favoriteButton.style.display = 'inline-flex';
     }
-    
+
     if (copyButton) {
       copyButton.style.display = 'inline-flex';
     }
@@ -786,7 +822,7 @@ export class PopupIntegration {
     const tabId = elementId.replace('-text', '');
     const resultContainer = shadowRoot?.querySelector(`#${tabId}-result`) as HTMLElement;
     const errorTemplate = shadowRoot?.querySelector(`#api-key-error-${tabId}`) as HTMLElement;
-    
+
     if (resultContainer && resultText && errorTemplate) {
       resultContainer.hidden = false;
       resultText.innerHTML = errorTemplate.innerHTML;
@@ -798,13 +834,13 @@ export class PopupIntegration {
   private showModelUnavailableError(elementId: string): void {
     const shadowRoot = this.popupUI.getShadowRoot();
     const resultText = shadowRoot?.querySelector(`#${elementId}`) as HTMLElement;
-    
+
     if (resultText) {
       resultText.innerHTML = t('api.modelUnavailable');
       resultText.className = 'result-text error';
       resultText.style.display = 'block';
     }
-    
+
     this.showToast(t('api.modelUnavailable'), 'error');
   }
 

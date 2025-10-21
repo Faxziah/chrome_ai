@@ -200,7 +200,10 @@ export class Tabs {
                 <button class="btn btn-icon" id="btn-send-chat" aria-label="${t('chat.sendMessage')}">➤</button>
               </div>
             </div>
-            <button class="btn btn-favorite" id="btn-favorite-toggle-${tabId}" data-is-favorite="false" style="display:none;">${t('common.addToFavorites')}</button>
+            <div class="result-actions">
+              <button class="btn btn-secondary" id="btn-copy-discuss" style="display:none;">${t('common.copy')}</button>
+              <button class="btn btn-favorite" id="btn-favorite-toggle-${tabId}" data-is-favorite="false" style="display:none;">${t('common.addToFavorites')}</button>
+            </div>
             <div class="api-key-error-template" id="api-key-error-discuss" style="display: none;">
               <div class="api-key-error">
                 <p>${t('api.missingKey')}</p>

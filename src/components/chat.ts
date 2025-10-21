@@ -54,10 +54,6 @@ export class Chat {
     this.onStreamComplete = callback;
   }
 
-  async sendMessage(content: string): Promise<ChatMessage> {
-    return this.sendMessageInternal(content);
-  }
-
   async sendMessageWithStream(
     content: string,
     onChunk?: (chunk: string) => void
@@ -106,18 +102,6 @@ export class Chat {
 
   getMessages(): ChatMessage[] {
     return [...this.messages];
-  }
-
-  getLastMessage(): ChatMessage | null {
-    return this.messages.length > 0 ? this.messages[this.messages.length - 1] : null;
-  }
-
-  clearHistory(): void {
-    this.messages = [];
-  }
-
-  loadHistory(messages: ChatMessage[]): void {
-    this.messages = [...messages];
   }
 
   private buildPrompt(): string {

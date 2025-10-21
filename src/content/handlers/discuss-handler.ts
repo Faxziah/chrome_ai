@@ -83,8 +83,17 @@ export class DiscussHandler {
       this.updateChatUI();
     });
     
-    this.chat.setStreamCompleteCallback((message) => {
+    this.chat.setStreamCompleteCallback(async (message) => {
       this.updateChatUI();
+      
+      // Save to history when stream is complete
+      if (message.role === 'assistant') {
+        const messages = this.chat!.getMessages();
+        const userMessage = messages.find(m => m.role === 'user');
+        if (userMessage) {
+          await this.saveToHistory(userMessage.content, message.content);
+        }
+      }
     });
   }
 
@@ -100,7 +109,6 @@ export class DiscussHandler {
         <div class="message-header">
           <span class="message-role">${message.role === 'user' ? t('chat.user') : t('chat.ai')}</span>
         </div>
-        <div class="message-time">${new Date(message.timestamp || Date.now()).toLocaleTimeString()}</div>
         <div class="message-content">${message.content.replace(/\n/g, '<br>')}</div>
       </div>
     `).join('');
@@ -146,7 +154,6 @@ export class DiscussHandler {
       const errorMessage = document.createElement('div');
       errorMessage.className = 'chat-message error';
       errorMessage.innerHTML = `
-        <div class="message-time">${new Date().toLocaleTimeString()}</div>
         <div class="message-content">${message}</div>
       `;
       chatMessages.appendChild(errorMessage);

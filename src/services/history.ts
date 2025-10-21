@@ -67,7 +67,7 @@ export class HistoryService {
   }
 
   async addToHistory(
-    type: 'summarize' | 'rephrase' | 'translate',
+    type: 'summarize' | 'rephrase' | 'translate' | 'discuss',
     prompt: string,
     response: string,
     originalText?: string,
