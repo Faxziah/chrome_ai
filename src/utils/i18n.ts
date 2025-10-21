@@ -154,6 +154,7 @@ const translations: LocaleData = {
     'options.highlightKeywords': 'Highlight key sentences:',
     'options.clearHighlight': 'Clear highlight:',
     'options.changeShortcuts': 'Change shortcuts',
+    'options.changeShortcutsHelp': 'To change keyboard shortcuts use the button below',
     'options.dataManagement': '📊 Data Management',
     'options.history': 'History',
     'options.favorites': 'Favorites',
@@ -285,7 +286,7 @@ const translations: LocaleData = {
     'common.miniR': 'Ф',
     'common.miniT': 'Т',
     'common.miniD': 'О',
-    'common.highlight': 'Подсветка',
+    'common.highlight': 'Выделение',
     'common.history': 'История',
     'common.favorites': 'Избранное',
     'common.pin': 'Закрепить попап',
@@ -299,13 +300,13 @@ const translations: LocaleData = {
     
     // Side Panel
     'sidepanel.title': 'Text Tuner - AI Sidebar',
-    'sidepanel.highlightKeywords': 'Подсветить ключевые предложения',
+    'sidepanel.highlightKeywords': 'Выделить ключевые предложения',
     'sidepanel.historyTitle': 'История операций',
     'sidepanel.favoritesTitle': 'Избранное',
     'sidepanel.allTypes': 'Все типы',
     'sidepanel.searchHistory': 'Поиск в истории...',
     'sidepanel.searchFavorites': 'Поиск в избранном...',
-    'sidepanel.clearAll': 'Очистить все',
+    'sidepanel.clearAll': 'Очистить',
     
     // API Setup
     'apiSetup.unlockProductivity': 'Последний клик для разблокировки',
@@ -396,6 +397,7 @@ const translations: LocaleData = {
     'options.highlightKeywords': 'Подсветка ключевых предложений:',
     'options.clearHighlight': 'Очистить подсветку:',
     'options.changeShortcuts': 'Изменить сочетания',
+    'options.changeShortcutsHelp': 'Для изменения сочетаний клавиш используйте кнопку ниже',
     'options.dataManagement': '📊 Управление данными',
     'options.history': 'История',
     'options.favorites': 'Избранное',

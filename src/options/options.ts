@@ -67,6 +67,7 @@ class OptionsPage {
       const success = await this.storageService.setLanguage(language);
       if (success) {
         setLocale(language);
+        this.updateUITexts();
         this.showStatus('language-status', t('status.languageSaved'), 'success');
         // Reload page to apply new language
         setTimeout(() => {
@@ -307,6 +308,15 @@ class OptionsPage {
       mainHeading.textContent = t('options.title');
     }
     
+    // Update all elements with data-i18n attributes
+    const elements = document.querySelectorAll('[data-i18n]');
+    elements.forEach((element) => {
+      const key = element.getAttribute('data-i18n');
+      if (key) {
+        element.textContent = t(key);
+      }
+    });
+    
     // Update language section
     const languageSection = document.querySelector('.section h2');
     if (languageSection) {
@@ -319,7 +329,17 @@ class OptionsPage {
       apiSection.textContent = '🔑 ' + t('options.apiSettings');
     }
     
-    // Update other sections as needed...
+    // Update Gemini Model section
+    const geminiSection = document.querySelectorAll('.section h2')[2];
+    if (geminiSection) {
+      geminiSection.textContent = '🤖 ' + t('options.geminiModelSettings');
+    }
+    
+    // Update Keyboard Shortcuts section
+    const shortcutsSection = document.querySelectorAll('.section h2')[3];
+    if (shortcutsSection) {
+      shortcutsSection.textContent = '⌨️ ' + t('options.keyboardShortcuts');
+    }
   }
 }
 

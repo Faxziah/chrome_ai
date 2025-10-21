@@ -300,18 +300,17 @@
             <div class="form-group">
                 <label for="interface-language" data-i18n="options.interfaceLanguage">Interface Language:</label>
                 <select id="interface-language">
-                    <option value="en" selected>English</option>
-                    <option value="ru">Русский</option>
-                    <option value="de">Deutsch</option>
-                    <option value="fr">Français</option>
-                    <option value="zh">中文</option>
+                    <option value="en" selected data-i18n="language.english">English</option>
+                    <option value="ru" data-i18n="language.russian">Русский</option>
+                    <option value="de" data-i18n="language.german">Deutsch</option>
+                    <option value="fr" data-i18n="language.french">Français</option>
+                    <option value="zh" data-i18n="language.chinese">中文</option>
                 </select>
                 <div class="help-text" data-i18n="options.selectLanguage">
-                    Select language for the extension interface
                 </div>
             </div>
             <div class="button-group">
-                <button class="md-button md-button--primary" id="save-language" data-i18n="options.saveLanguage">Save Language</button>
+                <button class="md-button md-button--primary" id="save-language" data-i18n="options.saveLanguage"></button>
             </div>
             <div class="status-message" id="language-status"></div>
         </div>
@@ -323,13 +322,13 @@
                 <label for="api-key" data-i18n="options.geminiApiKey">Gemini API key:</label>
                 <input type="password" id="api-key" data-i18n-placeholder="options.apiKeyPlaceholder" placeholder="Enter your API key">
                 <div class="help-text">
-                    <span data-i18n="options.getApiKey">Get API key at</span> <a href="https://aistudio.google.com/app/api-keys" target="_blank">aistudio.google.com</a>
+                    <span data-i18n="options.getApiKey"></span> <a href="https://aistudio.google.com/app/api-keys" target="_blank">aistudio.google.com</a>
                 </div>
             </div>
             <div class="button-group">
-                <button class="md-button md-button--primary" id="save-api-key" data-i18n="options.saveKey">Save key</button>
-                <button class="md-button md-button--secondary" id="test-api-key" data-i18n="options.testKey">Test key</button>
-                <button class="md-button md-button--secondary" id="toggle-api-visibility" data-i18n="options.showHide">Show</button>
+                <button class="md-button md-button--primary" id="save-api-key" data-i18n="options.saveKey"></button>
+                <button class="md-button md-button--secondary" id="test-api-key" data-i18n="options.testKey"></button>
+                <button class="md-button md-button--secondary" id="toggle-api-visibility" data-i18n="options.showHide"></button>
             </div>
             <div class="status-message" id="api-status"></div>
         </div>
@@ -338,7 +337,7 @@
         <div class="section">
             <h2 data-i18n="options.geminiModelSettings">🤖 Gemini Model Settings</h2>
             <div class="form-group">
-                <label for="gemini-model" data-i18n="options.model">Model:</label>
+                <label for="gemini-model" data-i18n="options.model"></label>
                 <select id="gemini-model">
                     <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
 <!--                    <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>-->
@@ -347,26 +346,24 @@
                     <option value="gemini-2.0-flash-lite">Gemini 2.0 Flash-Lite</option>
                 </select>
                 <div class="help-text" data-i18n="options.selectModel">
-                    Select Gemini model for processing requests
                 </div>
             </div>
             <div class="form-group">
-                <label for="gemini-temperature" data-i18n="options.temperature">Temperature (0.0 - 1.0):</label>
+                <label for="gemini-temperature" data-i18n="options.temperature"></label>
                 <input type="range" id="gemini-temperature" min="0" max="1" step="0.1" value="0.7">
                 <div class="help-text">
-                    <span id="temperature-value">0.7</span> - <span data-i18n="options.temperatureHelp">Higher = more creative responses, Lower = more accurate responses</span>
+                    <span id="temperature-value">0.7</span> - <span data-i18n="options.temperatureHelp"></span>
                 </div>
             </div>
             <div class="form-group">
-                <label for="gemini-max-tokens" data-i18n="options.maxTokens">Max tokens:</label>
+                <label for="gemini-max-tokens" data-i18n="options.maxTokens"></label>
                 <input type="number" id="gemini-max-tokens" min="100" max="8192" step="100" value="2048">
                 <div class="help-text" data-i18n="options.maxTokensHelp">
-                    Maximum number of tokens in response (100-8192)
                 </div>
             </div>
             <div class="button-group">
-                <button class="md-button md-button--primary" id="save-gemini-config" data-i18n="options.saveSettings">Save settings</button>
-                <button class="md-button md-button--secondary" id="reset-gemini-config" data-i18n="options.resetToDefault">Reset to default</button>
+                <button class="md-button md-button--primary" id="save-gemini-config" data-i18n="options.saveSettings"></button>
+                <button class="md-button md-button--secondary" id="reset-gemini-config" data-i18n="options.resetToDefault"></button>
             </div>
             <div class="status-message" id="gemini-config-status"></div>
         </div>
@@ -375,21 +372,20 @@
         <div class="section">
             <h2 data-i18n="options.keyboardShortcuts">⌨️ Keyboard Shortcuts</h2>
             <div class="form-group">
-                <label data-i18n="options.currentShortcuts">Current keyboard shortcuts:</label>
+                <label data-i18n="options.currentShortcuts"></label>
                 <div style="background: #f8f9fa; padding: 15px; border-radius: 4px; margin-bottom: 10px;">
                     <div style="margin-bottom: 8px;">
-                        <strong data-i18n="options.highlightKeywords">Highlight key sentences:</strong> <span id="highlight-shortcut-display">Ctrl+Shift+H (Windows) / Cmd+Shift+H (Mac)</span>
+                        <strong data-i18n="options.highlightKeywords"></strong> <span id="highlight-shortcut-display">Ctrl+Shift+H (Windows) / Cmd+Shift+H (Mac)</span>
                     </div>
                     <div>
-                        <strong data-i18n="options.clearHighlight">Clear highlight:</strong> <span id="clear-shortcut-display">Ctrl+Shift+C (Windows) / Cmd+Shift+C (Mac)</span>
+                        <strong data-i18n="options.clearHighlight"></strong> <span id="clear-shortcut-display">Ctrl+Shift+C (Windows) / Cmd+Shift+C (Mac)</span>
                     </div>
                 </div>
                 <div class="help-text" data-i18n="options.changeShortcutsHelp">
-                    To change keyboard shortcuts use the button below
                 </div>
             </div>
             <div class="button-group">
-                <button class="md-button md-button--primary" id="change-shortcuts" data-i18n="options.changeShortcuts">Change shortcuts</button>
+                <button class="md-button md-button--primary" id="change-shortcuts" data-i18n="options.changeShortcuts"></button>
             </div>
         </div>
 
