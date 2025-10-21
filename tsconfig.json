@@ -13,7 +13,8 @@
     "rootDir": "./src",
     "types": ["chrome"],
     "declaration": false,
-    "sourceMap": true
+    "sourceMap": true,
+    "noImplicitAny": false
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
