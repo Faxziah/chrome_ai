@@ -428,7 +428,7 @@ export class PopupIntegration {
         button.textContent = t('common.processing');
 
         try {
-          // Send message to content script to highlight keywords
+          // Send message to service worker to highlight keywords
           const response = await chrome.runtime.sendMessage({ action: 'HIGHLIGHT_KEYWORDS' });
           if (response?.success) {
             this.showToast(t('common.highlightCompleted'), 'success');

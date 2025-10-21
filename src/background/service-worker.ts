@@ -75,5 +75,20 @@ chrome.commands.onCommand.addListener(async (command) => {
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === ActionType.OPEN_OPTIONS) {
     chrome.runtime.openOptionsPage().catch(console.error);
+  } else if (message.action === ActionType.HIGHLIGHT_KEYWORDS) {
+    // Forward the highlight request to content script
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs[0]?.id) {
+        chrome.tabs.sendMessage(tabs[0].id, { action: ActionType.HIGHLIGHT_KEYWORDS })
+          .then(response => {
+            sendResponse({ success: true, response });
+          })
+          .catch(error => {
+            console.error('Error highlighting keywords:', error);
+            sendResponse({ success: false, error: error.message });
+          });
+      }
+    });
+    return true; // Keep the message channel open for async response
   }
 });

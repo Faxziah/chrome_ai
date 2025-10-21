@@ -134,7 +134,6 @@ export class HighlightManager {
     try {
       // Load saved API configuration
       const apiConfig = await this.storageService.getApiConfig();
-      console.error('test', 123)
       const response = await this.geminiService.generateContent(prompt, {
         model: apiConfig?.model || 'gemini-2.5-flash',
         temperature: apiConfig?.temperature || 0.7,
@@ -148,7 +147,8 @@ export class HighlightManager {
       console.error('response', response)
       const parsedTextRegExpMatchArray: RegExpMatchArray | null = response.text.match(/```json\s*([\s\S]*?)\s*```/);
       const parsedText = parsedTextRegExpMatchArray ? parsedTextRegExpMatchArray[1].trim() : '';
-      const data: any = jsonrepair(parsedText)
+      const dataString: any = jsonrepair(parsedText)
+      const data = JSON.parse(dataString)
 
       return { sentences: data.sentences || [] }
 
@@ -171,15 +171,14 @@ export class HighlightManager {
   }
 
   private highlightTexts(searchTexts: string[]): void {
+    console.error('searchTexts', searchTexts)
     const walker = document.createTreeWalker(
       document.body,
       NodeFilter.SHOW_TEXT,
       {
         acceptNode: (node) => {
-          const text = node.textContent || '';
-          return searchTexts.some(searchText => 
-            text.toLowerCase().includes(searchText.toLowerCase())
-          ) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+          // Убираем фильтр - принимаем все текстовые узлы
+          return NodeFilter.FILTER_ACCEPT;
         }
       }
     );
@@ -190,11 +189,13 @@ export class HighlightManager {
       textNodes.push(node as Text);
     }
 
+    console.log('Total text nodes found:', textNodes.length);
+
     const combinedRegex = this.buildCombinedRegex(searchTexts);
     if (!combinedRegex) {
       return;
     }
-
+    console.error('textNodes', textNodes)
     textNodes.forEach(textNode => {
       const parent = textNode.parentElement;
       if (!parent || this.shouldSkipElement(parent)) {
