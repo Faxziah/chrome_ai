@@ -130,6 +130,7 @@ export class HighlightManager {
     
     Text: ${text.substring(0, 4000)}`;
 
+
     try {
       // Load saved API configuration
       const apiConfig = await this.storageService.getApiConfig();
