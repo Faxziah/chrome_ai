@@ -35,7 +35,7 @@ export class PopupIntegration {
     this.attachEventListeners();
   }
 
-  private async initializeServices(): Promise<void> {
+  private async initializeServices(selectedText?: string): Promise<void> {
     try {
       const apiKey = await this.storageService.getApiKey();
       if (apiKey && apiKey.trim().length > 0) {
@@ -57,7 +57,7 @@ export class PopupIntegration {
         this.translateHandler = new TranslateHandler(shadowRoot, this.geminiService, this.storageService, this.speechManager);
         this.speechHandler = new SpeechHandler(shadowRoot, this.speechManager, this.storageService);
         this.summarizeHandler = new SummarizeHandler(shadowRoot, this.geminiService, this.storageService);
-        this.discussHandler = new DiscussHandler(shadowRoot, this.geminiService, this.storageService, this.favoritesService);
+        this.discussHandler = new DiscussHandler(shadowRoot, this.geminiService, this.storageService, this.favoritesService, selectedText || '');
       }
     } catch (error) {
       console.error('Failed to initialize services:', error);
@@ -600,6 +600,10 @@ private async handleFavoriteToggleClick(event: Event): Promise<void> {
           this.showToast(t('common.noResultToAddToFavorites'), 'error');
           return;
         }
+        
+        // Проверяем, есть ли уже избранное с таким же prompt
+        const existingFavorite = await this.favoritesService.findByPrompt(selectedText, 'discuss');
+        
         // Получить весь диалог
         const allMessages = Array.from(chatMessages.children);
         if (allMessages.length === 0) {
@@ -613,28 +617,49 @@ private async handleFavoriteToggleClick(event: Event): Promise<void> {
           const isAi = message.classList.contains('assistant');
           let text = message.textContent.trim() || '';
 
-          if (isAi) {
-            text = text.replace(`${t('chat.ai')}`, `\t${t('chat.ai')}\t`) + '\t';
-          }
-
-          // Убираем исходный текст из первого сообщения пользователя
-          if (isUser && text.includes(selectedText)) {
-            // Находим позицию исходного текста и берем только то, что после него
-            const originalTextIndex = text.indexOf(selectedText);
-            if (originalTextIndex !== -1) {
-              text = `${t('chat.user')}\t` + text.substring(originalTextIndex + selectedText.length).trim();
+          if (isUser) {
+            // Убираем исходный текст из первого сообщения пользователя
+            if (text.includes(selectedText)) {
+              const originalTextIndex = text.indexOf(selectedText);
+              if (originalTextIndex !== -1) {
+                text = text.substring(originalTextIndex + selectedText.length).trim();
+              }
             }
+            // Убираем существующий префикс "Пользователь" если есть
+            text = text.replace(new RegExp(`^${t('chat.user')}\\s*`), '').trim();
+            text = `${t('chat.user')}\n` + text;
+          } else if (isAi) {
+            // Убираем существующий префикс "ИИ" если есть
+            text = text.replace(new RegExp(`^${t('chat.ai')}\\s*`), '').trim();
+            text = `${t('chat.ai')}\n` + text;
           }
 
           return text;
         }).filter(text => text.trim().length > 0)
-          .join('\t')
-          .replace(/\n/g, '')
-          .replace(/\t/g, '\n');
+          .join('\n\n');
 
         prompt = selectedText;
         response = fullDialogue;
         type = 'discuss';
+        
+        // Если уже есть избранное с таким же prompt, обновляем его
+        if (existingFavorite) {
+          const success = await this.favoritesService.updateFavorite(existingFavorite.id, {
+            response: fullDialogue
+          });
+          
+          if (success) {
+            this.showToast('Избранное обновлено!', 'success');
+            this.updateFavoriteButtonState(button, true);
+            // Используем sourceId из metadata, если есть, иначе id
+            const sourceId = existingFavorite.metadata?.sourceId || existingFavorite.id;
+            button.dataset.sourceId = sourceId;
+            button.dataset.isFavorite = 'true';
+          } else {
+            this.showToast(t('common.failedToUpdateFavorites'), 'error');
+          }
+          return;
+        }
         break;
       default:
         this.showToast(t('common.cannotAddToFavoritesFromThisTab'), 'error');
@@ -666,7 +691,8 @@ private async handleFavoriteToggleClick(event: Event): Promise<void> {
     const sourceId = button.dataset.sourceId;
 
     if (!sourceId) {
-      this.showToast(t('common.noFavoriteIdFound'), 'error');
+      // Если нет sourceId, просто меняем кнопку на "Добавить в избранное"
+      this.updateFavoriteButtonState(button, false);
       return;
     }
 
@@ -675,7 +701,8 @@ private async handleFavoriteToggleClick(event: Event): Promise<void> {
     if (success) {
       this.updateFavoriteButtonState(button, false);
     } else {
-      this.showToast(t('common.failedToRemoveFromFavorites'), 'error');
+      // Если не удалось удалить, просто меняем кнопку на "Добавить в избранное"
+      this.updateFavoriteButtonState(button, false);
     }
   }
 

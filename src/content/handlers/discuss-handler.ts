@@ -11,17 +11,20 @@ export class DiscussHandler {
   private favoritesService: FavoritesService;
   private chat: Chat | null;
   private shadowRoot: ShadowRoot;
+  private selectedText: string;
 
   constructor(
     shadowRoot: ShadowRoot,
     geminiService: GeminiService | null,
     storageService: StorageService,
-    favoritesService: FavoritesService
+    favoritesService: FavoritesService,
+    selectedText: string
   ) {
     this.shadowRoot = shadowRoot;
     this.geminiService = geminiService;
     this.storageService = storageService;
     this.favoritesService = favoritesService;
+    this.selectedText = selectedText;
     this.chat = geminiService ? new Chat(geminiService, storageService, favoritesService) : null;
     
     if (this.chat) {
@@ -94,10 +97,29 @@ export class DiscussHandler {
           // Собираем весь диалог для сохранения
           const fullDialogue = messages.map(msg => {
             const role = msg.role === 'user' ? 'Пользователь' : 'ИИ';
-            return `${role}\n${msg.content}`;
+            let content = msg.content;
+            
+            // Убираем выделенный текст из первого сообщения пользователя
+            if (msg.role === 'user') {
+              const selectedText = this.extractSelectedText(msg.content);
+              if (content.includes(selectedText)) {
+                const originalTextIndex = content.indexOf(selectedText);
+                if (originalTextIndex !== -1) {
+                  content = content.substring(originalTextIndex + selectedText.length).trim();
+                }
+              }
+            }
+            
+            return `${role}\n${content}`;
           }).join('\n\n');
           
-          await this.saveToHistory(userMessage.content, fullDialogue);
+          // Получаем выделенный текст из первого сообщения пользователя
+          const firstUserMessage = messages.find(m => m.role === 'user');
+          if (firstUserMessage) {
+            // Извлекаем выделенный текст из первого сообщения
+            const selectedText = this.extractSelectedText(firstUserMessage.content);
+            await this.saveToHistory(selectedText, fullDialogue);
+          }
         }
       }
     });
@@ -121,6 +143,26 @@ export class DiscussHandler {
 
     // Scroll to bottom
     chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  private extractSelectedText(userMessage: string): string {
+    // Если в сообщении есть выделенный текст (обычно в начале), извлекаем его
+    // Выделенный текст обычно заканчивается перед вопросом или новой строкой
+    const lines = userMessage.split('\n');
+    if (lines.length > 1) {
+      // Берем первую строку как выделенный текст
+      return lines[0].trim();
+    }
+    
+    // Если нет переносов строк, ищем паттерн выделенного текста
+    // Обычно выделенный текст - это первая часть до знака вопроса или точки
+    const match = userMessage.match(/^([^?]*?)(?:\?|$)/);
+    if (match && match[1].trim().length > 0) {
+      return match[1].trim();
+    }
+    
+    // Если ничего не найдено, возвращаем все сообщение
+    return userMessage.trim();
   }
 
   private async saveToHistory(originalText: string, response: string): Promise<void> {

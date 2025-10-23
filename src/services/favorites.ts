@@ -104,6 +104,16 @@ export class FavoritesService {
     }
   }
 
+  async findByPrompt(prompt: string, type: string): Promise<FavoriteItem | null> {
+    try {
+      const favorites = await this.storageService.getFavorites();
+      return favorites.find(item => item.prompt === prompt && item.type === type) || null;
+    } catch (error) {
+      console.error('Error finding favorite by prompt:', error);
+      return null;
+    }
+  }
+
   async updateFavorite(
     itemId: string, 
     updates: Partial<Omit<FavoriteItem, 'id' | 'timestamp'>>
