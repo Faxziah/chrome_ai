@@ -126,6 +126,11 @@ export class PopupUI {
       this.tabsComponent.addEventListener('tabChange', (event: any) => {
         this.updateSelectedTextDisplay();
       });
+
+      // Прокручиваем к активной вкладке после рендеринга
+      setTimeout(() => {
+        this.tabsComponent?.scrollToActiveTab();
+      }, 100);
     }
     
     // 1. Рендерить контент
@@ -146,8 +151,6 @@ export class PopupUI {
   }
 
   public hide(): void {
-
-    console.log(222)
     if (this.popupContainer) {
       this.popupContainer.style.opacity = '0';
       this.popupContainer.style.visibility = 'hidden';
@@ -158,8 +161,6 @@ export class PopupUI {
     this.recentlyClosed = false;
 
     this.cleanupEventListeners();
-    console.log(333)
-
     document.dispatchEvent(new CustomEvent('popupHidden'));
   }
 
@@ -375,6 +376,11 @@ export class PopupUI {
     // when switching from mini mode to full mode
     
     this.updateSelectedTextDisplay();
+    
+    // Прокручиваем к активной вкладке после переключения в полноэкранный режим
+    setTimeout(() => {
+      this.tabsComponent?.scrollToActiveTab();
+    }, 100);
     
     // Update position after switching to full mode to prevent going off-screen
     const selectionRect = this.getCurrentSelectionRect();

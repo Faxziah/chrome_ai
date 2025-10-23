@@ -393,6 +393,11 @@ export class Tabs {
       } as TabChangeEvent
     });
     this.eventTarget.dispatchEvent(event);
+
+    // Прокручиваем к активной вкладке после переключения
+    setTimeout(() => {
+      this.scrollToActiveTab();
+    }, 50);
   }
 
   getCurrentTab(): { id: string; index: number } {
@@ -406,6 +411,22 @@ export class Tabs {
     const index = this.tabs.findIndex(tab => tab.id === tabId);
     if (index !== -1) {
       this.selectTab(index, false);
+    }
+  }
+
+  scrollToActiveTab(): void {
+    if (!this.rootElement) return;
+
+    const shadowRoot = this.rootElement.getRootNode() as ShadowRoot;
+    const activeTab = shadowRoot.querySelector('.tab.is-active') as HTMLElement;
+    
+    if (activeTab && this.rootElement) {
+      // Прокручиваем к активной вкладке
+      activeTab.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+        inline: 'center'
+      });
     }
   }
 
