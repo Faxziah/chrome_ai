@@ -280,27 +280,24 @@ export class HighlightManager {
   private highlightTexts(searchTexts: string[]): void {
     console.log('Ищем предложения:', searchTexts);
 
-    // Удаляем старые выделения
     this.removeExistingHighlights();
 
-    // Проходим по всем текстовым узлам на странице
-    const walker = document.createTreeWalker(
-      document.body,
-      NodeFilter.SHOW_TEXT,
-      null
-    );
-
-    const textNodes: Text[] = [];
-    let node;
-    while (node = walker.nextNode()) {
-      textNodes.push(node as Text);
-    }
-
-    console.log('Найдено текстовых узлов:', textNodes.length);
-
-    // Для каждого искомого предложения
+    // Для каждого предложения отдельно находим и выделяем
     searchTexts.forEach(sentence => {
-      this.highlightSentenceInTextNodes(sentence, textNodes);
+      // Каждый раз пересобираем текстовые узлы, так как DOM мог измениться
+      const walker = document.createTreeWalker(
+        document.body,
+        NodeFilter.SHOW_TEXT,
+        null
+      );
+
+      const currentTextNodes: Text[] = [];
+      let node;
+      while (node = walker.nextNode()) {
+        currentTextNodes.push(node as Text);
+      }
+
+      this.highlightSentenceInTextNodes(sentence, currentTextNodes);
     });
   }
 
@@ -320,53 +317,77 @@ export class HighlightManager {
 
   private highlightInNode(textNode: Text, searchText: string, originalText: string): void {
     const normalizedOriginal = this.normalizeText(originalText);
-    const startIndex = normalizedOriginal.indexOf(searchText);
-
-    if (startIndex === -1) return;
-
-    // Находим соответствующие позиции в оригинальном тексте
-    let actualStart = 0;
-    let actualEnd = 0;
-    let normalizedPos = 0;
-
-    // Сопоставляем позиции в нормализованном и оригинальном тексте
-    for (let i = 0; i < originalText.length; i++) {
-      if (normalizedPos === startIndex) {
-        actualStart = i;
-      }
-      if (normalizedPos === startIndex + searchText.length) {
-        actualEnd = i;
-        break;
-      }
-
-      // Учитываем только символы, которые не удаляются при нормализации
-      const char = originalText[i];
-      if (char !== '\u00A0' && !/[\u2013\u2014]/.test(char)) {
-        normalizedPos++;
-      }
+    const normalizedSearch = this.normalizeText(searchText);
+    
+    // Находим все вхождения предложения
+    const matches: { start: number; end: number }[] = [];
+    let startIndex = 0;
+    
+    while (true) {
+      const index = normalizedOriginal.indexOf(normalizedSearch, startIndex);
+      if (index === -1) break;
+      
+      matches.push({
+        start: index,
+        end: index + normalizedSearch.length
+      });
+      
+      startIndex = index + 1;
     }
 
-    if (actualEnd === 0) {
-      actualEnd = originalText.length;
-    }
+    if (matches.length === 0) return;
 
-    const before = originalText.substring(0, actualStart);
-    const highlighted = originalText.substring(actualStart, actualEnd);
-    const after = originalText.substring(actualEnd);
+    // Выделяем все найденные вхождения
+    this.highlightAllMatchesInNode(textNode, originalText, matches, normalizedSearch);
+  }
 
+  private highlightAllMatchesInNode(textNode: Text, originalText: string, matches: { start: number; end: number }[], searchText: string): void {
     const parent = textNode.parentNode;
     if (!parent) return;
 
-    const beforeNode = document.createTextNode(before);
-    const highlightNode = document.createElement('mark');
-    highlightNode.className = 'search-highlight';
-    highlightNode.textContent = highlighted;
-    const afterNode = document.createTextNode(after);
-
-    parent.insertBefore(beforeNode, textNode);
-    parent.insertBefore(highlightNode, textNode);
-    parent.insertBefore(afterNode, textNode);
-    parent.removeChild(textNode);
+    // Сортируем совпадения по позиции (от конца к началу, чтобы не сбивать индексы)
+    const sortedMatches = matches.sort((a, b) => b.start - a.start);
+    
+    let currentText = originalText;
+    
+    // Обрабатываем совпадения от конца к началу
+    sortedMatches.forEach(match => {
+      const before = currentText.substring(0, match.start);
+      const highlighted = currentText.substring(match.start, match.end);
+      const after = currentText.substring(match.end);
+      
+      // Создаем новые узлы
+      const beforeNode = document.createTextNode(before);
+      const highlightNode = document.createElement('mark');
+      highlightNode.className = 'search-highlight';
+      highlightNode.textContent = highlighted;
+      const afterNode = document.createTextNode(after);
+      
+      // Заменяем текущий текстовый узел
+      if (currentText === originalText) {
+        // Первое совпадение - заменяем исходный узел
+        parent.insertBefore(beforeNode, textNode);
+        parent.insertBefore(highlightNode, textNode);
+        parent.insertBefore(afterNode, textNode);
+        parent.removeChild(textNode);
+      } else {
+        // Последующие совпадения - работаем с фрагментом
+        const fragment = document.createDocumentFragment();
+        fragment.appendChild(beforeNode);
+        fragment.appendChild(highlightNode);
+        fragment.appendChild(afterNode);
+        
+        // Находим и заменяем соответствующий текстовый узел
+        const textNodes = Array.from(parent.childNodes).filter(node => node.nodeType === Node.TEXT_NODE);
+        const targetNode = textNodes.find(node => node.textContent === currentText);
+        if (targetNode) {
+          parent.replaceChild(fragment, targetNode);
+        }
+      }
+      
+      // Обновляем текущий текст для следующей итерации
+      currentText = before + after;
+    });
   }
 
   private normalizeText(text: string): string {
