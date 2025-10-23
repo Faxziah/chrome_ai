@@ -2,8 +2,8 @@ import { GeminiService } from '../../services/gemini-api';
 import { StorageService } from '../../services/storage';
 import { FavoritesService } from '../../services/favorites';
 import { Chat } from '../../components/chat';
-import { ChatMessage } from '../../types';
 import { t } from '../../utils/i18n';
+import { formatMarkdown } from '../../utils/utils';
 
 export class DiscussHandler {
   private geminiService: GeminiService | null;
@@ -109,7 +109,7 @@ export class DiscussHandler {
         <div class="message-header">
           <span class="message-role">${message.role === 'user' ? t('chat.user') : t('chat.ai')}</span>
         </div>
-        <div class="message-content">${message.content.replace(/\n/g, '<br>')}</div>
+        <div class="message-content">${message.role === 'assistant' ? formatMarkdown(message.content) : message.content.replace(/\n/g, '<br>')}</div>
       </div>
     `).join('');
 
@@ -143,7 +143,6 @@ export class DiscussHandler {
 
   private showLoading(button: HTMLButtonElement, input: HTMLTextAreaElement): void {
     button.disabled = true;
-    button.textContent = t('status.summarizing');
     input.disabled = true;
   }
 
@@ -166,5 +165,4 @@ export class DiscussHandler {
     button.textContent = '➤';
     input.disabled = false;
   }
-
 }

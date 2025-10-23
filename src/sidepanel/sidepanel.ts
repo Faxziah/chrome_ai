@@ -2,6 +2,7 @@ import { StorageService } from '../services/storage';
 import { HistoryService } from '../services/history';
 import { FavoritesService } from '../services/favorites';
 import { setLocale, t } from '../utils/i18n';
+import { truncateText, escapeHtml, formatMarkdown } from '../utils/utils';
 
 // Material Design Utils (будет доступен глобально после загрузки скрипта)
 declare global {
@@ -348,8 +349,8 @@ class SidePanelApp {
             </button>
           </div>
         </div>
-        <div class="item-content">${this.escapeHtml(this.truncateText(item.prompt, 100))}</div>
-        <div class="item-result">${item.type === 'discuss' ? this.formatMarkdown(this.truncateText(item.response, 150)) : this.escapeHtml(this.truncateText(item.response, 150))}</div>
+        <div class="item-content">${escapeHtml(truncateText(item.prompt, 100))}</div>
+        <div class="item-result">${item.type === 'discuss' ? formatMarkdown(truncateText(item.response, 150)) as string : escapeHtml(truncateText(item.response, 150))}</div>
         <div class="item-meta">${new Date(item.timestamp).toLocaleString()}</div>
       </div>
     `).join('');
@@ -388,8 +389,8 @@ class SidePanelApp {
             </button>
           </div>
         </div>
-        <div class="item-content">${this.escapeHtml(this.truncateText(item.prompt, 100))}</div>
-        <div class="item-result">${item.type === 'discuss' ? this.formatMarkdown(this.truncateText(item.response, 150)) : this.escapeHtml(this.truncateText(item.response, 150))}</div>
+        <div class="item-content">${escapeHtml(truncateText(item.prompt, 100))}</div>
+        <div class="item-result">${item.type === 'discuss' ? formatMarkdown(truncateText(item.response, 150)) as string : escapeHtml(truncateText(item.response, 150))}</div>
         <div class="item-meta">${new Date(item.timestamp).toLocaleString()}</div>
       </div>
     `).join('');
@@ -466,26 +467,6 @@ class SidePanelApp {
       console.error('Error clearing favorites:', error);
       this.showStatus(t('status.errorClearingFavorites'), 'error');
     }
-  }
-
-  private truncateText(text: string, maxLength: number): string {
-    if (text.length <= maxLength) return text;
-    return text.substring(0, maxLength) + '...';
-  }
-
-  private escapeHtml(text: string): string {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-  }
-
-  private formatMarkdown(text: string): string {
-    // Простое форматирование markdown для отображения
-    return text
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // **bold**
-      .replace(/\*(.*?)\*/g, '<em>$1</em>') // *italic*
-      .replace(/\n/g, '<br>') // Переносы строк
-      .replace(/\n\n/g, '<br><br>'); // Двойные переносы строк
   }
 
   private setupHistoryEventListeners(): void {
@@ -655,11 +636,11 @@ class SidePanelApp {
           <div class="modal-body">
             <div class="detail-section">
               <h4>${t('common.originalText')}</h4>
-              <div class="detail-content">${this.escapeHtml(item.prompt)}</div>
+              <div class="detail-content">${escapeHtml(item.prompt)}</div>
             </div>
             <div class="detail-section">
               <h4>${t('common.result')}</h4>
-              <div class="detail-content">${item.type === 'discuss' ? this.formatMarkdown(item.response) : this.escapeHtml(item.response)}</div>
+              <div class="detail-content">${item.type === 'discuss' ? formatMarkdown(item.response) as string : escapeHtml(item.response)}</div>
             </div>
           </div>
         </div>
