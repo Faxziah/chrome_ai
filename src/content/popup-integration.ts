@@ -21,7 +21,6 @@ export class PopupIntegration {
   private isProcessing: boolean = false;
   private isProcessingFavorite: boolean = false;
   private toastTimer: number | null = null;
-  private apiKeyValid: boolean = false;
   private abortController: AbortController | null = null;
 
   constructor(popupUI: PopupUI) {
@@ -41,14 +40,8 @@ export class PopupIntegration {
       const apiKey = await this.storageService.getApiKey();
       if (apiKey && apiKey.trim().length > 0) {
         this.geminiService = new GeminiService(apiKey);
-        this.apiKeyValid = await this.geminiService.testConnection();
-        if (!this.apiKeyValid) {
-          console.log('API key is invalid or connection failed');
-          this.geminiService = null;
-        }
       } else {
         console.log('API key not found. User needs to configure in options.');
-        this.apiKeyValid = false;
       }
 
       this.speechManager = new SpeechSynthesisManager();
@@ -68,7 +61,6 @@ export class PopupIntegration {
       }
     } catch (error) {
       console.error('Failed to initialize services:', error);
-      this.apiKeyValid = false;
     }
   }
 
@@ -196,14 +188,14 @@ export class PopupIntegration {
         return;
       }
 
-      if (!this.apiKeyValid) {
+      if (!this.geminiService) {
         this.showApiKeyError('rephrase-text');
         return;
       }
 
       if (!this.rephraseHandler) {
         await this.initializeServices();
-        if (!this.rephraseHandler || !this.apiKeyValid) {
+        if (!this.rephraseHandler || !this.geminiService) {
           this.showApiKeyError('rephrase-text');
           return;
         }
@@ -278,14 +270,14 @@ export class PopupIntegration {
         return;
       }
 
-      if (!this.apiKeyValid) {
+      if (!this.geminiService) {
         this.showApiKeyError('translate-text');
         return;
       }
 
       if (!this.translateHandler) {
         await this.initializeServices();
-        if (!this.translateHandler || !this.apiKeyValid) {
+        if (!this.translateHandler || !this.geminiService) {
           this.showApiKeyError('translate-text');
           return;
         }
@@ -371,14 +363,14 @@ export class PopupIntegration {
         return;
       }
 
-      if (!this.apiKeyValid) {
+      if (!this.geminiService) {
         this.showApiKeyError('summary-text');
         return;
       }
 
       if (!this.summarizeHandler) {
         await this.initializeServices();
-        if (!this.summarizeHandler || !this.apiKeyValid) {
+        if (!this.summarizeHandler || !this.geminiService) {
           this.showApiKeyError('summary-text');
           return;
         }
@@ -415,7 +407,7 @@ export class PopupIntegration {
     this.abortController = new AbortController();
 
     try {
-      if (!this.apiKeyValid) {
+      if (!this.geminiService) {
         this.showApiKeyError('highlight-text');
         return;
       }
@@ -466,14 +458,14 @@ export class PopupIntegration {
         return;
       }
 
-      if (!this.apiKeyValid) {
+      if (!this.geminiService) {
         this.showApiKeyError('discuss-text');
         return;
       }
 
       if (!this.discussHandler) {
         await this.initializeServices();
-        if (!this.discussHandler || !this.apiKeyValid) {
+        if (!this.discussHandler || !this.geminiService) {
           this.showApiKeyError('discuss-text');
           return;
         }
@@ -912,7 +904,7 @@ export class PopupIntegration {
   }
 
   public isApiKeyValid(): boolean {
-    return this.apiKeyValid;
+    return this.geminiService !== null;
   }
 
   public cancelCurrentOperation(): void {
