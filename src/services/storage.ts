@@ -54,6 +54,28 @@ export class StorageService {
   async saveToHistory(item: Omit<HistoryItem, 'id' | 'timestamp'>): Promise<boolean> {
     try {
       const history = await this.getHistory();
+
+      // Для типа 'discuss' ищем существующий элемент с таким же prompt
+      if (item.type === 'discuss') {
+        const existingItemIndex = history.findIndex(historyItem =>
+          historyItem.type === 'discuss' && historyItem.prompt === item.prompt
+        );
+
+        if (existingItemIndex !== -1) {
+          // Объединяем ответы
+          history[existingItemIndex].response += '\n\n' + item.response;
+
+          // Обновляем timestamp на текущий
+          history[existingItemIndex].timestamp = Date.now();
+
+          await chrome.storage.local.set({
+            [StorageService.STORAGE_KEYS.HISTORY]: history
+          });
+
+          return true;
+        }
+      }
+
       const newItem: HistoryItem = {
         ...item,
         id: this.generateId(),
@@ -61,11 +83,11 @@ export class StorageService {
       };
 
       const updatedHistory = [newItem, ...history].slice(0, StorageService.HISTORY_LIMIT);
-      
+
       await chrome.storage.local.set({
         [StorageService.STORAGE_KEYS.HISTORY]: updatedHistory
       });
-      
+
       return true;
     } catch (error) {
       console.error('Error saving to history:', error);
