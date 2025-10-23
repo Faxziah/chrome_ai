@@ -110,7 +110,7 @@ export class Chat {
       .slice(-this.config.maxHistory! * 2)
       .filter(msg => !(msg.role === 'assistant' && msg.isStreaming && msg.content === ''))
       .map(msg => `${msg.role === 'user' ? 'Пользователь' : 'Ассистент'}: ${msg.content}`)
-      .join('\n\n');
+      .join('\n');
 
     return `${systemPrompt}\n\nИстория разговора:\n${conversationHistory}`;
   }

@@ -63,7 +63,7 @@ export class StorageService {
 
         if (existingItemIndex !== -1) {
           // Объединяем ответы
-          history[existingItemIndex].response += '\n\n' + item.response;
+          history[existingItemIndex].response = item.response
 
           // Обновляем timestamp на текущий
           history[existingItemIndex].timestamp = Date.now();

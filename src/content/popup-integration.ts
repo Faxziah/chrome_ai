@@ -476,7 +476,7 @@ export class PopupIntegration {
 
       // Формируем полное сообщение: выделенный текст + вопрос пользователя
       const fullMessage = selectedText
-        ? `${selectedText}\n\n${chatInput.value}`
+        ? `${selectedText}\n${chatInput.value}`
         : chatInput.value;
 
       // Очищаем поле ввода после отправки
@@ -505,7 +505,7 @@ export class PopupIntegration {
     }
   }
 
-  private async handleFavoriteToggleClick(event: Event): Promise<void> {
+private async handleFavoriteToggleClick(event: Event): Promise<void> {
     event.preventDefault();
     event.stopPropagation();
 
@@ -614,7 +614,7 @@ export class PopupIntegration {
           let text = message.textContent.trim() || '';
 
           if (isAi) {
-            text = text.replace('AI', '\tAI\t') + '\t';
+            text = text.replace(`${t('chat.ai')}`, `\t${t('chat.ai')}\t`) + '\t';
           }
 
           // Убираем исходный текст из первого сообщения пользователя
@@ -622,7 +622,7 @@ export class PopupIntegration {
             // Находим позицию исходного текста и берем только то, что после него
             const originalTextIndex = text.indexOf(selectedText);
             if (originalTextIndex !== -1) {
-              text = 'User\t' + text.substring(originalTextIndex + selectedText.length).trim();
+              text = `${t('chat.user')}\t` + text.substring(originalTextIndex + selectedText.length).trim();
             }
           }
 

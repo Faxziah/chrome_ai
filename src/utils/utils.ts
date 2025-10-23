@@ -12,5 +12,6 @@ export function escapeHtml(text: string): string {
 }
 
 export function formatMarkdown(text: string): string {
-  return marked.parse(text) as string;
+  const textWithNewLines = text.replace(/\n/g, '<br>');
+  return marked.parse(textWithNewLines).toString();
 }

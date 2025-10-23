@@ -85,13 +85,19 @@ export class DiscussHandler {
     
     this.chat.setStreamCompleteCallback(async (message) => {
       this.updateChatUI();
-      
+
       // Save to history when stream is complete
       if (message.role === 'assistant') {
         const messages = this.chat!.getMessages();
         const userMessage = messages.find(m => m.role === 'user');
         if (userMessage) {
-          await this.saveToHistory(userMessage.content, message.content);
+          // Собираем весь диалог для сохранения
+          const fullDialogue = messages.map(msg => {
+            const role = msg.role === 'user' ? 'Пользователь' : 'ИИ';
+            return `${role}\n${msg.content}`;
+          }).join('\n\n');
+          
+          await this.saveToHistory(userMessage.content, fullDialogue);
         }
       }
     });
