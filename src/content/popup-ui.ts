@@ -1,6 +1,7 @@
 import { Tabs } from '../components/tabs';
 import { t } from '../utils/i18n';
 import { StorageService } from '../services/storage';
+import {getSelectedText, getSelectionRect} from "./selection-utils";
 
 export class PopupUI {
   private hostElement: HTMLDivElement | null = null;
@@ -132,7 +133,7 @@ export class PopupUI {
         this.tabsComponent?.scrollToActiveTab();
       }, 100);
     }
-    
+
     // 1. Рендерить контент
     // 2. Вычислить и установить позицию (БЕЗ показа)
     this.updatePosition(selectionRect);
@@ -239,13 +240,19 @@ export class PopupUI {
       }
     }, { capture: true, signal: this.abortController.signal });
 
-    document.addEventListener('pointerdown', (event) => {
+    document.addEventListener('pointerup', (event) => {
       const path = event.composedPath();
       const clickedInside = path.some(el => el === this.popupContainer || (el instanceof HTMLElement && this.popupContainer?.contains(el)));
       const target = event.target as HTMLElement;
       const isInteractive = target.closest('button, input, textarea, select');
+      const selectedText = getSelectedText();
 
-      if (!clickedInside && !this.isPinned && !isInteractive) {
+      if (selectedText) {
+        const selectionRect = getSelectionRect();
+        this.show(selectedText, selectionRect!);
+      }
+
+      if (!clickedInside && !this.isPinned && !isInteractive && !selectedText) {
         this.hide();
       }
     }, { capture: true, signal: this.abortController.signal });
