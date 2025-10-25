@@ -44,18 +44,19 @@ function showPopupIfTextSelected(): void {
     return;
   }
   
+  // Если попап открыт, не закрываем его при отсутствии выделения
+  if (popupUI.isPopupVisible()) {
+    return;
+  }
+  
   if (!isValidSelection(selectedText, 1)) {
-    if (!popupUI.getIsPinned()) {
-      popupUI.hide();
-    }
+    popupUI.hide();
     return;
   }
 
   const selectionRect = getSelectionRect();
   if (!selectionRect) {
-    if (!popupUI.getIsPinned()) {
-      popupUI.hide();
-    }
+    popupUI.hide();
     return;
   }
 
@@ -77,9 +78,8 @@ function schedulePositionUpdate(): void {
     
     const freshSelectionRect = getSelectionRect();
     if (!freshSelectionRect) {
-      if (!popupUI.getIsPinned()) {
-        popupUI.hide();
-      }
+      // Не закрываем попап при обновлении позиции (прокрутка, изменение размера)
+      // Попап должен закрываться только при явных действиях пользователя
       lastSelectionRect = null;
       positionUpdateScheduled = false;
       return;
@@ -141,6 +141,11 @@ document.addEventListener('keyup', (event) => {
   const path = event.composedPath();
   const isInsidePopup = path.some(el => el instanceof HTMLElement && el.id === 'ai-text-tools-popup-host');
   if (isInsidePopup) {
+    return;
+  }
+
+  // Проверяем, что попап открыт - не закрываем его при случайных нажатиях
+  if (popupUI.isPopupVisible()) {
     return;
   }
 
