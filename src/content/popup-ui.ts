@@ -156,10 +156,13 @@ export class PopupUI {
       this.popupContainer.style.opacity = '0';
       this.popupContainer.style.visibility = 'hidden';
       this.popupContainer.style.transform = '';
+      this.popupContainer.style.width = 'auto';
     }
 
     this.isVisible = false;
     this.recentlyClosed = false;
+    this.tabsComponent = null;
+    this.mode = 'mini';
 
     this.cleanupEventListeners();
     document.dispatchEvent(new CustomEvent('popupHidden'));
@@ -172,8 +175,11 @@ export class PopupUI {
   public updatePosition(selectionRect: DOMRect): void {
     if (!this.popupContainer) return;
 
-    if (this.wasManuallyPositioned && this.currentPosition) {
-      this.popupContainer.style.transform = `translate(${this.currentPosition.x}px, ${this.currentPosition.y}px)`;
+    // Не обновляем позицию, если попап перетаскивается или был вручную позиционирован
+    if (this.isDragging || (this.wasManuallyPositioned && this.currentPosition)) {
+      if (this.currentPosition) {
+        this.popupContainer.style.transform = `translate(${this.currentPosition.x}px, ${this.currentPosition.y}px)`;
+      }
       return;
     }
 
@@ -470,6 +476,7 @@ export class PopupUI {
     dragHandle.addEventListener('mousedown', (e) => {
       
       this.isDragging = true;
+      this.wasManuallyPositioned = true;
       this.dragStartX = e.clientX;
       this.dragStartY = e.clientY;
       
@@ -517,7 +524,6 @@ export class PopupUI {
       
       const handleMouseUp = () => {
         this.isDragging = false;
-        this.wasManuallyPositioned = true;
         this.popupContainer!.classList.remove('popup-dragging');
         // Restore original transition
         this.popupContainer!.style.transition = originalTransition;
