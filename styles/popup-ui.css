@@ -367,7 +367,7 @@ button:active {
     color: var(--secondary-color);
     white-space: nowrap;
     cursor: pointer;
-    font: 500 0.9375rem / 1.2 system-ui, -apple-system, sans-serif;
+    font: 500 15px / 1.2 system-ui, -apple-system, sans-serif;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     border-radius: 8px 8px 0 0;
     margin-bottom: -2px;
@@ -433,7 +433,7 @@ button:active {
     background: linear-gradient(135deg, rgba(26, 115, 232, 0.06) 0%, rgba(26, 115, 232, 0.03) 100%);
     border-left: 4px solid var(--primary-color);
     border-radius: 8px;
-    font-size: 0.9375rem;
+    font-size: 15px;
     line-height: 1.6;
     color: var(--popup-text);
     max-height: 120px;
@@ -456,7 +456,7 @@ textarea {
     border: 2px solid var(--input-border);
     border-radius: 10px;
     font-family: inherit;
-    font-size: 0.9375rem;
+    font-size: 15px;
     color: var(--popup-text);
     background: var(--popup-bg);
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -497,7 +497,7 @@ textarea:focus {
     padding: var(--spacing-md) var(--spacing-xl);
     border: none;
     border-radius: 24px;
-    font-size: 0.9375rem;
+    font-size: 15px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -723,7 +723,7 @@ textarea:focus {
 .result-label {
     font-weight: 600;
     color: var(--success-color);
-    font-size: 0.8125rem;
+    font-size: 13px;
     text-transform: uppercase;
     letter-spacing: 0.8px;
 }
@@ -732,7 +732,7 @@ textarea:focus {
     line-height: 1.7;
     color: var(--popup-text);
     word-wrap: break-word;
-    font-size: 0.9375rem;
+    font-size: 15px;
 }
 
 /* Chat Styles */
@@ -850,7 +850,7 @@ textarea:focus {
 #translate-result .result-label {
     font-weight: 500;
     color: var(--success-color);
-    font-size: 0.75rem;
+    font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
@@ -863,7 +863,7 @@ textarea:focus {
     padding: var(--spacing-md) var(--spacing-lg);
     border-radius: 8px;
     color: white;
-    font-size: 0.875rem;
+    font-size: 14px;
     font-weight: 500;
     z-index: 10000;
     opacity: 0;
