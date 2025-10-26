@@ -15,14 +15,9 @@ const translations: LocaleData = {
     'common.view': 'View',
     'common.originalText': 'Original Text',
     'common.result': 'Result',
-    'common.metadata': 'Metadata',
-    'common.type': 'Type',
-    'common.timestamp': 'Timestamp',
-    'common.id': 'ID',
     'common.itemNotFound': 'Item not found',
     'common.errorLoadingDetails': 'Error loading details',
     'common.translate': 'Translate',
-    'common.summarize': 'Summarize',
     'common.rephrase': 'Rephrase',
     'common.selectedText': 'Selected text will appear here',
     'common.noTextSelected': 'No text selected',
@@ -32,7 +27,6 @@ const translations: LocaleData = {
     'common.failedToRemoveFromFavorites': 'Failed to remove from favorites',
     'common.noResultToAddToFavorites': 'No result to add to favorites',
     'common.cannotAddToFavoritesFromThisTab': 'Cannot add to favorites from this tab',
-    'common.noFavoriteIdFound': 'No favorite ID found',
     'common.errorTogglingFavorite': 'Error toggling favorite',
     'common.noTextSelectedToSpeak': 'No text selected to speak',
     'common.speechHandlerNotAvailable': 'Speech handler not available',
@@ -45,7 +39,6 @@ const translations: LocaleData = {
     'common.miniD': 'D',
     'common.miniH': 'H',
     'common.highlight': 'Highlight',
-    'common.highlightKeySentences': 'Highlight key sentences',
     'common.highlightCompleted': 'Highlighting completed',
     'common.processing': 'Processing...',
     'common.history': 'History',
@@ -54,61 +47,47 @@ const translations: LocaleData = {
     'common.unpin': 'Unpin popup',
     'common.close': 'Close',
     'common.drag': 'Drag popup',
-    
-    // Highlight
-    'highlight.clearButton': 'Clear highlights',
-    'highlight.clearButtonTitle': 'Remove all highlights from the page',
-    
+
     // Side Panel
-    'sidepanel.title': 'Text Tuner - AI Sidebar',
-    'sidepanel.highlightKeywords': 'Highlight Keywords',
-    'sidepanel.historyTitle': 'Operation History',
-    'sidepanel.favoritesTitle': 'Favorites',
     'sidepanel.allTypes': 'All Types',
     'sidepanel.searchHistory': 'Search history...',
     'sidepanel.searchFavorites': 'Search favorites...',
     'sidepanel.clearAll': 'Clear All',
-    
+
     // API Setup
-    'apiSetup.unlockProductivity': 'The Last Click to Unlock',
-    'apiSetup.productivity': 'Productivity',
     'apiSetup.howToGetKey': 'How to get an API key?',
     'apiSetup.step1': 'Open the Gemini Console',
     'apiSetup.step2': 'Click the "Create API key" button',
     'apiSetup.step3': 'Copy the generated token and paste it below',
-    'apiSetup.apiKeyLabel': 'API Key',
     'apiSetup.apiKeyPlaceholder': 'Paste your Gemini API key here.',
     'apiSetup.saveButton': 'Save API Key',
-    
+
     // Context menu
     'contextMenu.summarize': 'Summarize text',
     'contextMenu.rephrase': 'Rephrase text',
     'contextMenu.translate': 'Translate text',
     'contextMenu.discuss': 'Discuss text',
-    
+
     // Status messages for handlers
     'status.translating': 'Translating...',
     'status.rephrasing': 'Rephrasing...',
     'status.summarizing': 'Summarizing...',
-    
+
     // API Errors
     'api.missingKey': 'API key is missing or invalid. Please configure your Gemini API key.',
     'api.visitStudio': 'Visit Google AI Studio',
     'api.createApiKey': 'and click "Create API key"',
     'api.modelUnavailable': 'Model is not available for current API version. Choose another model in settings.',
-    
+
     // Error messages
     'errors.translateFailed': 'Failed to translate text',
     'errors.rephraseFailed': 'Failed to rephrase text',
     'errors.summarizeFailed': 'Failed to summarize text',
     'errors.highlightFailed': 'Failed to highlight text',
-    'errors.highlightParsingFailed': 'Failed to parse AI response',
     'errors.noTextFound': 'No text found on page to highlight',
     'errors.noKeywordsFound': 'No keywords found to highlight',
     'errors.emptyResponse': 'Empty response from AI',
-    'errors.noValidJson': 'No valid JSON found in response',
-    'errors.withReason': 'Reason: {{reason}}',
-    
+
     // Translation
     'translate.autoDetect': 'Auto-detect',
     'translate.translation': 'Translation:',
@@ -116,21 +95,20 @@ const translations: LocaleData = {
     'translate.speakOriginal': 'Speak original text',
     'translate.speakTranslation': 'Speak translation',
     'translate.sameLanguages': 'Source and target languages cannot be the same',
-    
+
     // Rephrase
-    'rephrase.style': 'Style:',
     'rephrase.casual': 'Casual',
     'rephrase.formal': 'Formal',
     'rephrase.professional': 'Professional',
     'rephrase.friendly': 'Friendly',
     'rephrase.academic': 'Academic',
-    
+
     // Chat
     'chat.placeholder': 'Ask about this text...',
     'chat.sendMessage': 'Send message',
     'chat.user': 'User',
     'chat.ai': 'AI',
-    
+
     // Options page
     'options.title': 'AI Text Tools - Settings',
     'options.languageSettings': 'Language Settings',
@@ -147,10 +125,6 @@ const translations: LocaleData = {
     'options.geminiModelSettings': 'Gemini Model Settings',
     'options.model': 'Model:',
     'options.selectModel': 'Select Gemini model for processing requests',
-    'options.temperature': 'Temperature (0.0 - 1.0):',
-    'options.temperatureHelp': 'Higher = more creative responses, Lower = more accurate responses',
-    'options.maxTokens': 'Max tokens:',
-    'options.maxTokensHelp': 'Maximum number of tokens in response (100-8192)',
     'options.saveSettings': 'Save settings',
     'options.resetToDefault': 'Reset to default',
     'options.miniPopupSettings': 'Mini Popup Settings',
@@ -166,28 +140,9 @@ const translations: LocaleData = {
     'options.clearHighlight': 'Clear highlight:',
     'options.changeShortcuts': 'Change shortcuts',
     'options.changeShortcutsHelp': 'To change keyboard shortcuts use the button below',
-    'options.history': 'History',
-    'options.favorites': 'Favorites',
-    'options.stats': 'Statistics',
-    'options.searchHistory': 'Search history...',
-    'options.searchFavorites': 'Search favorites...',
-    'options.all': 'All',
-    'options.clearHistory': 'Clear history',
-    'options.clearFavorites': 'Clear favorites',
-    'options.exportHistory': 'Export history',
-    'options.exportFavorites': 'Export favorites',
-    'options.importHistory': 'Import history',
-    'options.importFavorites': 'Import favorites',
-    'options.totalInHistory': 'Total in history',
-    'options.inFavorites': 'In favorites',
-    'options.importExport': '📁 Import/Export',
-    'options.exportAllData': 'Export all data',
-    'options.importData': 'Import data',
-    'options.clearAllData': 'Clear all data',
-    
+
     // Status messages
     'status.apiKeySaved': 'API key saved successfully',
-    'status.apiKeyError': 'Error saving API key',
     'status.apiKeyValid': 'API key is valid',
     'status.apiKeyInvalid': 'API key is invalid or unavailable',
     'status.enterApiKey': 'Enter API key',
@@ -229,7 +184,6 @@ const translations: LocaleData = {
     'status.miniPopupTabsSaved': 'Mini popup tabs saved successfully',
     'status.errorSavingMiniPopupTabs': 'Error saving mini popup tabs',
     'status.initializationError': 'Initialization error',
-    'status.view': 'View',
     'status.messageSendError': 'Error sending message',
     'status.addToFavoritesError': 'Error adding to favorites',
     'status.historyLoadError': 'Error loading history',
@@ -241,12 +195,7 @@ const translations: LocaleData = {
     'status.removedFromHistory': 'Removed from history',
     'status.historyDeleteError': 'Error deleting from history',
     'status.favoritesDeleteError': 'Error deleting from favorites',
-    
-    // Confirmations
-    'confirm.clearHistory': 'Are you sure you want to clear all history?',
-    'confirm.clearFavorites': 'Are you sure you want to clear all favorites?',
-    'confirm.clearAllData': 'Are you sure you want to delete ALL data? This action cannot be undone!',
-    
+
     // Empty states
     'empty.history': 'History is empty',
     'empty.favorites': 'Favorites is empty',
@@ -254,26 +203,15 @@ const translations: LocaleData = {
     'empty.historyDescription': 'Your recent operations will be displayed here',
     'empty.loadingHistory': 'Loading history...',
     'empty.loadingFavorites': 'Loading favorites...',
-    
-    // View item modal
-    'modal.viewItem': 'View item',
-    'modal.close': 'Close',
-    'modal.type': 'Type:',
-    'modal.prompt': 'Prompt:',
-    'modal.response': 'Response:',
-    'modal.originalText': 'Original text:',
-    'modal.date': 'Date:',
-    'modal.tags': 'Tags:',
-    
+
     // Language names
     'language.english': 'English',
     'language.russian': 'Russian',
     'language.german': 'German',
     'language.french': 'French',
-    'language.chinese': 'Chinese',
-    'language.auto': 'Auto-detect'
+    'language.chinese': 'Chinese'
   },
-  
+
   ru: {
     // Common
     'common.addToFavorites': '★ Добавить в избранное',
@@ -282,14 +220,9 @@ const translations: LocaleData = {
     'common.view': 'Просмотр',
     'common.originalText': 'Исходный текст',
     'common.result': 'Результат',
-    'common.metadata': 'Метаданные',
-    'common.type': 'Тип',
-    'common.timestamp': 'Время',
-    'common.id': 'ID',
     'common.itemNotFound': 'Элемент не найден',
     'common.errorLoadingDetails': 'Ошибка загрузки деталей',
     'common.translate': 'Перевести',
-    'common.summarize': 'Резюмировать',
     'common.rephrase': 'Перефразировать',
     'common.selectedText': 'Выделенный текст появится здесь',
     'common.noTextSelected': 'Текст не выбран',
@@ -299,7 +232,6 @@ const translations: LocaleData = {
     'common.failedToRemoveFromFavorites': 'Не удалось убрать из избранного',
     'common.noResultToAddToFavorites': 'Нет результата для добавления в избранное',
     'common.cannotAddToFavoritesFromThisTab': 'Нельзя добавить в избранное с этой вкладки',
-    'common.noFavoriteIdFound': 'ID избранного не найден',
     'common.errorTogglingFavorite': 'Ошибка переключения избранного',
     'common.noTextSelectedToSpeak': 'Нет выбранного текста для озвучивания',
     'common.speechHandlerNotAvailable': 'Обработчик речи недоступен',
@@ -312,7 +244,6 @@ const translations: LocaleData = {
     'common.miniD': 'О',
     'common.miniH': 'В',
     'common.highlight': 'Выделение',
-    'common.highlightKeySentences': 'Выделить ключевые предложения',
     'common.highlightCompleted': 'Выделение завершено',
     'common.processing': 'Обработка...',
     'common.history': 'История',
@@ -321,61 +252,47 @@ const translations: LocaleData = {
     'common.unpin': 'Открепить попап',
     'common.close': 'Закрыть',
     'common.drag': 'Перетащить попап',
-    
-    // Highlight
-    'highlight.clearButton': 'Очистить подсветку',
-    'highlight.clearButtonTitle': 'Удалить все подсветки со страницы',
-    
+
     // Side Panel
-    'sidepanel.title': 'Text Tuner - AI Sidebar',
-    'sidepanel.highlightKeywords': 'Выделить ключевые предложения',
-    'sidepanel.historyTitle': 'История операций',
-    'sidepanel.favoritesTitle': 'Избранное',
     'sidepanel.allTypes': 'Все типы',
     'sidepanel.searchHistory': 'Поиск в истории...',
     'sidepanel.searchFavorites': 'Поиск в избранном...',
     'sidepanel.clearAll': 'Очистить',
-    
+
     // API Setup
-    'apiSetup.unlockProductivity': 'Последний клик для разблокировки',
-    'apiSetup.productivity': 'Продуктивности',
     'apiSetup.howToGetKey': 'Как получить API ключ?',
     'apiSetup.step1': 'Откройте Gemini Console',
     'apiSetup.step2': 'Нажмите кнопку "Create API key"',
     'apiSetup.step3': 'Скопируйте сгенерированный токен и вставьте ниже',
-    'apiSetup.apiKeyLabel': 'API Ключ',
     'apiSetup.apiKeyPlaceholder': 'Вставьте ваш Gemini API ключ здесь.',
     'apiSetup.saveButton': 'Сохранить API Ключ',
-    
+
     // Context menu
     'contextMenu.summarize': 'Резюмировать текст',
     'contextMenu.rephrase': 'Перефразировать текст',
     'contextMenu.translate': 'Перевести текст',
     'contextMenu.discuss': 'Обсудить текст',
-    
+
     // Status messages for handlers
     'status.translating': 'Перевожу...',
     'status.rephrasing': 'Перефразирую...',
     'status.summarizing': 'Резюмирую...',
-    
+
     // API Errors
     'api.missingKey': 'API ключ отсутствует или недействителен. Настройте ваш Gemini API ключ.',
     'api.visitStudio': 'Посетите Google AI Studio',
     'api.createApiKey': 'и нажмите "Создать API ключ"',
     'api.modelUnavailable': 'Модель недоступна для текущей версии API. Выберите другую модель в настройках.',
-    
+
     // Error messages
     'errors.translateFailed': 'Не удалось перевести текст',
     'errors.rephraseFailed': 'Не удалось перефразировать текст',
     'errors.summarizeFailed': 'Не удалось резюмировать текст',
     'errors.highlightFailed': 'Не удалось подсветить текст',
-    'errors.highlightParsingFailed': 'Не удалось разобрать ответ ИИ',
     'errors.noTextFound': 'На странице не найдено текста для подсветки',
     'errors.noKeywordsFound': 'Не найдено ключевых слов для подсветки',
     'errors.emptyResponse': 'Некорректный ответ от ИИ',
-    'errors.noValidJson': 'Не найден корректный JSON в ответе',
-    'errors.withReason': 'Причина: {{reason}}',
-    
+
     // Translation
     'translate.autoDetect': 'Автоопределение',
     'translate.translation': 'Перевод:',
@@ -383,21 +300,20 @@ const translations: LocaleData = {
     'translate.speakOriginal': 'Озвучить исходный текст',
     'translate.speakTranslation': 'Озвучить перевод',
     'translate.sameLanguages': 'Исходный и целевой языки не могут быть одинаковыми',
-    
+
     // Rephrase
-    'rephrase.style': 'Стиль:',
     'rephrase.casual': 'Неформальный',
     'rephrase.formal': 'Формальный',
     'rephrase.professional': 'Профессиональный',
     'rephrase.friendly': 'Дружелюбный',
     'rephrase.academic': 'Академический',
-    
+
     // Chat
     'chat.placeholder': 'Спросите об этом тексте...',
     'chat.sendMessage': 'Отправить сообщение',
     'chat.user': 'Пользователь',
     'chat.ai': 'ИИ',
-    
+
     // Options page
     'options.title': 'AI Text Tools - Настройки',
     'options.languageSettings': 'Настройки языка',
@@ -414,10 +330,6 @@ const translations: LocaleData = {
     'options.geminiModelSettings': 'Настройки модели Gemini',
     'options.model': 'Модель:',
     'options.selectModel': 'Выберите модель Gemini для обработки запросов',
-    'options.temperature': 'Температура (0.0 - 1.0):',
-    'options.temperatureHelp': 'Выше = более креативные ответы, Ниже = более точные ответы',
-    'options.maxTokens': 'Максимум токенов:',
-    'options.maxTokensHelp': 'Максимальное количество токенов в ответе (100-8192)',
     'options.saveSettings': 'Сохранить настройки',
     'options.resetToDefault': 'Сбросить к умолчанию',
     'options.miniPopupSettings': 'Настройки мини-попапа',
@@ -433,28 +345,9 @@ const translations: LocaleData = {
     'options.clearHighlight': 'Очистить подсветку:',
     'options.changeShortcuts': 'Изменить сочетания',
     'options.changeShortcutsHelp': 'Для изменения сочетаний клавиш используйте кнопку ниже',
-    'options.history': 'История',
-    'options.favorites': 'Избранное',
-    'options.stats': 'Статистика',
-    'options.searchHistory': 'Поиск в истории...',
-    'options.searchFavorites': 'Поиск в избранном...',
-    'options.all': 'Все',
-    'options.clearHistory': 'Очистить историю',
-    'options.clearFavorites': 'Очистить избранное',
-    'options.exportHistory': 'Экспорт истории',
-    'options.exportFavorites': 'Экспорт избранного',
-    'options.importHistory': 'Импорт истории',
-    'options.importFavorites': 'Импорт избранного',
-    'options.totalInHistory': 'Всего в истории',
-    'options.inFavorites': 'В избранном',
-    'options.importExport': '📁 Импорт/Экспорт',
-    'options.exportAllData': 'Экспорт всех данных',
-    'options.importData': 'Импорт данных',
-    'options.clearAllData': 'Очистить все данные',
-    
+
     // Status messages
     'status.apiKeySaved': 'API ключ успешно сохранен',
-    'status.apiKeyError': 'Ошибка при сохранении API ключа',
     'status.apiKeyValid': 'API ключ действителен',
     'status.apiKeyInvalid': 'API ключ недействителен или недоступен',
     'status.enterApiKey': 'Введите API ключ',
@@ -496,7 +389,6 @@ const translations: LocaleData = {
     'status.miniPopupTabsSaved': 'Вкладки мини-попапа успешно сохранены',
     'status.errorSavingMiniPopupTabs': 'Ошибка при сохранении табов мини-попапа',
     'status.initializationError': 'Ошибка инициализации',
-    'status.view': 'Просмотр',
     'status.messageSendError': 'Ошибка отправки сообщения',
     'status.addToFavoritesError': 'Ошибка добавления в избранное',
     'status.historyLoadError': 'Ошибка загрузки истории',
@@ -508,12 +400,7 @@ const translations: LocaleData = {
     'status.removedFromHistory': 'Удалено из истории',
     'status.historyDeleteError': 'Ошибка удаления из истории',
     'status.favoritesDeleteError': 'Ошибка удаления из избранного',
-    
-    // Confirmations
-    'confirm.clearHistory': 'Вы уверены, что хотите очистить всю историю?',
-    'confirm.clearFavorites': 'Вы уверены, что хотите очистить все избранное?',
-    'confirm.clearAllData': 'Вы уверены, что хотите удалить ВСЕ данные? Это действие нельзя отменить!',
-    
+
     // Empty states
     'empty.history': 'История пуста',
     'empty.favorites': 'Избранное пусто',
@@ -521,26 +408,15 @@ const translations: LocaleData = {
     'empty.historyDescription': 'Здесь будут отображаться ваши последние операции',
     'empty.loadingHistory': 'Загрузка истории...',
     'empty.loadingFavorites': 'Загрузка избранного...',
-    
-    // View item modal
-    'modal.viewItem': 'Просмотр элемента',
-    'modal.close': 'Закрыть',
-    'modal.type': 'Тип:',
-    'modal.prompt': 'Запрос:',
-    'modal.response': 'Ответ:',
-    'modal.originalText': 'Исходный текст:',
-    'modal.date': 'Дата:',
-    'modal.tags': 'Теги:',
-    
+
     // Language names
     'language.english': 'English',
     'language.russian': 'Русский',
     'language.german': 'Немецкий',
     'language.french': 'Французский',
-    'language.chinese': 'Китайский',
-    'language.auto': 'Автоопределение'
+    'language.chinese': 'Китайский'
   },
-  
+
   de: {
     // Common
     'common.addToFavorites': '★ Zu Favoriten hinzufügen',
@@ -548,7 +424,6 @@ const translations: LocaleData = {
     'common.copy': '📋 Kopieren',
     'common.view': 'Anzeigen',
     'common.translate': 'Übersetzen',
-    'common.summarize': 'Zusammenfassen',
     'common.rephrase': 'Umschreiben',
     'common.selectedText': 'Ausgewählter Text wird hier angezeigt',
     'common.noTextSelected': 'Kein Text ausgewählt',
@@ -558,7 +433,6 @@ const translations: LocaleData = {
     'common.failedToRemoveFromFavorites': 'Fehler beim Entfernen aus Favoriten',
     'common.noResultToAddToFavorites': 'Kein Ergebnis zum Hinzufügen zu Favoriten',
     'common.cannotAddToFavoritesFromThisTab': 'Kann nicht von dieser Registerkarte zu Favoriten hinzufügen',
-    'common.noFavoriteIdFound': 'Keine Favoriten-ID gefunden',
     'common.errorTogglingFavorite': 'Fehler beim Umschalten der Favoriten',
     'common.noTextSelectedToSpeak': 'Kein Text zum Sprechen ausgewählt',
     'common.speechHandlerNotAvailable': 'Sprach-Handler nicht verfügbar',
@@ -571,68 +445,54 @@ const translations: LocaleData = {
     'common.miniD': 'D',
     'common.miniH': 'H',
     'common.highlight': 'Hervorheben',
-    'common.highlightKeySentences': 'Schlüsselsätze hervorheben',
     'common.highlightCompleted': 'Hervorhebung abgeschlossen',
     'common.processing': 'Verarbeitung...',
-    
-    // Highlight
-    'highlight.clearButton': 'Hervorhebungen löschen',
-    'highlight.clearButtonTitle': 'Alle Hervorhebungen von der Seite entfernen',
-    
+
     // Side Panel
-    'sidepanel.title': 'Text Tuner - AI Sidebar',
-    'sidepanel.highlightKeywords': 'Schlüsselsätze hervorheben',
-    'sidepanel.historyTitle': 'Vorgangsverlauf',
-    'sidepanel.favoritesTitle': 'Favoriten',
     'sidepanel.allTypes': 'Alle Typen',
     'sidepanel.searchHistory': 'Verlauf durchsuchen...',
     'sidepanel.searchFavorites': 'Favoriten durchsuchen...',
     'sidepanel.clearAll': 'Alle löschen',
-    
+
     // API Setup
-    'apiSetup.unlockProductivity': 'Der letzte Klick zur Freischaltung',
-    'apiSetup.productivity': 'Produktivität',
     'apiSetup.howToGetKey': 'Wie erhält man einen API-Schlüssel?',
     'apiSetup.step1': 'Öffnen Sie die Gemini Console',
     'apiSetup.step2': 'Klicken Sie auf "Create API key"',
     'apiSetup.step3': 'Kopieren Sie den generierten Token und fügen Sie ihn unten ein',
-    'apiSetup.apiKeyLabel': 'API-Schlüssel',
     'apiSetup.apiKeyPlaceholder': 'Fügen Sie Ihren Gemini API-Schlüssel hier ein.',
     'apiSetup.saveButton': 'API-Schlüssel speichern',
-    
+
     // API Errors
     'api.missingKey': 'API-Schlüssel fehlt oder ist ungültig. Bitte konfigurieren Sie Ihren Gemini API-Schlüssel.',
     'api.visitStudio': 'Besuchen Sie Google AI Studio',
     'api.createApiKey': 'API-Schlüssel erstellen',
     'api.modelUnavailable': 'Modell ist für die aktuelle API-Version nicht verfügbar. Wählen Sie ein anderes Modell in den Einstellungen.',
-    
+
     // Error messages
     'errors.translateFailed': 'Text konnte nicht übersetzt werden',
     'errors.rephraseFailed': 'Text konnte nicht umgeschrieben werden',
     'errors.summarizeFailed': 'Text konnte nicht zusammengefasst werden',
-    'errors.withReason': 'Grund: {{reason}}',
-    
+
     // Translation
     'translate.autoDetect': 'Auto-Erkennung',
     'translate.translation': 'Übersetzung:',
     'translate.swapLanguages': 'Sprachen tauschen',
     'translate.speakOriginal': 'Originaltext sprechen',
     'translate.speakTranslation': 'Übersetzung sprechen',
-    
+
     // Rephrase
-    'rephrase.style': 'Stil:',
     'rephrase.casual': 'Lässig',
     'rephrase.formal': 'Formell',
     'rephrase.professional': 'Professionell',
     'rephrase.friendly': 'Freundlich',
     'rephrase.academic': 'Akademisch',
-    
+
     // Chat
     'chat.placeholder': 'Fragen Sie über diesen Text...',
     'chat.sendMessage': 'Nachricht senden',
     'chat.user': 'Benutzer',
     'chat.ai': 'KI',
-    
+
     // Options page
     'options.title': 'AI Text Tools - Einstellungen',
     'options.languageSettings': 'Spracheinstellungen',
@@ -649,10 +509,6 @@ const translations: LocaleData = {
     'options.geminiModelSettings': 'Gemini-Modell-Einstellungen',
     'options.model': 'Modell:',
     'options.selectModel': 'Wählen Sie ein Gemini-Modell für die Verarbeitung von Anfragen',
-    'options.temperature': 'Temperatur (0.0 - 1.0):',
-    'options.temperatureHelp': 'Höher = kreativere Antworten, Niedriger = genauere Antworten',
-    'options.maxTokens': 'Max. Token:',
-    'options.maxTokensHelp': 'Maximale Anzahl von Token in der Antwort (100-8192)',
     'options.saveSettings': 'Einstellungen speichern',
     'options.resetToDefault': 'Auf Standard zurücksetzen',
     'options.miniPopupSettings': 'Mini-Popup-Einstellungen',
@@ -667,28 +523,9 @@ const translations: LocaleData = {
     'options.highlightKeywords': 'Schlüsselsätze hervorheben:',
     'options.clearHighlight': 'Hervorhebung löschen:',
     'options.changeShortcuts': 'Tastenkürzel ändern',
-    'options.history': 'Verlauf',
-    'options.favorites': 'Favoriten',
-    'options.stats': 'Statistiken',
-    'options.searchHistory': 'Verlauf durchsuchen...',
-    'options.searchFavorites': 'Favoriten durchsuchen...',
-    'options.all': 'Alle',
-    'options.clearHistory': 'Verlauf löschen',
-    'options.clearFavorites': 'Favoriten löschen',
-    'options.exportHistory': 'Verlauf exportieren',
-    'options.exportFavorites': 'Favoriten exportieren',
-    'options.importHistory': 'Verlauf importieren',
-    'options.importFavorites': 'Favoriten importieren',
-    'options.totalInHistory': 'Gesamt im Verlauf',
-    'options.inFavorites': 'In Favoriten',
-    'options.importExport': '📁 Import/Export',
-    'options.exportAllData': 'Alle Daten exportieren',
-    'options.importData': 'Daten importieren',
-    'options.clearAllData': 'Alle Daten löschen',
-    
+
     // Status messages
     'status.apiKeySaved': 'API-Schlüssel erfolgreich gespeichert',
-    'status.apiKeyError': 'Fehler beim Speichern des API-Schlüssels',
     'status.apiKeyValid': 'API-Schlüssel ist gültig',
     'status.apiKeyInvalid': 'API-Schlüssel ist ungültig oder nicht verfügbar',
     'status.enterApiKey': 'API-Schlüssel eingeben',
@@ -730,7 +567,6 @@ const translations: LocaleData = {
     'status.miniPopupTabsSaved': 'Mini-Popup-Tabs erfolgreich gespeichert',
     'status.errorSavingMiniPopupTabs': 'Fehler beim Speichern der Mini-Popup-Tabs',
     'status.initializationError': 'Initialisierungsfehler',
-    'status.view': 'Anzeigen',
     'status.messageSendError': 'Fehler beim Senden der Nachricht',
     'status.addToFavoritesError': 'Fehler beim Hinzufügen zu Favoriten',
     'status.historyLoadError': 'Fehler beim Laden des Verlaufs',
@@ -742,12 +578,7 @@ const translations: LocaleData = {
     'status.removedFromHistory': 'Aus Verlauf entfernt',
     'status.historyDeleteError': 'Fehler beim Löschen aus dem Verlauf',
     'status.favoritesDeleteError': 'Fehler beim Löschen aus den Favoriten',
-    
-    // Confirmations
-    'confirm.clearHistory': 'Sind Sie sicher, dass Sie den gesamten Verlauf löschen möchten?',
-    'confirm.clearFavorites': 'Sind Sie sicher, dass Sie alle Favoriten löschen möchten?',
-    'confirm.clearAllData': 'Sind Sie sicher, dass Sie ALLE Daten löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden!',
-    
+
     // Empty states
     'empty.history': 'Verlauf ist leer',
     'empty.favorites': 'Favoriten ist leer',
@@ -755,26 +586,15 @@ const translations: LocaleData = {
     'empty.historyDescription': 'Ihre letzten Operationen werden hier angezeigt',
     'empty.loadingHistory': 'Verlauf wird geladen...',
     'empty.loadingFavorites': 'Favoriten werden geladen...',
-    
-    // View item modal
-    'modal.viewItem': 'Element anzeigen',
-    'modal.close': 'Schließen',
-    'modal.type': 'Typ:',
-    'modal.prompt': 'Aufforderung:',
-    'modal.response': 'Antwort:',
-    'modal.originalText': 'Originaltext:',
-    'modal.date': 'Datum:',
-    'modal.tags': 'Tags:',
-    
+
     // Language names
     'language.english': 'English',
     'language.russian': 'Russisch',
     'language.german': 'Deutsch',
     'language.french': 'Französisch',
-    'language.chinese': 'Chinesisch',
-    'language.auto': 'Auto-Erkennung'
+    'language.chinese': 'Chinesisch'
   },
-  
+
   fr: {
     // Common
     'common.addToFavorites': '★ Ajouter aux favoris',
@@ -782,7 +602,6 @@ const translations: LocaleData = {
     'common.copy': '📋 Copier',
     'common.view': 'Voir',
     'common.translate': 'Traduire',
-    'common.summarize': 'Résumer',
     'common.rephrase': 'Reformuler',
     'common.selectedText': 'Le texte sélectionné apparaîtra ici',
     'common.noTextSelected': 'Aucun texte sélectionné',
@@ -792,7 +611,6 @@ const translations: LocaleData = {
     'common.failedToRemoveFromFavorites': 'Échec de la suppression des favoris',
     'common.noResultToAddToFavorites': 'Aucun résultat à ajouter aux favoris',
     'common.cannotAddToFavoritesFromThisTab': 'Impossible d\'ajouter aux favoris depuis cet onglet',
-    'common.noFavoriteIdFound': 'Aucun ID de favori trouvé',
     'common.errorTogglingFavorite': 'Erreur lors du basculement des favoris',
     'common.noTextSelectedToSpeak': 'Aucun texte sélectionné pour la lecture',
     'common.speechHandlerNotAvailable': 'Gestionnaire de parole non disponible',
@@ -805,68 +623,54 @@ const translations: LocaleData = {
     'common.miniD': 'D',
     'common.miniH': 'S',
     'common.highlight': 'Surligner',
-    'common.highlightKeySentences': 'Surligner les phrases clés',
     'common.highlightCompleted': 'Surlignage terminé',
     'common.processing': 'Traitement...',
-    
-    // Highlight
-    'highlight.clearButton': 'Effacer les surlignages',
-    'highlight.clearButtonTitle': 'Supprimer tous les surlignages de la page',
-    
+
     // Side Panel
-    'sidepanel.title': 'Text Tuner - AI Sidebar',
-    'sidepanel.highlightKeywords': 'Surligner les phrases clés',
-    'sidepanel.historyTitle': 'Historique des opérations',
-    'sidepanel.favoritesTitle': 'Favoris',
     'sidepanel.allTypes': 'Tous les types',
     'sidepanel.searchHistory': 'Rechercher dans l\'historique...',
     'sidepanel.searchFavorites': 'Rechercher dans les favoris...',
     'sidepanel.clearAll': 'Tout effacer',
-    
+
     // API Setup
-    'apiSetup.unlockProductivity': 'Le dernier clic pour débloquer',
-    'apiSetup.productivity': 'Productivité',
     'apiSetup.howToGetKey': 'Comment obtenir une clé API ?',
     'apiSetup.step1': 'Ouvrez la Gemini Console',
     'apiSetup.step2': 'Cliquez sur "Create API key"',
     'apiSetup.step3': 'Copiez le token généré et collez-le ci-dessous',
-    'apiSetup.apiKeyLabel': 'Clé API',
     'apiSetup.apiKeyPlaceholder': 'Collez votre clé API Gemini ici.',
     'apiSetup.saveButton': 'Enregistrer la clé API',
-    
+
     // API Errors
     'api.missingKey': 'Clé API manquante ou invalide. Veuillez configurer votre clé API Gemini.',
     'api.visitStudio': 'Visitez Google AI Studio',
     'api.createApiKey': 'Créer une clé API',
     'api.modelUnavailable': 'Modèle non disponible pour la version API actuelle. Choisissez un autre modèle dans les paramètres.',
-    
+
     // Error messages
     'errors.translateFailed': 'Échec de la traduction du texte',
     'errors.rephraseFailed': 'Échec de la reformulation du texte',
     'errors.summarizeFailed': 'Échec du résumé du texte',
-    'errors.withReason': 'Raison : {{reason}}',
-    
+
     // Translation
     'translate.autoDetect': 'Détection automatique',
     'translate.translation': 'Traduction :',
     'translate.swapLanguages': 'Échanger les langues',
     'translate.speakOriginal': 'Lire le texte original',
     'translate.speakTranslation': 'Lire la traduction',
-    
+
     // Rephrase
-    'rephrase.style': 'Style :',
     'rephrase.casual': 'Décontracté',
     'rephrase.formal': 'Formel',
     'rephrase.professional': 'Professionnel',
     'rephrase.friendly': 'Amical',
     'rephrase.academic': 'Académique',
-    
+
     // Chat
     'chat.placeholder': 'Posez des questions sur ce texte...',
     'chat.sendMessage': 'Envoyer le message',
     'chat.user': 'Utilisateur',
     'chat.ai': 'IA',
-    
+
     // Options page
     'options.title': 'AI Text Tools - Paramètres',
     'options.languageSettings': 'Paramètres de langue',
@@ -883,10 +687,6 @@ const translations: LocaleData = {
     'options.geminiModelSettings': 'Paramètres du modèle Gemini',
     'options.model': 'Modèle :',
     'options.selectModel': 'Sélectionnez un modèle Gemini pour traiter les requêtes',
-    'options.temperature': 'Température (0.0 - 1.0) :',
-    'options.temperatureHelp': 'Plus élevé = réponses plus créatives, Plus bas = réponses plus précises',
-    'options.maxTokens': 'Max tokens :',
-    'options.maxTokensHelp': 'Nombre maximum de tokens dans la réponse (100-8192)',
     'options.saveSettings': 'Sauvegarder les paramètres',
     'options.resetToDefault': 'Réinitialiser par défaut',
     'options.miniPopupSettings': 'Paramètres mini-popup',
@@ -901,28 +701,9 @@ const translations: LocaleData = {
     'options.highlightKeywords': 'Surligner les phrases clés :',
     'options.clearHighlight': 'Effacer le surlignage :',
     'options.changeShortcuts': 'Modifier les raccourcis',
-    'options.history': 'Historique',
-    'options.favorites': 'Favoris',
-    'options.stats': 'Statistiques',
-    'options.searchHistory': 'Rechercher dans l\'historique...',
-    'options.searchFavorites': 'Rechercher dans les favoris...',
-    'options.all': 'Tous',
-    'options.clearHistory': 'Effacer l\'historique',
-    'options.clearFavorites': 'Effacer les favoris',
-    'options.exportHistory': 'Exporter l\'historique',
-    'options.exportFavorites': 'Exporter les favoris',
-    'options.importHistory': 'Importer l\'historique',
-    'options.importFavorites': 'Importer les favoris',
-    'options.totalInHistory': 'Total dans l\'historique',
-    'options.inFavorites': 'Dans les favoris',
-    'options.importExport': '📁 Import/Export',
-    'options.exportAllData': 'Exporter toutes les données',
-    'options.importData': 'Importer les données',
-    'options.clearAllData': 'Effacer toutes les données',
-    
+
     // Status messages
     'status.apiKeySaved': 'Clé API sauvegardée avec succès',
-    'status.apiKeyError': 'Erreur lors de la sauvegarde de la clé API',
     'status.apiKeyValid': 'Clé API valide',
     'status.apiKeyInvalid': 'Clé API invalide ou indisponible',
     'status.enterApiKey': 'Entrez la clé API',
@@ -964,7 +745,6 @@ const translations: LocaleData = {
     'status.miniPopupTabsSaved': 'Onglets mini-popup sauvegardés avec succès',
     'status.errorSavingMiniPopupTabs': 'Erreur lors de la sauvegarde des onglets mini-popup',
     'status.initializationError': 'Erreur d\'initialisation',
-    'status.view': 'Voir',
     'status.messageSendError': 'Erreur lors de l\'envoi du message',
     'status.addToFavoritesError': 'Erreur lors de l\'ajout aux favoris',
     'status.historyLoadError': 'Erreur lors du chargement de l\'historique',
@@ -976,12 +756,7 @@ const translations: LocaleData = {
     'status.removedFromHistory': 'Retiré de l\'historique',
     'status.historyDeleteError': 'Erreur lors de la suppression de l\'historique',
     'status.favoritesDeleteError': 'Erreur lors de la suppression des favoris',
-    
-    // Confirmations
-    'confirm.clearHistory': 'Êtes-vous sûr de vouloir effacer tout l\'historique ?',
-    'confirm.clearFavorites': 'Êtes-vous sûr de vouloir effacer tous les favoris ?',
-    'confirm.clearAllData': 'Êtes-vous sûr de vouloir supprimer TOUTES les données ? Cette action ne peut pas être annulée !',
-    
+
     // Empty states
     'empty.history': 'L\'historique est vide',
     'empty.favorites': 'Les favoris sont vides',
@@ -989,26 +764,15 @@ const translations: LocaleData = {
     'empty.historyDescription': 'Vos dernières opérations seront affichées ici',
     'empty.loadingHistory': 'Chargement de l\'historique...',
     'empty.loadingFavorites': 'Chargement des favoris...',
-    
-    // View item modal
-    'modal.viewItem': 'Afficher l\'élément',
-    'modal.close': 'Fermer',
-    'modal.type': 'Type :',
-    'modal.prompt': 'Invite :',
-    'modal.response': 'Réponse :',
-    'modal.originalText': 'Texte original :',
-    'modal.date': 'Date :',
-    'modal.tags': 'Tags :',
-    
+
     // Language names
     'language.english': 'English',
     'language.russian': 'Russe',
     'language.german': 'Allemand',
     'language.french': 'Français',
-    'language.chinese': 'Chinois',
-    'language.auto': 'Détection automatique'
+    'language.chinese': 'Chinois'
   },
-  
+
   zh: {
     // Common
     'common.addToFavorites': '★ 添加到收藏夹',
@@ -1016,7 +780,6 @@ const translations: LocaleData = {
     'common.copy': '📋 复制',
     'common.view': '查看',
     'common.translate': '翻译',
-    'common.summarize': '总结',
     'common.rephrase': '改写',
     'common.selectedText': '选中的文本将在此显示',
     'common.noTextSelected': '未选择文本',
@@ -1026,7 +789,6 @@ const translations: LocaleData = {
     'common.failedToRemoveFromFavorites': '从收藏夹移除失败',
     'common.noResultToAddToFavorites': '没有结果可添加到收藏夹',
     'common.cannotAddToFavoritesFromThisTab': '无法从此标签页添加到收藏夹',
-    'common.noFavoriteIdFound': '未找到收藏夹ID',
     'common.errorTogglingFavorite': '切换收藏夹时出错',
     'common.noTextSelectedToSpeak': '未选择要朗读的文本',
     'common.speechHandlerNotAvailable': '语音处理器不可用',
@@ -1039,68 +801,54 @@ const translations: LocaleData = {
     'common.miniD': '讨',
     'common.miniH': '高',
     'common.highlight': '高亮',
-    'common.highlightKeySentences': '高亮关键句子',
     'common.highlightCompleted': '高亮完成',
     'common.processing': '处理中...',
-    
-    // Highlight
-    'highlight.clearButton': '清除高亮',
-    'highlight.clearButtonTitle': '从页面删除所有高亮',
-    
+
     // Side Panel
-    'sidepanel.title': 'Text Tuner - AI Sidebar',
-    'sidepanel.highlightKeywords': '高亮关键句子',
-    'sidepanel.historyTitle': '操作历史',
-    'sidepanel.favoritesTitle': '收藏夹',
     'sidepanel.allTypes': '所有类型',
     'sidepanel.searchHistory': '搜索历史记录...',
     'sidepanel.searchFavorites': '搜索收藏夹...',
     'sidepanel.clearAll': '清除全部',
-    
+
     // API Setup
-    'apiSetup.unlockProductivity': '解锁的最后一步',
-    'apiSetup.productivity': '生产力',
     'apiSetup.howToGetKey': '如何获取API密钥？',
     'apiSetup.step1': '打开Gemini Console',
     'apiSetup.step2': '点击"Create API key"按钮',
     'apiSetup.step3': '复制生成的令牌并粘贴到下方',
-    'apiSetup.apiKeyLabel': 'API密钥',
     'apiSetup.apiKeyPlaceholder': '在此粘贴您的Gemini API密钥。',
     'apiSetup.saveButton': '保存API密钥',
-    
+
     // API Errors
     'api.missingKey': 'API密钥缺失或无效。请配置您的Gemini API密钥。',
     'api.visitStudio': '访问Google AI Studio',
     'api.createApiKey': '创建API密钥',
     'api.modelUnavailable': '当前API版本不支持此模型。请在设置中选择其他模型。',
-    
+
     // Error messages
     'errors.translateFailed': '翻译文本失败',
     'errors.rephraseFailed': '改写文本失败',
     'errors.summarizeFailed': '总结文本失败',
-    'errors.withReason': '原因：{{reason}}',
-    
+
     // Translation
     'translate.autoDetect': '自动检测',
     'translate.translation': '翻译：',
     'translate.swapLanguages': '交换语言',
     'translate.speakOriginal': '朗读原文',
     'translate.speakTranslation': '朗读翻译',
-    
+
     // Rephrase
-    'rephrase.style': '风格：',
     'rephrase.casual': '随意',
     'rephrase.formal': '正式',
     'rephrase.professional': '专业',
     'rephrase.friendly': '友好',
     'rephrase.academic': '学术',
-    
+
     // Chat
     'chat.placeholder': '询问关于此文本的问题...',
     'chat.sendMessage': '发送消息',
     'chat.user': '用户',
     'chat.ai': 'AI',
-    
+
     // Options page
     'options.title': 'AI文本工具 - 设置',
     'options.languageSettings': '语言设置',
@@ -1117,10 +865,6 @@ const translations: LocaleData = {
     'options.geminiModelSettings': 'Gemini模型设置',
     'options.model': '模型：',
     'options.selectModel': '选择Gemini模型来处理请求',
-    'options.temperature': '温度（0.0 - 1.0）：',
-    'options.temperatureHelp': '更高 = 更有创意的回答，更低 = 更准确的回答',
-    'options.maxTokens': '最大令牌数：',
-    'options.maxTokensHelp': '回答中的最大令牌数（100-8192）',
     'options.saveSettings': '保存设置',
     'options.resetToDefault': '重置为默认',
     'options.miniPopupSettings': '迷你弹窗设置',
@@ -1135,28 +879,9 @@ const translations: LocaleData = {
     'options.highlightKeywords': '高亮关键句子：',
     'options.clearHighlight': '清除高亮：',
     'options.changeShortcuts': '更改快捷键',
-    'options.history': '历史记录',
-    'options.favorites': '收藏夹',
-    'options.stats': '统计',
-    'options.searchHistory': '搜索历史记录...',
-    'options.searchFavorites': '搜索收藏夹...',
-    'options.all': '全部',
-    'options.clearHistory': '清除历史记录',
-    'options.clearFavorites': '清除收藏夹',
-    'options.exportHistory': '导出历史记录',
-    'options.exportFavorites': '导出收藏夹',
-    'options.importHistory': '导入历史记录',
-    'options.importFavorites': '导入收藏夹',
-    'options.totalInHistory': '历史记录总数',
-    'options.inFavorites': '收藏夹中',
-    'options.importExport': '📁 导入/导出',
-    'options.exportAllData': '导出所有数据',
-    'options.importData': '导入数据',
-    'options.clearAllData': '清除所有数据',
-    
+
     // Status messages
     'status.apiKeySaved': 'API密钥保存成功',
-    'status.apiKeyError': '保存API密钥时出错',
     'status.apiKeyValid': 'API密钥有效',
     'status.apiKeyInvalid': 'API密钥无效或不可用',
     'status.enterApiKey': '输入API密钥',
@@ -1198,7 +923,6 @@ const translations: LocaleData = {
     'status.miniPopupTabsSaved': '迷你弹窗标签页保存成功',
     'status.errorSavingMiniPopupTabs': '保存迷你弹窗标签页时出错',
     'status.initializationError': '初始化错误',
-    'status.view': '查看',
     'status.messageSendError': '发送消息时出错',
     'status.addToFavoritesError': '添加到收藏夹时出错',
     'status.historyLoadError': '加载历史记录时出错',
@@ -1210,12 +934,7 @@ const translations: LocaleData = {
     'status.removedFromHistory': '已从历史记录移除',
     'status.historyDeleteError': '删除历史记录时出错',
     'status.favoritesDeleteError': '删除收藏夹时出错',
-    
-    // Confirmations
-    'confirm.clearHistory': '您确定要清除所有历史记录吗？',
-    'confirm.clearFavorites': '您确定要清除所有收藏夹吗？',
-    'confirm.clearAllData': '您确定要删除所有数据吗？此操作无法撤销！',
-    
+
     // Empty states
     'empty.history': '历史记录为空',
     'empty.favorites': '收藏夹为空',
@@ -1223,24 +942,13 @@ const translations: LocaleData = {
     'empty.historyDescription': '您最近的操作将显示在这里',
     'empty.loadingHistory': '正在加载历史记录...',
     'empty.loadingFavorites': '正在加载收藏夹...',
-    
-    // View item modal
-    'modal.viewItem': '查看项目',
-    'modal.close': '关闭',
-    'modal.type': '类型：',
-    'modal.prompt': '提示：',
-    'modal.response': '回答：',
-    'modal.originalText': '原始文本：',
-    'modal.date': '日期：',
-    'modal.tags': '标签：',
-    
+
     // Language names
     'language.english': 'English',
     'language.russian': '俄语',
     'language.german': '德语',
     'language.french': '法语',
-    'language.chinese': '中文',
-    'language.auto': '自动检测'
+    'language.chinese': '中文'
   }
 };
 
@@ -1282,19 +990,4 @@ function interpolate(template: string, params: { [key: string]: string }): strin
   return template.replace(/\{\{(\w+)\}\}/g, (match, key) => {
     return params[key] || match;
   });
-}
-
-export function getAvailableLocales(): string[] {
-  return Object.keys(translations);
-}
-
-export function getLocaleName(locale: string): string {
-  const names: { [key: string]: string } = {
-    'en': 'English',
-    'ru': 'Русский',
-    'de': 'Deutsch',
-    'fr': 'Français',
-    'zh': '中文'
-  };
-  return names[locale] || locale;
 }

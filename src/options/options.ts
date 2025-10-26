@@ -213,7 +213,7 @@ class OptionsPage {
       
       setTimeout(() => {
         element.style.display = 'none';
-      }, 2000);
+      }, 3000);
     }
   }
 
