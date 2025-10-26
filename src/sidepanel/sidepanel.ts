@@ -1,8 +1,8 @@
-import { StorageService } from '../services/storage';
-import { HistoryService } from '../services/history';
-import { FavoritesService } from '../services/favorites';
-import { setLocale, t } from '../utils/i18n';
-import { truncateText, escapeHtml, formatMarkdown } from '../utils/utils';
+import {StorageService} from '../services/storage';
+import {HistoryService} from '../services/history';
+import {FavoritesService} from '../services/favorites';
+import {setLocale, t} from '../utils/i18n';
+import {truncateText, escapeHtml, formatMarkdown} from '../utils/utils';
 
 // Material Design Utils (будет доступен глобально после загрузки скрипта)
 declare global {
@@ -22,14 +22,14 @@ class SidePanelApp {
     this.storageService = new StorageService();
     this.historyService = new HistoryService(this.storageService);
     this.favoritesService = new FavoritesService(this.storageService);
-    
+
     // Bind event handlers once
     this.historyClickHandler = this.handleHistoryClick.bind(this);
     this.favoritesClickHandler = this.handleFavoritesClick.bind(this);
-    
+
     // Initialize language
     this.initializeLanguage();
-    
+
     this.initializeApp().catch(console.error);
   }
 
@@ -60,7 +60,7 @@ class SidePanelApp {
       this.setupEventListeners();
       this.setupApiWarningHandlers();
       this.localizeElements();
-      
+
       // Load history by default
       await this.loadHistory();
     } catch (error) {
@@ -71,7 +71,7 @@ class SidePanelApp {
 
   private setupEventListeners(): void {
     const tabs = document.querySelectorAll('.md-tab');
-    
+
     tabs.forEach(tab => {
       tab.addEventListener('click', async () => {
         const tabId = tab.id.replace('-tab', '');
@@ -136,17 +136,17 @@ class SidePanelApp {
   private async switchTab(tabId: string): Promise<void> {
     const tabs = document.querySelectorAll('.md-tab');
     const tabContents = document.querySelectorAll('.md-tab-content');
-    
+
     tabs.forEach(tab => tab.classList.remove('active'));
     tabContents.forEach(content => content.classList.remove('active'));
-    
+
     const activeTab = document.getElementById(`${tabId}-tab`);
     const activeContent = document.getElementById(`${tabId}-content`);
-    
+
     if (activeTab && activeContent) {
       activeTab.classList.add('active');
       activeContent.classList.add('active');
-      
+
       // Добавляем анимацию появления
       if (window.MaterialDesignUtils) {
         window.MaterialDesignUtils.animateElement(activeContent, 'fadeIn');
@@ -158,7 +158,7 @@ class SidePanelApp {
     } else if (tabId === 'favorites') {
       await this.loadFavorites();
     }
-    
+
     // Load history by default when the app starts
     if (tabId === 'history' || !tabId) {
       await this.loadHistory();
@@ -177,7 +177,7 @@ class SidePanelApp {
       statusDiv.textContent = message;
       statusDiv.className = `status ${type}`;
       statusDiv.style.display = 'block';
-      
+
       setTimeout(() => {
         statusDiv.style.display = 'none';
       }, 3000);
@@ -188,7 +188,7 @@ class SidePanelApp {
     const apiSetupContainer = document.getElementById('api-setup-container') as HTMLDivElement;
     const mainTabs = document.getElementById('main-tabs') as HTMLDivElement;
     const content = document.querySelector('.content') as HTMLDivElement;
-    
+
     if (apiSetupContainer) {
       apiSetupContainer.style.display = 'block';
     }
@@ -204,7 +204,7 @@ class SidePanelApp {
     const apiSetupContainer = document.getElementById('api-setup-container') as HTMLDivElement;
     const mainTabs = document.getElementById('main-tabs') as HTMLDivElement;
     const content = document.querySelector('.content') as HTMLDivElement;
-    
+
     if (apiSetupContainer) {
       apiSetupContainer.style.display = 'none';
     }
@@ -219,7 +219,7 @@ class SidePanelApp {
   private setupApiWarningHandlers(): void {
     const saveApiKeyBtn = document.getElementById('save-api-key');
     const apiKeyInput = document.getElementById('api-key-input') as HTMLInputElement;
-    
+
     if (saveApiKeyBtn && apiKeyInput) {
       saveApiKeyBtn.addEventListener('click', async () => {
         const apiKey = apiKeyInput.value.trim();
@@ -271,22 +271,6 @@ class SidePanelApp {
       const key = element.getAttribute('data-i18n-placeholder');
       if (key && element instanceof HTMLInputElement) {
         element.placeholder = t(key);
-      }
-    });
-  }
-
-  private sendMessageToContentScript(action: string): void {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      if (tabs[0]?.id) {
-        chrome.tabs.sendMessage(tabs[0].id, { action }, (response) => {
-          if (chrome.runtime.lastError) {
-            this.showStatus('Error: ' + chrome.runtime.lastError.message, 'error');
-          } else if (response?.success) {
-            this.showStatus('Action completed successfully!');
-          } else {
-            this.showStatus('No text selected. Please select some text first.', 'error');
-          }
-        });
       }
     });
   }
@@ -413,7 +397,7 @@ class SidePanelApp {
     try {
       const filterSelect = document.getElementById('history-filter') as HTMLSelectElement;
       const searchInput = document.getElementById('history-search') as HTMLInputElement;
-      
+
       const filter: any = {};
       if (filterSelect.value) {
         filter.type = filterSelect.value;
@@ -433,7 +417,7 @@ class SidePanelApp {
     try {
       const filterSelect = document.getElementById('favorites-filter') as HTMLSelectElement;
       const searchInput = document.getElementById('favorites-search') as HTMLInputElement;
-      
+
       const filter: any = {};
       if (filterSelect.value) {
         filter.type = filterSelect.value;
@@ -475,7 +459,7 @@ class SidePanelApp {
 
     // Remove existing listeners to avoid duplicates
     historyList.removeEventListener('click', this.historyClickHandler);
-    
+
     // Add new listener
     historyList.addEventListener('click', this.historyClickHandler);
   }
@@ -486,19 +470,28 @@ class SidePanelApp {
 
     // Remove existing listeners to avoid duplicates
     favoritesList.removeEventListener('click', this.favoritesClickHandler);
-    
+
     // Add new listener
     favoritesList.addEventListener('click', this.favoritesClickHandler);
   }
 
   private async handleHistoryClick(event: Event): Promise<void> {
     const target = event.target as HTMLElement;
-    const button = target.closest('button[data-action]') as HTMLButtonElement;
-    
-    if (!button) return;
 
-    const action = button.dataset.action;
-    const itemId = button.dataset.id;
+    let itemId: string | undefined;
+    let action: string = 'view-item';
+
+    if (target.classList.contains('action-btn')) {
+      action = target.dataset.action!;
+      itemId = target.dataset.id;
+    } else {
+      if (target.classList.contains('history-item')) {
+        itemId = target.dataset.id;
+      } else {
+        const parentElement: HTMLButtonElement | null = target.closest('.history-item');
+        itemId = parentElement?.dataset.id;
+      }
+    }
 
     if (!itemId) return;
 
@@ -519,16 +512,23 @@ class SidePanelApp {
 
   private async handleFavoritesClick(event: Event): Promise<void> {
     const target = event.target as HTMLElement;
-    const button = target.closest('button[data-action]') as HTMLButtonElement;
-    
-    if (!button) return;
 
-    const action = button.dataset.action;
-    const itemId = button.dataset.id;
+    let itemId: string | undefined;
+    let action: string = 'view-item';
+
+    if (target.classList.contains('action-btn')) {
+      action = target.dataset.action!;
+      itemId = target.dataset.id;
+    } else {
+      if (target.classList.contains('favorite-item')) {
+        itemId = target.dataset.id;
+      } else {
+        const parentElement: HTMLButtonElement | null = target.closest('.favorite-item');
+        itemId = parentElement?.dataset.id;
+      }
+    }
 
     if (!itemId) return;
-
-    event.stopPropagation();
 
     switch (action) {
       case 'view-item':
@@ -546,7 +546,7 @@ class SidePanelApp {
   private async toggleFavorite(itemId: string): Promise<void> {
     try {
       const isFavorite = await this.favoritesService.isFavoriteBySourceId(itemId);
-      
+
       if (isFavorite) {
         await this.favoritesService.removeBySourceId(itemId);
       } else {
@@ -559,11 +559,11 @@ class SidePanelApp {
             item.response,
             item.originalText,
             [],
-            { ...item.metadata, sourceId: itemId }
+            {...item.metadata, sourceId: itemId}
           );
         }
       }
-      
+
       // Update the UI
       await this.loadHistory();
     } catch (error) {
@@ -651,7 +651,7 @@ class SidePanelApp {
       // Add event listeners
       const closeBtn = modal.querySelector('.modal-close');
       const overlay = modal.querySelector('.modal-overlay');
-      
+
       const closeModal = () => {
         document.body.removeChild(modal);
       };
