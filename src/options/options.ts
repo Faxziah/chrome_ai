@@ -72,10 +72,6 @@ class OptionsPage {
         setLocale(language);
         this.updateUITexts();
         this.showStatus('language-status', t('status.languageSaved'), 'success');
-        // Reload page to apply new language
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
       } else {
         this.showStatus('language-status', t('status.errorSavingLanguage'), 'error');
       }
@@ -217,7 +213,7 @@ class OptionsPage {
       
       setTimeout(() => {
         element.style.display = 'none';
-      }, 5000);
+      }, 2000);
     }
   }
 
