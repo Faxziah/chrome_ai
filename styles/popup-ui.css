@@ -254,11 +254,11 @@ button:active {
 .tabs {
     position: relative;
     display: flex;
-    overflow-x: auto;
     scrollbar-width: thin;
     scrollbar-color: rgba(26, 115, 232, 0.3) #f8f9fa;
     border-bottom: 2px solid rgba(26, 115, 232, 0.1);
     background: linear-gradient(to bottom, #ffffff 0%, #f8fbff 100%);
+    overflow: auto hidden;
 }
 
 .tabs::-webkit-scrollbar {
@@ -367,7 +367,7 @@ button:active {
     color: var(--secondary-color);
     white-space: nowrap;
     cursor: pointer;
-    font: 500 15px / 1.2 system-ui, -apple-system, sans-serif;
+    font: 500 14px / 1.2 system-ui, -apple-system, sans-serif;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     border-radius: 8px 8px 0 0;
     margin-bottom: -2px;
