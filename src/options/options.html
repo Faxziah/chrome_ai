@@ -18,10 +18,10 @@
                 <label for="interface-language" data-i18n="options.interfaceLanguage">Interface Language:</label>
                 <select id="interface-language">
                     <option value="en" selected data-i18n="language.english">English</option>
-                    <option value="ru" data-i18n="language.russian">Русский</option>
                     <option value="de" data-i18n="language.german">Deutsch</option>
                     <option value="fr" data-i18n="language.french">Français</option>
                     <option value="zh" data-i18n="language.chinese">中文</option>
+                    <option value="ru" data-i18n="language.russian">Русский</option>
                 </select>
                 <div class="help-text" data-i18n="options.selectLanguage">
                 </div>
@@ -30,6 +30,24 @@
                 <button class="md-button md-button--primary" id="save-language" data-i18n="options.saveLanguage"></button>
             </div>
             <div class="status-message" id="language-status"></div>
+        </div>
+
+        <!-- API Configuration Section -->
+        <div class="section">
+            <h2 data-i18n="options.apiSettings">🔑 API Settings</h2>
+            <div class="form-group">
+                <label for="api-key" data-i18n="options.geminiApiKey">Gemini API key:</label>
+                <input type="password" id="api-key" data-i18n-placeholder="options.apiKeyPlaceholder" placeholder="Enter your API key">
+                <div class="help-text">
+                    <span data-i18n="options.getApiKey"></span> <a href="https://aistudio.google.com/app/api-keys" target="_blank">aistudio.google.com</a>
+                </div>
+            </div>
+            <div class="button-group">
+                <button class="md-button md-button--primary" id="save-api-key" data-i18n="options.saveKey"></button>
+                <button class="md-button md-button--secondary" id="test-api-key" data-i18n="options.testKey"></button>
+                <button class="md-button md-button--secondary" id="toggle-api-visibility" data-i18n="options.showHide"></button>
+            </div>
+            <div class="status-message" id="api-status"></div>
         </div>
 
         <!-- Mini Popup Settings Section -->
@@ -66,24 +84,6 @@
             <div class="status-message" id="mini-popup-status"></div>
         </div>
 
-        <!-- API Configuration Section -->
-        <div class="section">
-            <h2 data-i18n="options.apiSettings">🔑 API Settings</h2>
-            <div class="form-group">
-                <label for="api-key" data-i18n="options.geminiApiKey">Gemini API key:</label>
-                <input type="password" id="api-key" data-i18n-placeholder="options.apiKeyPlaceholder" placeholder="Enter your API key">
-                <div class="help-text">
-                    <span data-i18n="options.getApiKey"></span> <a href="https://aistudio.google.com/app/api-keys" target="_blank">aistudio.google.com</a>
-                </div>
-            </div>
-            <div class="button-group">
-                <button class="md-button md-button--primary" id="save-api-key" data-i18n="options.saveKey"></button>
-                <button class="md-button md-button--secondary" id="test-api-key" data-i18n="options.testKey"></button>
-                <button class="md-button md-button--secondary" id="toggle-api-visibility" data-i18n="options.showHide"></button>
-            </div>
-            <div class="status-message" id="api-status"></div>
-        </div>
-
         <!-- Gemini Model Configuration Section -->
         <div class="section">
             <h2 data-i18n="options.geminiModelSettings">🤖 Gemini Model Settings</h2>
@@ -97,19 +97,6 @@
                     <option value="gemini-2.0-flash-lite">Gemini 2.0 Flash-Lite</option>
                 </select>
                 <div class="help-text" data-i18n="options.selectModel">
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="gemini-temperature" data-i18n="options.temperature"></label>
-                <input type="range" id="gemini-temperature" min="0" max="1" step="0.1" value="0.7">
-                <div class="help-text">
-                    <span id="temperature-value">0.7</span> - <span data-i18n="options.temperatureHelp"></span>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="gemini-max-tokens" data-i18n="options.maxTokens"></label>
-                <input type="number" id="gemini-max-tokens" min="100" max="8192" step="100" value="2048">
-                <div class="help-text" data-i18n="options.maxTokensHelp">
                 </div>
             </div>
             <div class="button-group">

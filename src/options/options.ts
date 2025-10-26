@@ -39,7 +39,6 @@ class OptionsPage {
     // Gemini Model Configuration events
     document.getElementById('save-gemini-config')?.addEventListener('click', () => this.saveGeminiConfig());
     document.getElementById('reset-gemini-config')?.addEventListener('click', () => this.resetGeminiConfig());
-    document.getElementById('gemini-temperature')?.addEventListener('input', (e) => this.updateTemperatureDisplay(e));
 
     // Mini popup tabs events
     this.setupMiniPopupTabsListeners();
@@ -227,20 +226,9 @@ class OptionsPage {
       const config = await this.storageService.getApiConfig();
       if (config) {
         const modelSelect = document.getElementById('gemini-model') as HTMLSelectElement;
-        const temperatureSlider = document.getElementById('gemini-temperature') as HTMLInputElement;
-        const maxTokensInput = document.getElementById('gemini-max-tokens') as HTMLInputElement;
         
         if (modelSelect && config.model) {
           modelSelect.value = config.model;
-        }
-        
-        if (temperatureSlider && config.temperature !== undefined) {
-          temperatureSlider.value = config.temperature.toString();
-          this.updateTemperatureDisplay({ target: temperatureSlider } as unknown as Event);
-        }
-        
-        if (maxTokensInput && config.maxTokens) {
-          maxTokensInput.value = config.maxTokens.toString();
         }
       }
     } catch (error) {
@@ -251,13 +239,11 @@ class OptionsPage {
   private async saveGeminiConfig(): Promise<void> {
     try {
       const modelSelect = document.getElementById('gemini-model') as HTMLSelectElement;
-      const temperatureSlider = document.getElementById('gemini-temperature') as HTMLInputElement;
-      const maxTokensInput = document.getElementById('gemini-max-tokens') as HTMLInputElement;
       
       const config = {
         model: modelSelect?.value || 'gemini-2.5-flash',
-        temperature: parseFloat(temperatureSlider?.value || '0.7'),
-        maxTokens: parseInt(maxTokensInput?.value || '2048')
+        temperature: 0.7, // Дефолтное значение
+        maxTokens: 2048   // Дефолтное значение
       };
       
       const success = await this.storageService.setApiConfig(config);
@@ -276,8 +262,8 @@ class OptionsPage {
     try {
       const defaultConfig = {
         model: 'gemini-2.5-flash',
-        temperature: 0.7,
-        maxTokens: 2048
+        temperature: 0.7, // Дефолтное значение
+        maxTokens: 2048   // Дефолтное значение
       };
       
       const success = await this.storageService.setApiConfig(defaultConfig);
@@ -293,14 +279,6 @@ class OptionsPage {
     }
   }
 
-  private updateTemperatureDisplay(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    const value = target.value;
-    const displayElement = document.getElementById('temperature-value');
-    if (displayElement) {
-      displayElement.textContent = value;
-    }
-  }
 
   private async loadMiniPopupTabs(): Promise<void> {
     try {
@@ -406,16 +384,16 @@ class OptionsPage {
       languageSection.textContent = '🌐 ' + t('options.languageSettings');
     }
     
-    // Update Mini Popup section
-    const miniPopupSection = document.querySelectorAll('.section h2')[1];
-    if (miniPopupSection) {
-      miniPopupSection.textContent = '📱 ' + t('options.miniPopupSettings');
-    }
-    
     // Update API section
-    const apiSection = document.querySelectorAll('.section h2')[2];
+    const apiSection = document.querySelectorAll('.section h2')[1];
     if (apiSection) {
       apiSection.textContent = '🔑 ' + t('options.apiSettings');
+    }
+    
+    // Update Mini Popup section
+    const miniPopupSection = document.querySelectorAll('.section h2')[2];
+    if (miniPopupSection) {
+      miniPopupSection.textContent = '📱 ' + t('options.miniPopupSettings');
     }
     
     // Update Gemini Model section
