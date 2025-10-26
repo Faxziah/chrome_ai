@@ -52,20 +52,20 @@ export class Summarizer {
 
   private buildPrompt(text: string, maxLength: number, style: string, language: string): string {
     const styleInstructions: Record<string, string> = {
-      'brief': 'краткое резюме в 2-3 предложениях',
-      'detailed': 'подробное резюме с основными пунктами',
-      'bullet-points': 'резюме в виде маркированного списка'
+      'brief': 'brief summary in 2-3 sentences',
+      'detailed': 'detailed summary with main points',
+      'bullet-points': 'summary as a bulleted list'
     };
 
     const styleInstruction = styleInstructions[style] || styleInstructions['brief'];
 
-    return `Создай ${styleInstruction} следующего текста на языке ${language}. 
-Максимальная длина резюме: ${maxLength} символов.
+    return `Create a ${styleInstruction} of the following text in ${language}. 
+Maximum summary length: ${maxLength} characters.
 
-Текст для резюмирования:
+Text to summarize:
 ${text}
 
-Резюме:`;
+Summary:`;
   }
 
   async summarizeWithStream(

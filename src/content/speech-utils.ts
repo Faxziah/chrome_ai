@@ -1,4 +1,4 @@
-import { SpeechConfig, VoiceInfo } from '../types';
+import { SpeechConfig } from '../types';
 
 export class SpeechSynthesisManager {
   private readonly synthesis: SpeechSynthesis | null;
@@ -33,44 +33,11 @@ export class SpeechSynthesisManager {
       }
       return a.name.localeCompare(b.name);
     });
-    
-    console.log('Loaded voices:', this.voices.length);
-  }
-
-  public getVoices(): SpeechSynthesisVoice[] {
-    return this.voices;
   }
 
   isSupported(): boolean {
     return this.synthesis !== null && this.isInitialized;
   }
-
-  getAvailableVoices(): VoiceInfo[] {
-    return this.voices.map(voice => ({
-      voice,
-      name: voice.name,
-      lang: voice.lang,
-      localService: voice.localService
-    }));
-  }
-
-  getVoicesForLanguage(languageCode: string): VoiceInfo[] {
-    const localeCode = this.getLocaleCode(languageCode);
-    
-    let matchingVoices = this.voices.filter(v => v.lang === localeCode);
-    
-    if (matchingVoices.length === 0) {
-      matchingVoices = this.voices.filter(v => v.lang.startsWith(languageCode));
-    }
-    
-    return matchingVoices.map(voice => ({
-      voice,
-      name: voice.name,
-      lang: voice.lang,
-      localService: voice.localService
-    }));
-  }
-
 
   isLanguageSupportedForSpeech(code: string): boolean {
     const supportedLanguages = [
@@ -122,22 +89,6 @@ export class SpeechSynthesisManager {
     if (this.synthesis) {
       this.synthesis.cancel();
     }
-  }
-
-  pause(): void {
-    if (this.synthesis && this.synthesis.speaking) {
-      this.synthesis.pause();
-    }
-  }
-
-  resume(): void {
-    if (this.synthesis && this.synthesis.paused) {
-      this.synthesis.resume();
-    }
-  }
-
-  isSpeaking(): boolean {
-    return this.synthesis?.speaking || false;
   }
 
   private getLocaleCode(languageCode: string): string {
@@ -284,8 +235,3 @@ export class SpeechSynthesisManager {
     return voice !== null;
   }
 }
-
-export function createSpeechManager(): SpeechSynthesisManager {
-  return new SpeechSynthesisManager();
-}
-

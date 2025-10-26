@@ -70,9 +70,9 @@ export class GeminiService {
       // Handle 400 errors for bad request
       if (error.status === 400 || error.message?.includes('400') || error.message?.includes('Bad Request')) {
         throw new Error(
-          'Некорректный запрос к API. ' +
-          'Проверьте формат запроса и параметры. ' +
-          `Детали: ${error.message || 'Неизвестная ошибка'}`
+          'Invalid API request. ' +
+          'Check request format and parameters. ' +
+          `Details: ${error.message || 'Unknown error'}`
         );
       }
       
@@ -84,20 +84,20 @@ export class GeminiService {
       // Handle 401 errors for API key issues
       if (error.message?.includes('401') || error.message?.includes('API key')) {
         throw new Error(
-          'API ключ некорректный или отсутствует. ' +
-          'Проверьте ключ в настройках расширения.'
+          'API key is invalid or missing. ' +
+          'Check your key in extension settings.'
         );
       }
       
       // Handle 429 errors for rate limits
       if (error.message?.includes('429') || error.message?.includes('quota')) {
         throw new Error(
-          'Превышен лимит запросов к API. ' +
-          'Пожалуйста, подождите несколько минут и попробуйте снова.'
+          'API rate limit exceeded. ' +
+          'Please wait a few minutes and try again.'
         );
       }
       
-      throw new Error(`Ошибка Gemini API: ${error.message || 'Неизвестная ошибка'}`);
+      throw new Error(`Gemini API error: ${error.message || 'Unknown error'}`);
     }
   }
 
@@ -149,31 +149,31 @@ export class GeminiService {
       // Handle 400 errors for bad request
       if (error.status === 400 || error.message?.includes('400') || error.message?.includes('Bad Request')) {
         throw new Error(
-          'Некорректный запрос к API. ' +
-          'Проверьте формат запроса и параметры. ' +
-          `Детали: ${error.message || 'Неизвестная ошибка'}`
+          'Invalid API request. ' +
+          'Check request format and parameters. ' +
+          `Details: ${error.message || 'Unknown error'}`
         );
       }
       
       if (error.message?.includes('404') || error.message?.includes('not found')) {
         throw new Error(
-          'Модель недоступна для текущей версии API. Пожалуйста, выберите другую модель в настройках расширения. '
+          'Model is not available for current API version. Please select another model in extension settings.'
         );
       }
       
       if (error.message?.includes('API key') || error.message?.includes('401')) {
         throw new Error(
-          'API ключ некорректный или отсутствует. Проверьте ключ в настройках расширения.'
+          'API key is invalid or missing. Check your key in extension settings.'
         );
       }
       
       if (error.message?.includes('429') || error.message?.includes('quota')) {
         throw new Error(
-          'Превышен лимит запросов к API. Пожалуйста, подождите несколько минут и попробуйте снова.'
+          'API rate limit exceeded. Please wait a few minutes and try again.'
         );
       }
       
-      throw new Error(`Ошибка Gemini API: ${error.message || 'Неизвестная ошибка'}`);
+      throw new Error(`Gemini API error: ${error.message || 'Unknown error'}`);
     }
   }
 

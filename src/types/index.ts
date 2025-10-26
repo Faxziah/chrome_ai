@@ -63,22 +63,6 @@ export interface TabChangeEvent {
   tabIndex: number;
 }
 
-export interface TabPanelContent {
-  summarize?: {
-    summary?: string;
-    chatHistory?: Array<{ role: 'user' | 'assistant', content: string }>;
-  };
-  rephrase?: {
-    style?: string;
-    result?: string;
-  };
-  translate?: {
-    sourceLanguage?: string;
-    targetLanguage?: string;
-    result?: string;
-  };
-}
-
 export interface RephraserConfig {
   style: 'casual' | 'formal' | 'professional' | 'friendly' | 'academic';
   preserveMeaning?: boolean;
@@ -126,26 +110,9 @@ export interface VoiceInfo {
 
 export type LanguageCode = 'auto' | 'en' | 'ru' | 'es' | 'fr' | 'de' | 'zh' | 'ja' | 'ko' | 'it' | 'pt';
 
-export interface HighlightData {
-  keywords: string[];
-  sentences: string[];
-}
-
-export interface HighlightResult {
-  success: boolean;
-  highlightedCount?: number;
-  error?: string;
-}
-
 export interface SummarizerResult {
   summary: string;
   originalLength: number;
   summaryLength: number;
   compressionRatio: number;
-}
-
-export interface ChatMessage {
-  role: 'user' | 'assistant';
-  content: string;
-  timestamp?: number;
 }

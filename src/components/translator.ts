@@ -269,22 +269,22 @@ export class Translator {
     let prompt = '';
 
     if (sourceLanguage === 'auto') {
-      prompt += `Определи язык следующего текста и переведи его на ${targetLanguageName}.\n`;
+      prompt += `Detect the language of the following text and translate it to ${targetLanguageName}.\n`;
     } else {
-      prompt += `Переведи следующий текст с ${sourceLanguageName} на ${targetLanguageName}.\n`;
+      prompt += `Translate the following text from ${sourceLanguageName} to ${targetLanguageName}.\n`;
     }
 
     if (preserveFormatting) {
-      prompt += 'Сохрани форматирование текста (переносы строк, списки, структуру).\n';
+      prompt += 'Preserve text formatting (line breaks, lists, structure).\n';
     }
 
-    prompt += 'Предоставь только перевод без дополнительных объяснений.\n';
+    prompt += 'Provide only the translation without additional explanations.\n';
 
     if (sourceLanguage === 'auto') {
-      prompt += 'В первой строке укажи обнаруженный язык в формате \'Detected: [код языка]\', затем с новой строки дай перевод.\n';
+      prompt += 'In the first line, specify the detected language in the format \'Detected: [language code]\', then provide the translation on a new line.\n';
     }
 
-    prompt += `Исходный текст:\n${text}\n\nПеревод:`;
+    prompt += `Source text:\n${text}\n\nTranslation:`;
 
     return prompt;
   }

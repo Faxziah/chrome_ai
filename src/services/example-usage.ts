@@ -14,7 +14,7 @@ export class ExampleUsage {
     try {
       const apiKey = await this.storageService.getApiKey();
       if (!apiKey) {
-        console.log('No API key found in storage');
+        console.error('No API key found in storage');
         return false;
       }
 

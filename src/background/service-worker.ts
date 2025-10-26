@@ -1,8 +1,8 @@
 import { ActionType } from '../types';
 import { t, setLocale } from '../utils/i18n';
-import { StorageService } from '../services/storage';
+import { StorageService } from '../services';
 
-console.log('AI Text Tools service worker initialized');
+// AI Text Tools service worker initialized
 
 // Create context menu items on install
 chrome.runtime.onInstalled.addListener(async () => {

@@ -417,8 +417,8 @@ class PopupApp {
     if (history.length === 0) {
       historyList.innerHTML = `
         <div class="empty-state">
-          <h3>История пуста</h3>
-          <p>Здесь будут отображаться ваши последние операции</p>
+          <h3>${t('empty.history')}</h3>
+          <p>${t('empty.historyDescription')}</p>
         </div>
       `;
       return;
@@ -462,8 +462,8 @@ class PopupApp {
     if (favorites.length === 0) {
       favoritesList.innerHTML = `
         <div class="empty-state">
-          <h3>Избранное пусто</h3>
-          <p>Добавьте элементы в избранное, нажав на звездочку</p>
+          <h3>${t('empty.favorites')}</h3>
+          <p>${t('empty.favoritesDescription')}</p>
         </div>
       `;
       return;
@@ -679,7 +679,7 @@ class PopupApp {
     try {
       await this.favoritesService.removeFromFavorites(itemId);
       await this.loadFavorites();
-      this.showStatus('Удалено из избранного', 'success');
+      this.showStatus(t('common.removedFromFavorites'), 'success');
     } catch (error) {
       console.error('Error removing from favorites:', error);
       this.showStatus(t('status.favoritesDeleteError'), 'error');
@@ -690,7 +690,7 @@ class PopupApp {
     try {
       await this.favoritesService.removeFromFavorites(itemId);
       await this.loadFavorites();
-      this.showStatus('Удалено из избранного', 'success');
+      this.showStatus(t('common.removedFromFavorites'), 'success');
     } catch (error) {
       console.error('Error deleting favorite item:', error);
       this.showStatus(t('status.favoritesDeleteError'), 'error');

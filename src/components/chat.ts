@@ -38,7 +38,7 @@ export class Chat {
     this.storageService = storageService;
     this.favoritesService = favoritesService;
     this.config = {
-      systemPrompt: 'Ты полезный AI-ассистент, который помогает с анализом и резюмированием текста.',
+      systemPrompt: 'You are a helpful AI assistant that helps with text analysis and summarization.',
       maxHistory: 20,
       temperature: 0.7,
       maxTokens: 2048,
@@ -109,10 +109,10 @@ export class Chat {
     const conversationHistory = this.messages
       .slice(-this.config.maxHistory! * 2)
       .filter(msg => !(msg.role === 'assistant' && msg.isStreaming && msg.content === ''))
-      .map(msg => `${msg.role === 'user' ? 'Пользователь' : 'Ассистент'}: ${msg.content}`)
+      .map(msg => `${msg.role === 'user' ? 'User' : 'Assistant'}: ${msg.content}`)
       .join('\n');
 
-    return `${systemPrompt}\n\nИстория разговора:\n${conversationHistory}`;
+    return `${systemPrompt}\n\nConversation history:\n${conversationHistory}`;
   }
 
   private trimHistory(): void {
@@ -182,7 +182,7 @@ export class Chat {
 
     } catch (error) {
       console.error('Chat error:', error);
-      assistantMessage.content = `Ошибка: ${error instanceof Error ? error.message : 'Неизвестная ошибка'}`;
+      assistantMessage.content = `Error: ${error instanceof Error ? error.message : 'Unknown error'}`;
       assistantMessage.isStreaming = false;
       this.onMessageUpdate?.(assistantMessage);
       throw error;

@@ -696,7 +696,7 @@ textarea:focus {
 
 /* Hide favorite button by default */
 #btn-favorite-toggle {
-    display: none; /* Скрыто до появления результата */
+    display: none;
 }
 
 #btn-favorite-toggle.show {
@@ -887,7 +887,7 @@ textarea:focus {
     transform: translateX(0);
 }
 
-/* Стили для speak-source-container */
+/* Styles for speak-source-container */
 .speak-source-container {
     margin-top: 8px;
     margin-bottom: 8px;
@@ -901,7 +901,7 @@ textarea:focus {
     gap: 4px;
 }
 
-/* Стили для api-key-error */
+/* Styles for api-key-error */
 .api-key-error {
     background: #fef7e0;
     border: 1px solid #f9ab00;
@@ -926,7 +926,7 @@ textarea:focus {
     color: #1557b0;
 }
 
-/* Стили для speech-error-container */
+/* Styles for speech-error-container */
 @keyframes slideIn {
     from {
         transform: translateX(100%);
@@ -942,7 +942,7 @@ textarea:focus {
     animation: slideIn 0.3s ease;
 }
 
-/* Стили для результатов с ограничением высоты */
+/* Styles for results with height limitation */
 #summary-result .result-text,
 #rephrase-result .result-text,
 #translate-result .result-text {
@@ -952,7 +952,7 @@ textarea:focus {
     line-height: 1.6;
 }
 
-/* Стили для скроллбара */
+/* Styles for scrollbar */
 #summary-result .result-text::-webkit-scrollbar,
 #rephrase-result .result-text::-webkit-scrollbar,
 #translate-result .result-text::-webkit-scrollbar {

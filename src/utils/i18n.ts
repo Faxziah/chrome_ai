@@ -251,6 +251,8 @@ const translations: LocaleData = {
     // Empty states
     'empty.history': 'History is empty',
     'empty.favorites': 'Favorites is empty',
+    'empty.favoritesDescription': 'Add items to favorites by clicking the star',
+    'empty.historyDescription': 'Your recent operations will be displayed here',
     'empty.loadingHistory': 'Loading history...',
     'empty.loadingFavorites': 'Loading favorites...',
     
@@ -517,6 +519,8 @@ const translations: LocaleData = {
     // Empty states
     'empty.history': 'История пуста',
     'empty.favorites': 'Избранное пусто',
+    'empty.favoritesDescription': 'Добавьте элементы в избранное, нажав на звездочку',
+    'empty.historyDescription': 'Здесь будут отображаться ваши последние операции',
     'empty.loadingHistory': 'Загрузка истории...',
     'empty.loadingFavorites': 'Загрузка избранного...',
     
@@ -750,6 +754,8 @@ const translations: LocaleData = {
     // Empty states
     'empty.history': 'Verlauf ist leer',
     'empty.favorites': 'Favoriten ist leer',
+    'empty.favoritesDescription': 'Elemente zu Favoriten hinzufügen, indem Sie auf den Stern klicken',
+    'empty.historyDescription': 'Ihre letzten Operationen werden hier angezeigt',
     'empty.loadingHistory': 'Verlauf wird geladen...',
     'empty.loadingFavorites': 'Favoriten werden geladen...',
     
@@ -983,6 +989,8 @@ const translations: LocaleData = {
     // Empty states
     'empty.history': 'L\'historique est vide',
     'empty.favorites': 'Les favoris sont vides',
+    'empty.favoritesDescription': 'Ajoutez des éléments aux favoris en cliquant sur l\'étoile',
+    'empty.historyDescription': 'Vos dernières opérations seront affichées ici',
     'empty.loadingHistory': 'Chargement de l\'historique...',
     'empty.loadingFavorites': 'Chargement des favoris...',
     
@@ -1216,6 +1224,8 @@ const translations: LocaleData = {
     // Empty states
     'empty.history': '历史记录为空',
     'empty.favorites': '收藏夹为空',
+    'empty.favoritesDescription': '点击星号将项目添加到收藏夹',
+    'empty.historyDescription': '您最近的操作将显示在这里',
     'empty.loadingHistory': '正在加载历史记录...',
     'empty.loadingFavorites': '正在加载收藏夹...',
     

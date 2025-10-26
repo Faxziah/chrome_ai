@@ -1,4 +1,4 @@
-/* Material Design CSS для Chrome AI Extension */
+/* Material Design CSS for Chrome AI Extension */
 
 /* ===== Screen Reader Only ===== */
 .sr-only {
@@ -13,7 +13,7 @@
   border: 0;
 }
 
-/* ===== CSS Variables для Material Design ===== */
+/* ===== CSS Variables for Material Design ===== */
 :root {
   /* Primary Colors */
   --md-primary: #1976d2;

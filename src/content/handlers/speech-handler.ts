@@ -28,7 +28,7 @@ export class SpeechHandler {
 
     try {
       if (!this.speechManager || !this.speechManager.isSupported()) {
-        this.showSpeechError('Синтез речи не поддерживается в вашем браузере.');
+        this.showSpeechError('Speech synthesis is not supported in your browser.');
         return;
       }
       
@@ -67,16 +67,16 @@ export class SpeechHandler {
     } catch (error: any) {
       console.error('Speech synthesis error:', error);
       
-      let errorMessage = 'Не удалось воспроизвести текст. ';
+      let errorMessage = 'Failed to play text. ';
       
       if (error.message?.includes('not-allowed')) {
-        errorMessage += 'Браузер заблокировал воспроизведение. Разрешите доступ к аудио.';
+        errorMessage += 'Browser blocked audio playback. Allow audio access.';
       } else if (error.message?.includes('network')) {
-        errorMessage += 'Ошибка сети. Проверьте подключение к интернету.';
+        errorMessage += 'Network error. Check your internet connection.';
       } else if (error.message?.includes('synthesis-unavailable')) {
-        errorMessage += 'Голос для этого языка недоступен.';
+        errorMessage += 'Voice for this language is not available.';
       } else {
-        errorMessage += error.message || 'Неизвестная ошибка.';
+        errorMessage += error.message || 'Unknown error.';
       }
       
       this.showSpeechError(errorMessage);

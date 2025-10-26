@@ -133,7 +133,7 @@ class OptionsPage {
     try {
       const success = await this.storageService.setApiKey(apiKey);
       if (success) {
-        this.showStatus('api-status', 'API ключ успешно сохранен', 'success');
+        this.showStatus('api-status', t('status.apiKeySaved'), 'success');
       } else {
         this.showStatus('api-status', t('status.errorSavingApiKey'), 'error');
       }

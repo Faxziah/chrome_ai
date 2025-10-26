@@ -1,6 +1,6 @@
 import { Tabs } from '../components/tabs';
 import { t } from '../utils/i18n';
-import { StorageService } from '../services/storage';
+import { StorageService } from '../services';
 import {getSelectedText, getSelectionRect} from "./selection-utils";
 
 export class PopupUI {

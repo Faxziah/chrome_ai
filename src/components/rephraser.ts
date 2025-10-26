@@ -106,24 +106,24 @@ export class Rephraser {
 
   private buildPrompt(text: string, style: string, preserveMeaning: boolean, language: string): string {
     const styleInstructions: Record<string, string> = {
-      'casual': 'неформальный, разговорный стиль, как будто общаешься с другом. Используй простые слова и короткие предложения.',
-      'formal': 'формальный, официальный стиль, подходящий для деловой переписки. Используй вежливые обороты и профессиональную лексику.',
-      'professional': 'профессиональный стиль для рабочей среды. Четко, структурировано, без лишних эмоций.',
-      'friendly': 'дружелюбный, теплый стиль. Позитивный тон, но не слишком неформальный.',
-      'academic': 'академический, научный стиль. Используй терминологию, сложные конструкции, избегай разговорных выражений.'
+      'casual': 'casual, conversational style, as if talking to a friend. Use simple words and short sentences.',
+      'formal': 'formal, official style suitable for business correspondence. Use polite phrases and professional vocabulary.',
+      'professional': 'professional style for work environment. Clear, structured, without unnecessary emotions.',
+      'friendly': 'friendly, warm style. Positive tone, but not too informal.',
+      'academic': 'academic, scientific style. Use terminology, complex constructions, avoid colloquial expressions.'
     };
 
     const styleInstruction = styleInstructions[style] || styleInstructions['casual'];
 
-    let prompt = `Перефразируй следующий текст в ${styleInstruction}`;
+    let prompt = `Rephrase the following text in ${styleInstruction}`;
     
     if (preserveMeaning) {
-      prompt += ' Сохрани точный смысл и все ключевые детали оригинала.';
+      prompt += ' Preserve the exact meaning and all key details of the original.';
     }
     
-    prompt += `\nЯзык вывода: ${language}`;
-    prompt += `\nИсходный текст:\n${text}`;
-    prompt += '\nПерефразированный текст:';
+    prompt += `\nOutput language: ${language}`;
+    prompt += `\nSource text:\n${text}`;
+    prompt += '\nRephrased text:';
 
     return prompt;
   }

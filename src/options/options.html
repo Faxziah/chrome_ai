@@ -3,13 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Text Tools - Настройки</title>
+    <title>AI Text Tools - Settings</title>
     <link rel="stylesheet" href="../../styles/material-design.css">
     <link rel="stylesheet" href="../../styles/options.css">
 </head>
 <body>
     <div class="container">
         <h1 data-i18n="options.title">AI Text Tools - Settings</h1>
+
+        <!-- API Configuration Section -->
+        <div class="section">
+            <h2 data-i18n="options.apiSettings">🔑 API Settings</h2>
+            <div class="form-group">
+                <label for="api-key" data-i18n="options.geminiApiKey">Gemini API key:</label>
+                <input type="password" id="api-key" data-i18n-placeholder="options.apiKeyPlaceholder" placeholder="Enter your API key">
+                <div class="help-text">
+                    <span data-i18n="options.getApiKey"></span> <a href="https://aistudio.google.com/app/api-keys" target="_blank">aistudio.google.com</a>
+                </div>
+            </div>
+            <div class="button-group">
+                <button class="md-button md-button--primary" id="save-api-key" data-i18n="options.saveKey"></button>
+                <button class="md-button md-button--secondary" id="test-api-key" data-i18n="options.testKey"></button>
+                <button class="md-button md-button--secondary" id="toggle-api-visibility" data-i18n="options.showHide"></button>
+            </div>
+            <div class="status-message" id="api-status"></div>
+        </div>
 
         <!-- Language Settings Section -->
         <div class="section">
@@ -30,24 +48,6 @@
                 <button class="md-button md-button--primary" id="save-language" data-i18n="options.saveLanguage"></button>
             </div>
             <div class="status-message" id="language-status"></div>
-        </div>
-
-        <!-- API Configuration Section -->
-        <div class="section">
-            <h2 data-i18n="options.apiSettings">🔑 API Settings</h2>
-            <div class="form-group">
-                <label for="api-key" data-i18n="options.geminiApiKey">Gemini API key:</label>
-                <input type="password" id="api-key" data-i18n-placeholder="options.apiKeyPlaceholder" placeholder="Enter your API key">
-                <div class="help-text">
-                    <span data-i18n="options.getApiKey"></span> <a href="https://aistudio.google.com/app/api-keys" target="_blank">aistudio.google.com</a>
-                </div>
-            </div>
-            <div class="button-group">
-                <button class="md-button md-button--primary" id="save-api-key" data-i18n="options.saveKey"></button>
-                <button class="md-button md-button--secondary" id="test-api-key" data-i18n="options.testKey"></button>
-                <button class="md-button md-button--secondary" id="toggle-api-visibility" data-i18n="options.showHide"></button>
-            </div>
-            <div class="status-message" id="api-status"></div>
         </div>
 
         <!-- Mini Popup Settings Section -->
