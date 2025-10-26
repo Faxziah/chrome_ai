@@ -14,8 +14,8 @@ interface TextMapping {
 
 interface NodeMapping {
   node: Text;
-  start: number;  // Позиция в полном тексте
-  end: number;    // Позиция в полном тексте
+  start: number;
+  end: number;
   text: string;
 }
 
@@ -27,10 +27,10 @@ interface TextMatch {
 
 interface AffectedNode {
   node: Text;
-  startInNode: number;  // Начало выделения в узле
-  endInNode: number;    // Конец выделения в узле
-  startInMatch: number; // Позиция в исходном совпадении
-  endInMatch: number;   // Позиция в исходном совпадении
+  startInNode: number;
+  endInNode: number;
+  startInMatch: number;
+  endInMatch: number;
 }
 
 export class HighlightManager {
@@ -51,10 +51,8 @@ export class HighlightManager {
   }
 
   private highlightAcrossNodes(affectedNodes: AffectedNode[], matchText: string): void {
-    // Сортируем узлы по позиции в совпадении
     affectedNodes.sort((a, b) => a.startInMatch - b.startInMatch);
 
-    // Выделяем каждый затронутый узел
     affectedNodes.forEach(affected => {
       this.highlightInSingleNode(
         affected.node,
@@ -77,14 +75,12 @@ export class HighlightManager {
     const parent = node.parentNode;
     if (!parent) return;
 
-    // Создаем новые узлы
     const beforeNode = document.createTextNode(before);
     const highlightNode = document.createElement('mark');
-    highlightNode.className = 'search-highlight'; // Добавляем класс для стилизации
+    highlightNode.className = 'search-highlight';
     highlightNode.textContent = highlighted;
     const afterNode = document.createTextNode(after);
 
-    // Заменяем исходный узел
     parent.insertBefore(beforeNode, node);
     parent.insertBefore(highlightNode, node);
     parent.insertBefore(afterNode, node);
@@ -115,7 +111,6 @@ export class HighlightManager {
   }
 
   private shouldSkipElement(element: Element): boolean {
-    // Пропускаем определенные элементы (скрипты, стили и т.д.)
     const tagName = element.tagName.toLowerCase();
     const skipTags = ['script', 'style', 'noscript', 'meta', 'link'];
 
@@ -123,7 +118,6 @@ export class HighlightManager {
       return true;
     }
 
-    // Можно добавить дополнительные проверки
     if (element.classList.contains('no-highlight')) {
       return true;
     }
@@ -251,7 +245,6 @@ export class HighlightManager {
         throw new Error(t('errors.emptyResponse'));
       }
 
-      console.error('response', response)
       const parsedTextRegExpMatchArray: RegExpMatchArray | null = response.text.match(/```json\s*([\s\S]*?)\s*```/);
       const parsedText = parsedTextRegExpMatchArray ? parsedTextRegExpMatchArray[1].trim() : '';
       const dataString: any = jsonrepair(parsedText)
@@ -278,13 +271,10 @@ export class HighlightManager {
   }
 
   private highlightTexts(searchTexts: string[]): void {
-    console.log('Ищем предложения:', searchTexts);
 
     this.removeExistingHighlights();
 
-    // Для каждого предложения отдельно находим и выделяем
     searchTexts.forEach(sentence => {
-      // Каждый раз пересобираем текстовые узлы, так как DOM мог измениться
       const walker = document.createTreeWalker(
         document.body,
         NodeFilter.SHOW_TEXT,
@@ -308,7 +298,6 @@ export class HighlightManager {
       const nodeText = textNode.textContent || '';
       const normalizedNodeText = this.normalizeText(nodeText);
 
-      // Ищем предложение в тексте узла
       if (normalizedNodeText.includes(normalizedSentence)) {
         this.highlightInNode(textNode, normalizedSentence, nodeText);
       }
@@ -319,7 +308,6 @@ export class HighlightManager {
     const normalizedOriginal = this.normalizeText(originalText);
     const normalizedSearch = this.normalizeText(searchText);
     
-    // Находим все вхождения предложения
     const matches: { start: number; end: number }[] = [];
     let startIndex = 0;
     
@@ -337,7 +325,6 @@ export class HighlightManager {
 
     if (matches.length === 0) return;
 
-    // Выделяем все найденные вхождения
     this.highlightAllMatchesInNode(textNode, originalText, matches, normalizedSearch);
   }
 
@@ -345,39 +332,32 @@ export class HighlightManager {
     const parent = textNode.parentNode;
     if (!parent) return;
 
-    // Сортируем совпадения по позиции (от конца к началу, чтобы не сбивать индексы)
     const sortedMatches = matches.sort((a, b) => b.start - a.start);
     
     let currentText = originalText;
     
-    // Обрабатываем совпадения от конца к началу
     sortedMatches.forEach(match => {
       const before = currentText.substring(0, match.start);
       const highlighted = currentText.substring(match.start, match.end);
       const after = currentText.substring(match.end);
       
-      // Создаем новые узлы
       const beforeNode = document.createTextNode(before);
       const highlightNode = document.createElement('mark');
       highlightNode.className = 'search-highlight';
       highlightNode.textContent = highlighted;
       const afterNode = document.createTextNode(after);
       
-      // Заменяем текущий текстовый узел
       if (currentText === originalText) {
-        // Первое совпадение - заменяем исходный узел
         parent.insertBefore(beforeNode, textNode);
         parent.insertBefore(highlightNode, textNode);
         parent.insertBefore(afterNode, textNode);
         parent.removeChild(textNode);
       } else {
-        // Последующие совпадения - работаем с фрагментом
         const fragment = document.createDocumentFragment();
         fragment.appendChild(beforeNode);
         fragment.appendChild(highlightNode);
         fragment.appendChild(afterNode);
         
-        // Находим и заменяем соответствующий текстовый узел
         const textNodes = Array.from(parent.childNodes).filter(node => node.nodeType === Node.TEXT_NODE);
         const targetNode = textNodes.find(node => node.textContent === currentText);
         if (targetNode) {
@@ -385,7 +365,6 @@ export class HighlightManager {
         }
       }
       
-      // Обновляем текущий текст для следующей итерации
       currentText = before + after;
     });
   }
@@ -393,9 +372,9 @@ export class HighlightManager {
   private normalizeText(text: string): string {
     return text
       .toLowerCase()
-      .replace(/\u00A0/g, ' ')      // неразрывный пробел -> обычный
-      .replace(/[\u2013\u2014]/g, '-') // тире -> дефис
-      .replace(/\s+/g, ' ')         // множественные пробелы -> один
+      .replace(/\u00A0/g, ' ')
+      .replace(/[\u2013\u2014]/g, '-')
+      .replace(/\s+/g, ' ')
       .trim();
   }
 
@@ -436,7 +415,6 @@ export class HighlightManager {
     const matches: TextMatch[] = [];
     let match;
 
-    // Ищем все совпадения в полном тексте
     while ((match = regex.exec(mapping.fullText)) !== null) {
       matches.push({
         start: match.index,
@@ -444,15 +422,11 @@ export class HighlightManager {
         text: match[0]
       });
 
-      // Избегаем бесконечного цикла
       if (match.index === regex.lastIndex) {
         regex.lastIndex++;
       }
     }
 
-    console.log('Matches found:', matches.length);
-
-    // Выделяем каждое совпадение
     matches.forEach(matchInfo => {
       this.highlightMatchInMapping(mapping, matchInfo);
     });
@@ -461,13 +435,11 @@ export class HighlightManager {
   private highlightMatchInMapping(mapping: TextMapping, match: TextMatch): void {
     const affectedNodes: AffectedNode[] = [];
 
-    // Находим все узлы, которые затрагивает это совпадение
     mapping.mappings.forEach(nodeMapping => {
       const overlapStart = Math.max(match.start, nodeMapping.start);
       const overlapEnd = Math.min(match.end, nodeMapping.end);
 
       if (overlapStart < overlapEnd) {
-        // Совпадение частично или полностью в этом узле
         const nodeStartInMatch = overlapStart - nodeMapping.start;
         const nodeEndInMatch = overlapEnd - nodeMapping.start;
 
@@ -481,7 +453,6 @@ export class HighlightManager {
       }
     });
 
-    // Выделяем совпадение во всех затронутых узлах
     this.highlightAcrossNodes(affectedNodes, match.text);
   }
 
@@ -575,7 +546,6 @@ export class HighlightManager {
   }
 
   private showHighlightError(message: string): void {
-    // Создать стилизованный toast для ошибок highlight
     const toast = document.createElement('div');
     toast.className = 'ai-highlight-error-toast';
     toast.textContent = message;

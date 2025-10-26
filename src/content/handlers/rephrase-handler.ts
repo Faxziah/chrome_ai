@@ -56,15 +56,7 @@ export class RephraseHandler {
       await this.saveToHistory(selectedText, result);
     } catch (error) {
       console.error('Rephrase error:', error);
-      
-      // Фильтруем системные ошибки
-      if (error instanceof Error && 
-          (error.message.includes('Could not establish connection') ||
-           error.message.includes('Receiving end does not exist') ||
-           error.message.includes('ACTION COMPLETED'))) {
-        return;
-      }
-      
+
       const base = t('errors.rephraseFailed');
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       const reason = t('errors.withReason', { reason: errorMessage });
@@ -110,11 +102,10 @@ export class RephraseHandler {
     resultText.className = 'result-text';
     resultContainer.hidden = false;
     
-    // Dispatch event для показа кнопки Favorites
     const event = new CustomEvent('resultReady', { 
       detail: { type: 'rephrase' },
       bubbles: true,
-      composed: true // Проходит через Shadow DOM
+      composed: true
     });
     this.shadowRoot.dispatchEvent(event);
   }

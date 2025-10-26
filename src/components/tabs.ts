@@ -394,7 +394,6 @@ export class Tabs {
     });
     this.eventTarget.dispatchEvent(event);
 
-    // Прокручиваем к активной вкладке после переключения
     setTimeout(() => {
       this.scrollToActiveTab();
     }, 50);
@@ -421,7 +420,6 @@ export class Tabs {
     const activeTab = shadowRoot.querySelector('.tab.is-active') as HTMLElement;
     
     if (activeTab && this.rootElement) {
-      // Прокручиваем к активной вкладке
       activeTab.scrollIntoView({
         behavior: 'smooth',
         block: 'nearest',

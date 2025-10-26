@@ -4,7 +4,7 @@ import {FavoritesService} from '../services/favorites';
 import {setLocale, t} from '../utils/i18n';
 import {truncateText, escapeHtml, formatMarkdown} from '../utils/utils';
 
-// Material Design Utils (будет доступен глобально после загрузки скрипта)
+// Material Design Utils
 declare global {
   interface Window {
     MaterialDesignUtils: any;
@@ -30,7 +30,7 @@ class SidePanelApp {
     // Initialize language
     this.initializeLanguage();
 
-    this.initializeApp().catch(console.error);
+    this.initializeApp().catch(() => {});
   }
 
   private async initializeLanguage(): Promise<void> {
@@ -147,7 +147,6 @@ class SidePanelApp {
       activeTab.classList.add('active');
       activeContent.classList.add('active');
 
-      // Добавляем анимацию появления
       if (window.MaterialDesignUtils) {
         window.MaterialDesignUtils.animateElement(activeContent, 'fadeIn');
       }
@@ -166,11 +165,9 @@ class SidePanelApp {
   }
 
   private showStatus(message: string, type: 'success' | 'error' = 'success'): void {
-    // Используем Material Design toast уведомления
     if (window.MaterialDesignUtils) {
       window.MaterialDesignUtils.showToast(message, type, 3000);
     } else {
-      // Fallback к старому способу
       const statusDiv = document.getElementById('status') as HTMLDivElement;
       if (!statusDiv) return;
 

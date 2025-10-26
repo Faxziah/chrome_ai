@@ -4,7 +4,7 @@ import { HistoryService } from '../services/history';
 import { FavoritesService } from '../services/favorites';
 import { Chat, ChatMessage } from '../components/chat';
 import { ActionType } from '../types';
-import { setLocale } from '../utils/i18n';
+import { setLocale, t } from '../utils/i18n';
 
 class PopupApp {
   private readonly geminiService: GeminiService;
@@ -24,7 +24,7 @@ class PopupApp {
     // Initialize language
     this.initializeLanguage();
     this.chat = new Chat(this.geminiService, this.storageService, this.favoritesService);
-    
+
     this.initializeApp().catch(console.error);
   }
 
@@ -56,7 +56,7 @@ class PopupApp {
       await this.loadChatHistory();
     } catch (error) {
       console.error('Initialization error:', error);
-      this.showStatus('Ошибка инициализации', 'error');
+      this.showStatus(t('status.initializationError'), 'error');
     }
   }
 
@@ -191,7 +191,6 @@ class PopupApp {
       activeTab.classList.add('active');
       activeContent.classList.add('active');
       
-      // Добавляем анимацию появления
       if (window.MaterialDesignUtils) {
         window.MaterialDesignUtils.animateElement(activeContent, 'fadeIn');
       }
@@ -211,11 +210,11 @@ class PopupApp {
     if (historyList && viewHistoryBtn) {
       if (historyList.style.display === 'none') {
         historyList.style.display = 'block';
-        viewHistoryBtn.textContent = 'Скрыть';
+        viewHistoryBtn.textContent = t('status.hide');
         await this.loadHistory();
       } else {
         historyList.style.display = 'none';
-        viewHistoryBtn.textContent = 'Просмотр';
+        viewHistoryBtn.textContent = t('status.view');
       }
     }
   }
@@ -227,11 +226,11 @@ class PopupApp {
     if (favoritesList && viewFavoritesBtn) {
       if (favoritesList.style.display === 'none') {
         favoritesList.style.display = 'block';
-        viewFavoritesBtn.textContent = 'Скрыть';
+        viewFavoritesBtn.textContent = t('status.hide');
         await this.loadFavorites();
       } else {
         favoritesList.style.display = 'none';
-        viewFavoritesBtn.textContent = 'Просмотр';
+        viewFavoritesBtn.textContent = t('status.view');
       }
     }
   }
@@ -255,7 +254,7 @@ class PopupApp {
       });
     } catch (error) {
       console.error('Error sending message:', error);
-      this.showStatus('Ошибка отправки сообщения', 'error');
+      this.showStatus(t('status.messageSendError'), 'error');
     } finally {
       sendBtn.disabled = false;
     }
@@ -318,10 +317,10 @@ class PopupApp {
     try {
       const messageType = this.currentTab === 'summarize' ? 'summary' : 'chat';
       await this.chat.addToFavorites(this.lastAssistantMessageId, messageType);
-      this.showStatus('Добавлено в избранное!', 'success');
+      this.showStatus(t('common.addedToFavorites'), 'success');
     } catch (error) {
       console.error('Error adding to favorites:', error);
-      this.showStatus('Ошибка добавления в избранное', 'error');
+      this.showStatus(t('status.addToFavoritesError'), 'error');
     } finally {
       if (favoriteBtn) {
         favoriteBtn.disabled = false;
@@ -335,11 +334,9 @@ class PopupApp {
   }
 
   private showStatus(message: string, type: 'success' | 'error' = 'success'): void {
-    // Используем Material Design toast уведомления
     if (window.MaterialDesignUtils) {
       window.MaterialDesignUtils.showToast(message, type, 3000);
     } else {
-      // Fallback к старому способу
       const statusDiv = document.getElementById('status') as HTMLDivElement;
       if (!statusDiv) return;
 
@@ -399,7 +396,7 @@ class PopupApp {
       await this.renderHistory(history);
     } catch (error) {
       console.error('Error loading history:', error);
-      this.showStatus('Ошибка загрузки истории', 'error');
+      this.showStatus(t('status.historyLoadError'), 'error');
     }
   }
 
@@ -409,7 +406,7 @@ class PopupApp {
       this.renderFavorites(favorites);
     } catch (error) {
       console.error('Error loading favorites:', error);
-      this.showStatus('Ошибка загрузки избранного', 'error');
+      this.showStatus(t('status.favoritesLoadError'), 'error');
     }
   }
 
@@ -539,10 +536,10 @@ class PopupApp {
     try {
       await this.historyService.clearHistory();
       await this.renderHistory([]);
-      this.showStatus('История очищена', 'success');
+      this.showStatus(t('status.historyCleared'), 'success');
     } catch (error) {
       console.error('Error clearing history:', error);
-      this.showStatus('Ошибка очистки истории', 'error');
+      this.showStatus(t('status.historyClearError'), 'error');
     }
   }
 
@@ -550,10 +547,10 @@ class PopupApp {
     try {
       await this.favoritesService.clearAllFavorites();
       this.renderFavorites([]);
-      this.showStatus('Избранное очищено', 'success');
+      this.showStatus(t('status.favoritesCleared'), 'success');
     } catch (error) {
       console.error('Error clearing favorites:', error);
-      this.showStatus('Ошибка очистки избранного', 'error');
+      this.showStatus(t('status.favoritesClearError'), 'error');
     }
   }
 
@@ -642,7 +639,7 @@ class PopupApp {
       
       if (isFavorite) {
         await this.favoritesService.removeBySourceId(itemId);
-        this.showStatus('Удалено из избранного', 'success');
+        this.showStatus(t('status.removedFromFavorites'), 'success');
       } else {
         const history = await this.historyService.getHistory();
         const item = history.find(h => h.id === itemId);
@@ -655,7 +652,7 @@ class PopupApp {
             [],
             { ...item.metadata, sourceId: itemId }
           );
-          this.showStatus('Добавлено в избранное!', 'success');
+          this.showStatus(t('common.addedToFavorites'), 'success');
         }
       }
       
@@ -663,7 +660,7 @@ class PopupApp {
       await this.loadHistory();
     } catch (error) {
       console.error('Error toggling favorite:', error);
-      this.showStatus('Ошибка изменения избранного', 'error');
+      this.showStatus(t('status.favoriteToggleError'), 'error');
     }
   }
 
@@ -671,10 +668,10 @@ class PopupApp {
     try {
       await this.historyService.removeFromHistory(itemId);
       await this.loadHistory();
-      this.showStatus('Удалено из истории', 'success');
+      this.showStatus(t('status.removedFromHistory'), 'success');
     } catch (error) {
       console.error('Error deleting history item:', error);
-      this.showStatus('Ошибка удаления из истории', 'error');
+      this.showStatus(t('status.historyDeleteError'), 'error');
     }
   }
 
@@ -685,7 +682,7 @@ class PopupApp {
       this.showStatus('Удалено из избранного', 'success');
     } catch (error) {
       console.error('Error removing from favorites:', error);
-      this.showStatus('Ошибка удаления из избранного', 'error');
+      this.showStatus(t('status.favoritesDeleteError'), 'error');
     }
   }
 
@@ -696,7 +693,7 @@ class PopupApp {
       this.showStatus('Удалено из избранного', 'success');
     } catch (error) {
       console.error('Error deleting favorite item:', error);
-      this.showStatus('Ошибка удаления из избранного', 'error');
+      this.showStatus(t('status.favoritesDeleteError'), 'error');
     }
   }
 }

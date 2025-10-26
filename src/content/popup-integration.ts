@@ -41,12 +41,12 @@ export class PopupIntegration {
       if (apiKey && apiKey.trim().length > 0) {
         this.geminiService = new GeminiService(apiKey);
       } else {
-        console.log('API key not found. User needs to configure in options.');
+        console.error('API key not found');
       }
 
       this.speechManager = new SpeechSynthesisManager();
       if (!this.speechManager.isSupported()) {
-        console.warn('Speech synthesis not supported');
+        console.error('Speech synthesis not supported');
         this.speechManager = null;
       }
 
@@ -76,7 +76,6 @@ export class PopupIntegration {
 
     // Listen for resultReady events from handlers
     shadowRoot.addEventListener('resultReady', ((event: CustomEvent) => {
-      console.log('Result ready for type:', event.detail.type);
       this.showFavoriteButton();
       this.syncFavoriteButtonState();
     }) as EventListener);
@@ -204,15 +203,9 @@ export class PopupIntegration {
       await this.rephraseHandler.handleRephrase(selectedText);
     } catch (error) {
       if (this.abortController?.signal.aborted) {
-        console.log('Rephrase operation was cancelled');
         return;
       }
-      if ((error as Error).message?.includes('Could not establish connection') ||
-          (error as Error).message?.includes('Receiving end does not exist') ||
-          (error as Error).message?.includes('ACTION COMPLETED')) {
-        console.log('System message, not showing to user:', (error as Error).message);
-        return;
-      }
+
       console.error('Rephrase error:', error);
       if (error instanceof Error && error.message === 'MODEL_NOT_AVAILABLE') {
         this.showModelUnavailableError('rephrase-text');
@@ -286,15 +279,9 @@ export class PopupIntegration {
       await this.translateHandler.handleTranslate(selectedText);
     } catch (error) {
       if (this.abortController?.signal.aborted) {
-        console.log('Translation operation was cancelled');
         return;
       }
-      if ((error as Error).message?.includes('Could not establish connection') ||
-          (error as Error).message?.includes('Receiving end does not exist') ||
-          (error as Error).message?.includes('ACTION COMPLETED')) {
-        console.log('System message, not showing to user:', (error as Error).message);
-        return;
-      }
+
       console.error('Translation error:', error);
       if (error instanceof Error && error.message === 'MODEL_NOT_AVAILABLE') {
         this.showModelUnavailableError('translate-text');
@@ -379,15 +366,9 @@ export class PopupIntegration {
       await this.summarizeHandler.handleSummarize(selectedText);
     } catch (error) {
       if (this.abortController?.signal.aborted) {
-        console.log('Summarize operation was cancelled');
         return;
       }
-      if ((error as Error).message?.includes('Could not establish connection') ||
-          (error as Error).message?.includes('Receiving end does not exist') ||
-          (error as Error).message?.includes('ACTION COMPLETED')) {
-        console.log('System message, not showing to user:', (error as Error).message);
-        return;
-      }
+
       console.error('Summarize error:', error);
       if (error instanceof Error && error.message === 'MODEL_NOT_AVAILABLE') {
         this.showModelUnavailableError('summary-text');
@@ -471,30 +452,21 @@ export class PopupIntegration {
         }
       }
 
-      // Получаем выделенный текст
       const selectedText = this.popupUI.getSelectedText();
 
-      // Формируем полное сообщение: выделенный текст + вопрос пользователя
       const fullMessage = selectedText
         ? `${selectedText}\n${chatInput.value}`
         : chatInput.value;
 
-      // Очищаем поле ввода после отправки
       chatInput.value = '';
 
       await this.discussHandler.handleSendMessage(fullMessage);
       chatInput.focus();
     } catch (error) {
       if (this.abortController?.signal.aborted) {
-        console.log('Chat operation was cancelled');
         return;
       }
-      if ((error as Error).message?.includes('Could not establish connection') ||
-          (error as Error).message?.includes('Receiving end does not exist') ||
-          (error as Error).message?.includes('ACTION COMPLETED')) {
-        console.log('System message, not showing to user:', (error as Error).message);
-        return;
-      }
+
       console.error('Chat error:', error);
       if (error instanceof Error && error.message === 'MODEL_NOT_AVAILABLE') {
         this.showModelUnavailableError('discuss-text');
@@ -601,35 +573,29 @@ private async handleFavoriteToggleClick(event: Event): Promise<void> {
           return;
         }
         
-        // Проверяем, есть ли уже избранное с таким же prompt
         const existingFavorite = await this.favoritesService.findByPrompt(selectedText, 'discuss');
         
-        // Получить весь диалог
         const allMessages = Array.from(chatMessages.children);
         if (allMessages.length === 0) {
           this.showToast(t('common.noResultToAddToFavorites'), 'error');
           return;
         }
 
-        // Собрать весь диалог без префиксов ролей и исходного текста
         const fullDialogue = allMessages.map(message => {
           const isUser = message.classList.contains('user');
           const isAi = message.classList.contains('assistant');
           let text = message.textContent.trim() || '';
 
           if (isUser) {
-            // Убираем исходный текст из первого сообщения пользователя
             if (text.includes(selectedText)) {
               const originalTextIndex = text.indexOf(selectedText);
               if (originalTextIndex !== -1) {
                 text = text.substring(originalTextIndex + selectedText.length).trim();
               }
             }
-            // Убираем существующий префикс "Пользователь" если есть
             text = text.replace(new RegExp(`^${t('chat.user')}\\s*`), '').trim();
             text = `${t('chat.user')}\n` + text;
           } else if (isAi) {
-            // Убираем существующий префикс "ИИ" если есть
             text = text.replace(new RegExp(`^${t('chat.ai')}\\s*`), '').trim();
             text = `${t('chat.ai')}\n` + text;
           }
@@ -642,16 +608,14 @@ private async handleFavoriteToggleClick(event: Event): Promise<void> {
         response = fullDialogue;
         type = 'discuss';
         
-        // Если уже есть избранное с таким же prompt, обновляем его
         if (existingFavorite) {
           const success = await this.favoritesService.updateFavorite(existingFavorite.id, {
             response: fullDialogue
           });
           
           if (success) {
-            this.showToast('Избранное обновлено!', 'success');
+            this.showToast(t('common.addedToFavorites'), 'success');
             this.updateFavoriteButtonState(button, true);
-            // Используем sourceId из metadata, если есть, иначе id
             const sourceId = existingFavorite.metadata?.sourceId || existingFavorite.id;
             button.dataset.sourceId = sourceId;
             button.dataset.isFavorite = 'true';
@@ -691,7 +655,6 @@ private async handleFavoriteToggleClick(event: Event): Promise<void> {
     const sourceId = button.dataset.sourceId;
 
     if (!sourceId) {
-      // Если нет sourceId, просто меняем кнопку на "Добавить в избранное"
       this.updateFavoriteButtonState(button, false);
       return;
     }
@@ -701,7 +664,6 @@ private async handleFavoriteToggleClick(event: Event): Promise<void> {
     if (success) {
       this.updateFavoriteButtonState(button, false);
     } else {
-      // Если не удалось удалить, просто меняем кнопку на "Добавить в избранное"
       this.updateFavoriteButtonState(button, false);
     }
   }

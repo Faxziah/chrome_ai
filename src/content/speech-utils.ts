@@ -228,7 +228,6 @@ export class SpeechSynthesisManager {
 
     const languageCode = localeCode.split('-')[0];
     
-    // Фильтруем голоса по языку
     const matchingVoices = this.voices.filter(voice => 
       voice.lang === localeCode || voice.lang.startsWith(languageCode)
     );
@@ -237,49 +236,41 @@ export class SpeechSynthesisManager {
       return null;
     }
 
-    // Приоритет 1: Hi-Quality локальные голоса с точным совпадением locale
     const highQualityLocalExactMatch = matchingVoices.find(v => 
       v.localService && v.lang === localeCode && this.isHighQualityVoice(v)
     );
     if (highQualityLocalExactMatch) return highQualityLocalExactMatch;
 
-    // Приоритет 2: Hi-Quality локальные голоса с совпадением языка
     const highQualityLocalMatch = matchingVoices.find(v => 
       v.localService && v.lang.startsWith(languageCode) && this.isHighQualityVoice(v)
     );
     if (highQualityLocalMatch) return highQualityLocalMatch;
 
-    // Приоритет 3: Hi-Quality онлайн голоса с точным совпадением
     const highQualityOnlineExactMatch = matchingVoices.find(v => 
       !v.localService && v.lang === localeCode && this.isHighQualityVoice(v)
     );
     if (highQualityOnlineExactMatch) return highQualityOnlineExactMatch;
 
-    // Приоритет 4: Hi-Quality онлайн голоса с совпадением языка
     const highQualityOnlineMatch = matchingVoices.find(v => 
       !v.localService && v.lang.startsWith(languageCode) && this.isHighQualityVoice(v)
     );
     if (highQualityOnlineMatch) return highQualityOnlineMatch;
 
-    // Приоритет 5: Локальные голоса с точным совпадением locale
     const localExactMatch = matchingVoices.find(v => 
       v.localService && v.lang === localeCode
     );
     if (localExactMatch) return localExactMatch;
 
-    // Приоритет 6: Локальные голоса с совпадением языка
     const localMatch = matchingVoices.find(v => 
       v.localService && v.lang.startsWith(languageCode)
     );
     if (localMatch) return localMatch;
 
-    // Приоритет 7: Онлайн голоса с точным совпадением
     const onlineExactMatch = matchingVoices.find(v => 
       !v.localService && v.lang === localeCode
     );
     if (onlineExactMatch) return onlineExactMatch;
 
-    // Приоритет 8: Любой голос для языка
     return matchingVoices[0];
   }
 

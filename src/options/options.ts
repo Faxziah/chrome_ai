@@ -242,8 +242,8 @@ class OptionsPage {
       
       const config = {
         model: modelSelect?.value || 'gemini-2.5-flash',
-        temperature: 0.7, // Дефолтное значение
-        maxTokens: 2048   // Дефолтное значение
+        temperature: 0.7,
+        maxTokens: 2048
       };
       
       const success = await this.storageService.setApiConfig(config);
@@ -262,8 +262,8 @@ class OptionsPage {
     try {
       const defaultConfig = {
         model: 'gemini-2.5-flash',
-        temperature: 0.7, // Дефолтное значение
-        maxTokens: 2048   // Дефолтное значение
+        temperature: 0.7,
+        maxTokens: 2048
       };
       
       const success = await this.storageService.setApiConfig(defaultConfig);

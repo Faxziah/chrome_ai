@@ -55,7 +55,6 @@ export class DiscussHandler {
       
       this.updateChatUI();
       
-      // Dispatch event для показа кнопки Favorites
       const event = new CustomEvent('resultReady', { 
         detail: { type: 'discuss' },
         bubbles: true,
@@ -66,10 +65,9 @@ export class DiscussHandler {
       if ((error as Error).message?.includes('Could not establish connection') || 
           (error as Error).message?.includes('Receiving end does not exist') ||
           (error as Error).message?.includes('ACTION COMPLETED')) {
-        console.log('System message, not showing to user:', (error as Error).message);
         return;
       }
-      console.error('Discuss error:', error);
+
       const base = t('errors.summarizeFailed');
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       const reason = t('errors.withReason', { reason: errorMessage });
@@ -94,12 +92,10 @@ export class DiscussHandler {
         const messages = this.chat!.getMessages();
         const userMessage = messages.find(m => m.role === 'user');
         if (userMessage) {
-          // Собираем весь диалог для сохранения
           const fullDialogue = messages.map(msg => {
-            const role = msg.role === 'user' ? 'Пользователь' : 'ИИ';
+            const role = msg.role === 'user' ? t('chat.user') : t('chat.ai');
             let content = msg.content;
             
-            // Убираем выделенный текст из первого сообщения пользователя
             if (msg.role === 'user') {
               const selectedText = this.extractSelectedText(msg.content);
               if (content.includes(selectedText)) {
@@ -113,10 +109,8 @@ export class DiscussHandler {
             return `${role}\n${content}`;
           }).join('\n\n');
           
-          // Получаем выделенный текст из первого сообщения пользователя
           const firstUserMessage = messages.find(m => m.role === 'user');
           if (firstUserMessage) {
-            // Извлекаем выделенный текст из первого сообщения
             const selectedText = this.extractSelectedText(firstUserMessage.content);
             await this.saveToHistory(selectedText, fullDialogue);
           }
@@ -146,22 +140,16 @@ export class DiscussHandler {
   }
 
   private extractSelectedText(userMessage: string): string {
-    // Если в сообщении есть выделенный текст (обычно в начале), извлекаем его
-    // Выделенный текст обычно заканчивается перед вопросом или новой строкой
     const lines = userMessage.split('\n');
     if (lines.length > 1) {
-      // Берем первую строку как выделенный текст
       return lines[0].trim();
     }
     
-    // Если нет переносов строк, ищем паттерн выделенного текста
-    // Обычно выделенный текст - это первая часть до знака вопроса или точки
     const match = userMessage.match(/^([^?]*?)(?:\?|$)/);
     if (match && match[1].trim().length > 0) {
       return match[1].trim();
     }
     
-    // Если ничего не найдено, возвращаем все сообщение
     return userMessage.trim();
   }
 

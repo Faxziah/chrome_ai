@@ -155,32 +155,24 @@ export class GeminiService {
         );
       }
       
-      // Проверка на 404 ошибку модели
       if (error.message?.includes('404') || error.message?.includes('not found')) {
         throw new Error(
-          'Модель недоступна для текущей версии API. ' +
-          'Пожалуйста, выберите другую модель в настройках расширения. ' +
-          'Доступные модели: gemini-1.5-flash, gemini-1.5-pro.'
+          'Модель недоступна для текущей версии API. Пожалуйста, выберите другую модель в настройках расширения. '
         );
       }
       
-      // Проверка на ошибку API ключа
       if (error.message?.includes('API key') || error.message?.includes('401')) {
         throw new Error(
-          'API ключ некорректный или отсутствует. ' +
-          'Проверьте ключ в настройках расширения.'
+          'API ключ некорректный или отсутствует. Проверьте ключ в настройках расширения.'
         );
       }
       
-      // Проверка на rate limit
       if (error.message?.includes('429') || error.message?.includes('quota')) {
         throw new Error(
-          'Превышен лимит запросов к API. ' +
-          'Пожалуйста, подождите несколько минут и попробуйте снова.'
+          'Превышен лимит запросов к API. Пожалуйста, подождите несколько минут и попробуйте снова.'
         );
       }
       
-      // Общая ошибка
       throw new Error(`Ошибка Gemini API: ${error.message || 'Неизвестная ошибка'}`);
     }
   }
@@ -193,7 +185,6 @@ export class GeminiService {
     } catch (error: any) {
       console.error('API key validation failed:', error);
       
-      // Логировать конкретную причину
       if (error.message?.includes('404') || error.message?.includes('MODEL_NOT_AVAILABLE')) {
         console.error('Model not found');
       } else if (error.message?.includes('401') || error.message?.includes('API key')) {

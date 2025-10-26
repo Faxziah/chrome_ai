@@ -55,17 +55,14 @@ export class StorageService {
     try {
       const history = await this.getHistory();
 
-      // Для типа 'discuss' ищем существующий элемент с таким же prompt
       if (item.type === 'discuss') {
         const existingItemIndex = history.findIndex(historyItem =>
           historyItem.type === 'discuss' && historyItem.prompt === item.prompt
         );
 
         if (existingItemIndex !== -1) {
-          // Объединяем ответы
           history[existingItemIndex].response = item.response
 
-          // Обновляем timestamp на текущий
           history[existingItemIndex].timestamp = Date.now();
 
           await chrome.storage.local.set({

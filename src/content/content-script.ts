@@ -4,11 +4,8 @@ import { getSelectedText, getSelectionRect, isValidSelection } from './selection
 import { highlightManager } from './highlight';
 import { ActionType } from '../types';
 import { setLocale } from '../utils/i18n';
-import { StorageService } from '../services/storage';
+import { StorageService } from '../services';
 
-console.log('AI Text Tools content script loaded');
-
-// Initialize language
 (async () => {
   try {
     const storageService = new StorageService();
@@ -44,7 +41,6 @@ function showPopupIfTextSelected(): void {
     return;
   }
   
-  // Если попап открыт, не закрываем его при отсутствии выделения
   if (popupUI.isPopupVisible()) {
     return;
   }
@@ -62,8 +58,6 @@ function showPopupIfTextSelected(): void {
 
   lastSelectionRect = selectionRect;
   popupUI.show(selectedText, selectionRect);
-  
-  console.log('Popup shown for text:', selectedText.substring(0, 50) + (selectedText.length > 50 ? '...' : ''));
 }
 
 function schedulePositionUpdate(): void {
@@ -78,8 +72,6 @@ function schedulePositionUpdate(): void {
     
     const freshSelectionRect = getSelectionRect();
     if (!freshSelectionRect) {
-      // Не закрываем попап при обновлении позиции (прокрутка, изменение размера)
-      // Попап должен закрываться только при явных действиях пользователя
       lastSelectionRect = null;
       positionUpdateScheduled = false;
       return;
@@ -114,7 +106,6 @@ document.addEventListener('mouseup', (event) => {
     return;
   }
   
-  // Игнорировать клики по UI элементам
   const target = event.target as HTMLElement;
   if (target.closest('button') || target.closest('input') || target.closest('textarea')) {
     return;
@@ -125,31 +116,26 @@ document.addEventListener('mouseup', (event) => {
     return;
   }
   
-  // Небольшая задержка для завершения выделения
   setTimeout(() => {
     handleSelectionChange();
   }, 50);
 });
 
 document.addEventListener('keyup', (event) => {
-  // Обработка завершения выделения с клавиатуры
   if (event.key === 'Shift' || event.key === 'Control' || event.key === 'Alt' || event.key === 'Meta' || event.key === 'Enter') {
     return;
   }
 
-  // Проверяем, что событие не происходит внутри попапа
   const path = event.composedPath();
   const isInsidePopup = path.some(el => el instanceof HTMLElement && el.id === 'ai-text-tools-popup-host');
   if (isInsidePopup) {
     return;
   }
 
-  // Проверяем, что попап открыт - не закрываем его при случайных нажатиях
   if (popupUI.isPopupVisible()) {
     return;
   }
 
-  // Небольшая задержка для завершения выделения
   setTimeout(() => {
     handleSelectionChange();
   }, 100);
@@ -172,19 +158,16 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   (async () => {
     try {
       if (message.action === ActionType.HIGHLIGHT_KEYWORDS) {
-        console.log('Highlight keywords command received');
         await highlightManager.initialize();
         await highlightManager.highlightKeywords();
         sendResponse({ success: true });
       } else if (message.action === ActionType.CLEAR_HIGHLIGHTS) {
-        console.log('Clear highlights command received');
         highlightManager.clearHighlights();
         sendResponse({ success: true });
       } else if (message.action === ActionType.GET_SELECTED_TEXT) {
         const selectedText = getSelectedText();
         sendResponse({ success: true, text: selectedText });
       } else if (message.action === ActionType.CONTEXT_MENU_ACTION) {
-        console.log('Context menu action received:', message.contextAction);
         const selectedText = message.selectedText || getSelectedText();
         
         if (selectedText && selectedText.trim()) {
@@ -209,7 +192,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         }
         sendResponse({ success: true });
       } else if (message.action === ActionType.REPHRASE) {
-        console.log('Rephrase action received');
         const selectedText = getSelectedText();
         if (selectedText && selectedText.trim()) {
           const selectionRect = getSelectionRect();
@@ -222,7 +204,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         }
         sendResponse({ success: true });
       } else if (message.action === ActionType.TRANSLATE) {
-        console.log('Translate action received');
         const selectedText = getSelectedText();
         if (selectedText && selectedText.trim()) {
           const selectionRect = getSelectionRect();
@@ -235,7 +216,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         }
         sendResponse({ success: true });
       } else if (message.action === ActionType.SUMMARIZE) {
-        console.log('Summarize action received');
         const selectedText = getSelectedText();
         if (selectedText && selectedText.trim()) {
           const selectionRect = getSelectionRect();
@@ -248,7 +228,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         }
         sendResponse({ success: true });
       } else {
-        console.debug('Unknown action:', message.action);
         sendResponse({ success: false, error: 'Unknown action' });
       }
     } catch (error) {
@@ -257,5 +236,5 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
   })();
 
-  return true; // Держать message port открытым для async операций
+  return true;
 });

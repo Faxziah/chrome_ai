@@ -117,7 +117,6 @@ export class SpeechHandler {
   private showSpeechError(message: string): void {
     if (!this.shadowRoot) return;
     
-    // Найти или создать контейнер для ошибок
     let errorContainer = this.shadowRoot.querySelector('.speech-error-container') as HTMLElement;
     
     if (!errorContainer) {
@@ -143,7 +142,6 @@ export class SpeechHandler {
     errorContainer.textContent = message;
     errorContainer.style.display = 'block';
     
-    // Автоматически скрыть через 5 секунд
     setTimeout(() => {
       errorContainer.style.display = 'none';
     }, 5000);

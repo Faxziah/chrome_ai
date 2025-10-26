@@ -40,7 +40,6 @@ export class PopupUI {
 
     this.shadowRoot = this.hostElement.attachShadow({ mode: 'open' });
 
-    // Добавляем Material Design CSS в Shadow DOM
     const materialDesignLink = document.createElement('link');
     materialDesignLink.rel = 'stylesheet';
     
@@ -128,16 +127,12 @@ export class PopupUI {
         this.updateSelectedTextDisplay();
       });
 
-      // Прокручиваем к активной вкладке после рендеринга
       setTimeout(() => {
         this.tabsComponent?.scrollToActiveTab();
       }, 100);
     }
 
-    // 1. Рендерить контент
-    // 2. Вычислить и установить позицию (БЕЗ показа)
     this.updatePosition(selectionRect);
-    // 3. Показать с плавной анимацией opacity
     if (this.popupContainer) {
       this.popupContainer.style.opacity = '1';
       this.popupContainer.style.visibility = 'visible';
@@ -175,7 +170,6 @@ export class PopupUI {
   public updatePosition(selectionRect: DOMRect): void {
     if (!this.popupContainer) return;
 
-    // Не обновляем позицию, если попап перетаскивается или был вручную позиционирован
     if (this.isDragging || (this.wasManuallyPositioned && this.currentPosition)) {
       if (this.currentPosition) {
         this.popupContainer.style.transform = `translate(${this.currentPosition.x}px, ${this.currentPosition.y}px)`;
@@ -384,13 +378,8 @@ export class PopupUI {
     
     // Setup drag and drop for header
     this.setupDragAndDrop();
-    
-    // Don't set any tab here - let the click handler set the correct tab
-    // when switching from mini mode to full mode
-    
     this.updateSelectedTextDisplay();
     
-    // Прокручиваем к активной вкладке после переключения в полноэкранный режим
     setTimeout(() => {
       this.tabsComponent?.scrollToActiveTab();
     }, 100);

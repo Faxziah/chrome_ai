@@ -57,15 +57,7 @@ export class SummarizeHandler {
       await this.saveToHistory(selectedText, result);
     } catch (error) {
       console.error('Summarize error:', error);
-      
-      // Фильтруем системные ошибки
-      if (error instanceof Error && 
-          (error.message.includes('Could not establish connection') ||
-           error.message.includes('Receiving end does not exist') ||
-           error.message.includes('ACTION COMPLETED'))) {
-        return;
-      }
-      
+
       const base = t('errors.summarizeFailed');
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       const reason = t('errors.withReason', { reason: errorMessage });
@@ -111,11 +103,10 @@ export class SummarizeHandler {
     resultText.className = 'result-text';
     resultContainer.hidden = false;
     
-    // Dispatch event для показа кнопки Favorites
     const event = new CustomEvent('resultReady', { 
       detail: { type: 'summarize' },
       bubbles: true,
-      composed: true // Проходит через Shadow DOM
+      composed: true
     });
     this.shadowRoot.dispatchEvent(event);
   }
