@@ -1,11 +1,8 @@
-import { PopupUI } from './popup-ui';
-import { GeminiService } from '../services/gemini-api';
-import { StorageService } from '../services/storage';
-import { FavoritesService } from '../services/favorites';
-import { SpeechSynthesisManager } from './speech-utils';
-import { RephraseHandler, TranslateHandler, ClipboardHandler, SpeechHandler, SummarizeHandler, DiscussHandler } from './handlers';
-import { RephraserConfig, RephraserResult, TranslatorConfig, TranslatorResult, HistoryItem, LanguageCode } from '../types';
-import { t } from '../utils/i18n';
+import {PopupUI} from './popup-ui';
+import {GeminiService, StorageService, FavoritesService} from '../services';
+import {SpeechSynthesisManager} from './speech-utils';
+import {RephraseHandler, TranslateHandler, ClipboardHandler, SpeechHandler, SummarizeHandler, DiscussHandler} from './handlers';
+import {t} from '../utils/i18n';
 
 export class PopupIntegration {
   private popupUI: PopupUI;
@@ -320,10 +317,10 @@ export class PopupIntegration {
         alert(t('common.noTextSelectedToSpeak'));
         return;
       }
-      const translationData = { result: null, originalText: selectedText };
+      const translationData = {result: null, originalText: selectedText};
       await this.speechHandler.handleSpeak(type, translationData);
     } else {
-      const translationData = this.translateHandler?.getLastTranslation() || { result: null, originalText: null };
+      const translationData = this.translateHandler?.getLastTranslation() || {result: null, originalText: null};
       await this.speechHandler.handleSpeak(type, translationData);
     }
   }
@@ -402,14 +399,11 @@ export class PopupIntegration {
 
         try {
           // Send message to service worker to highlight keywords
-          const response = await chrome.runtime.sendMessage({ action: 'HIGHLIGHT_KEYWORDS' });
-          if (response?.success) {
-            this.showToast(t('common.highlightCompleted'), 'success');
-          } else {
+          const response = await chrome.runtime.sendMessage({action: 'HIGHLIGHT_KEYWORDS'});
+          if (!response?.success) {
             this.showToast(t('errors.highlightFailed'), 'error');
           }
         } catch (error) {
-          console.error('Highlight error:', error);
           this.showToast(t('errors.highlightFailed'), 'error');
         } finally {
           button.disabled = false;
@@ -477,7 +471,7 @@ export class PopupIntegration {
     }
   }
 
-private async handleFavoriteToggleClick(event: Event): Promise<void> {
+  private async handleFavoriteToggleClick(event: Event): Promise<void> {
     event.preventDefault();
     event.stopPropagation();
 
@@ -572,9 +566,9 @@ private async handleFavoriteToggleClick(event: Event): Promise<void> {
           this.showToast(t('common.noResultToAddToFavorites'), 'error');
           return;
         }
-        
+
         const existingFavorite = await this.favoritesService.findByPrompt(selectedText, 'discuss');
-        
+
         const allMessages = Array.from(chatMessages.children);
         if (allMessages.length === 0) {
           this.showToast(t('common.noResultToAddToFavorites'), 'error');
@@ -607,12 +601,12 @@ private async handleFavoriteToggleClick(event: Event): Promise<void> {
         prompt = selectedText;
         response = fullDialogue;
         type = 'discuss';
-        
+
         if (existingFavorite) {
           const success = await this.favoritesService.updateFavorite(existingFavorite.id, {
             response: fullDialogue
           });
-          
+
           if (success) {
             this.showToast(t('common.addedToFavorites'), 'success');
             this.updateFavoriteButtonState(button, true);
@@ -637,7 +631,7 @@ private async handleFavoriteToggleClick(event: Event): Promise<void> {
       response,
       selectedText,
       undefined,
-      { sourceId }
+      {sourceId}
     );
 
     if (success) {
@@ -784,7 +778,7 @@ private async handleFavoriteToggleClick(event: Event): Promise<void> {
 
     const currentTab = this.popupUI.getCurrentTab();
     const favoriteButton = shadowRoot.querySelector(`#btn-favorite-toggle-${currentTab.id}`) as HTMLElement;
-    
+
     // Get the correct copy button ID based on tab type
     let copyButtonId: string;
     switch (currentTab.id) {
@@ -803,7 +797,7 @@ private async handleFavoriteToggleClick(event: Event): Promise<void> {
       default:
         copyButtonId = `btn-copy-${currentTab.id}`;
     }
-    
+
     const copyButton = shadowRoot.querySelector(`#${copyButtonId}`) as HTMLElement;
 
     if (favoriteButton) {

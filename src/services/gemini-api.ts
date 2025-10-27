@@ -46,7 +46,6 @@ export class GeminiService {
         }
       });
 
-      console.error('results', result);
       const response = result.response;
       const text = response.text();
 
@@ -60,13 +59,7 @@ export class GeminiService {
       };
     } catch (error: any) {
       console.error('Error generating content:', error);
-      console.error('Error details:', {
-        status: error.status,
-        statusText: error.statusText,
-        message: error.message,
-        response: error.response?.data
-      });
-      
+
       // Handle 400 errors for bad request
       if (error.status === 400 || error.message?.includes('400') || error.message?.includes('Bad Request')) {
         throw new Error(
