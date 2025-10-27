@@ -47,6 +47,8 @@ const translations: LocaleData = {
     'common.unpin': 'Unpin popup',
     'common.close': 'Close',
     'common.drag': 'Drag popup',
+    'common.highlightKeySentences': 'Highlight Key Sentences',
+    'common.failedToUpdateFavorites': 'Failed to update favorites',
 
     // Side Panel
     'sidepanel.allTypes': 'All Types',
@@ -153,6 +155,7 @@ const translations: LocaleData = {
     'status.errorTestingApiKey': 'Error testing API key. Check your internet connection',
     'status.show': 'Show',
     'status.hide': 'Hide',
+    'status.view': 'View',
     'status.errorOpeningShortcuts': 'Error opening shortcuts page',
     'status.modelSettingsSaved': 'Model settings saved',
     'status.errorSavingSettings': 'Error saving settings',
@@ -252,6 +255,8 @@ const translations: LocaleData = {
     'common.unpin': 'Открепить попап',
     'common.close': 'Закрыть',
     'common.drag': 'Перетащить попап',
+    'common.highlightKeySentences': 'Выделить ключевые предложения',
+    'common.failedToUpdateFavorites': 'Не удалось обновить избранное',
 
     // Side Panel
     'sidepanel.allTypes': 'Все типы',
@@ -358,6 +363,7 @@ const translations: LocaleData = {
     'status.errorTestingApiKey': 'Ошибка при проверке API ключа. Проверьте подключение к интернету',
     'status.show': 'Показать',
     'status.hide': 'Скрыть',
+    'status.view': 'Просмотр',
     'status.errorOpeningShortcuts': 'Ошибка при открытии страницы горячих клавиш',
     'status.modelSettingsSaved': 'Настройки модели сохранены',
     'status.errorSavingSettings': 'Ошибка при сохранении настроек',
@@ -447,6 +453,14 @@ const translations: LocaleData = {
     'common.highlight': 'Hervorheben',
     'common.highlightCompleted': 'Hervorhebung abgeschlossen',
     'common.processing': 'Verarbeitung...',
+    'common.history': 'History',
+    'common.favorites': 'Favorites',
+    'common.pin': 'Pin popup',
+    'common.unpin': 'Unpin popup',
+    'common.close': 'Close',
+    'common.drag': 'Drag popup',
+    'common.highlightKeySentences': 'Schlüsselsätze hervorheben',
+    'common.failedToUpdateFavorites': 'Fehler beim Aktualisieren der Favoriten',
 
     // Side Panel
     'sidepanel.allTypes': 'Alle Typen',
@@ -536,6 +550,7 @@ const translations: LocaleData = {
     'status.errorTestingApiKey': 'Fehler beim Testen des API-Schlüssels. Überprüfen Sie Ihre Internetverbindung',
     'status.show': 'Anzeigen',
     'status.hide': 'Verstecken',
+    'status.view': 'Anzeigen',
     'status.errorOpeningShortcuts': 'Fehler beim Öffnen der Tastenkombinationen-Seite',
     'status.modelSettingsSaved': 'Modelleinstellungen gespeichert',
     'status.errorSavingSettings': 'Fehler beim Speichern der Einstellungen',
@@ -625,6 +640,14 @@ const translations: LocaleData = {
     'common.highlight': 'Surligner',
     'common.highlightCompleted': 'Surlignage terminé',
     'common.processing': 'Traitement...',
+    'common.history': 'History',
+    'common.favorites': 'Favorites',
+    'common.pin': 'Pin popup',
+    'common.unpin': 'Unpin popup',
+    'common.close': 'Close',
+    'common.drag': 'Drag popup',
+    'common.highlightKeySentences': 'Surligner les phrases clés',
+    'common.failedToUpdateFavorites': 'Échec de la mise à jour des favoris',
 
     // Side Panel
     'sidepanel.allTypes': 'Tous les types',
@@ -714,6 +737,7 @@ const translations: LocaleData = {
     'status.errorTestingApiKey': 'Erreur lors du test de la clé API. Vérifiez votre connexion internet',
     'status.show': 'Afficher',
     'status.hide': 'Masquer',
+    'status.view': 'Voir',
     'status.errorOpeningShortcuts': 'Erreur lors de l\'ouverture de la page des raccourcis',
     'status.modelSettingsSaved': 'Paramètres du modèle sauvegardés',
     'status.errorSavingSettings': 'Erreur lors de la sauvegarde des paramètres',
@@ -803,6 +827,14 @@ const translations: LocaleData = {
     'common.highlight': '高亮',
     'common.highlightCompleted': '高亮完成',
     'common.processing': '处理中...',
+    'common.history': 'History',
+    'common.favorites': 'Favorites',
+    'common.pin': 'Pin popup',
+    'common.unpin': 'Unpin popup',
+    'common.close': 'Close',
+    'common.drag': 'Drag popup',
+    'common.highlightKeySentences': '高亮关键句子',
+    'common.failedToUpdateFavorites': '更新收藏夹失败',
 
     // Side Panel
     'sidepanel.allTypes': '所有类型',
@@ -892,6 +924,7 @@ const translations: LocaleData = {
     'status.errorTestingApiKey': '测试API密钥时出错。请检查您的网络连接',
     'status.show': '显示',
     'status.hide': '隐藏',
+    'status.view': '查看',
     'status.errorOpeningShortcuts': '打开快捷键页面时出错',
     'status.modelSettingsSaved': '模型设置已保存',
     'status.errorSavingSettings': '保存设置时出错',
