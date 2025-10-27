@@ -16,6 +16,10 @@ body {
     box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
 }
 
+.header.no-api {
+    background: #fff;
+}
+
 h1 {
     font-size: 20px;
     margin: 0 0 12px 0;
@@ -24,7 +28,10 @@ h1 {
     letter-spacing: -0.3px;
 }
 
-/* Modern tab styling with blue accent */
+h1.no-api {
+    color: #000;
+}
+
 .tabs {
     display: flex;
     gap: 0;
