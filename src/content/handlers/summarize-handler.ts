@@ -52,7 +52,7 @@ export class SummarizeHandler {
           }
         }
       );
-      
+
       this.showResult(resultContainer, resultText, result.summary);
       await this.saveToHistory(selectedText, result);
     } catch (error) {

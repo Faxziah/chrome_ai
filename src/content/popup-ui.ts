@@ -322,10 +322,6 @@ export class PopupUI {
     return this.shadowRoot;
   }
 
-  public getIsPinned(): boolean {
-    return this.isPinned;
-  }
-
   public triggerAction(action: string): void {
     if (this.tabsComponent) {
       // Switch to the appropriate tab and trigger the action

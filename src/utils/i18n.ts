@@ -81,6 +81,7 @@ const translations: LocaleData = {
     'api.visitStudio': 'Visit Google AI Studio',
     'api.createApiKey': 'and click "Create API key"',
     'api.modelUnavailable': 'Model is not available for current API version. Choose another model in settings.',
+    'api.keyNotSet': 'Please set your Gemini API key by clicking on the extension icon in the browser toolbar, then refresh the page',
 
     // Error messages
     'errors.translateFailed': 'Failed to translate text',
@@ -292,6 +293,7 @@ const translations: LocaleData = {
     'api.visitStudio': 'Посетите Google AI Studio',
     'api.createApiKey': 'и нажмите "Создать API ключ"',
     'api.modelUnavailable': 'Модель недоступна для текущей версии API. Выберите другую модель в настройках.',
+    'api.keyNotSet': 'Установите Gemini API-ключ, для этого нажмите на иконку расширения в панели браузера, затем обновите страницу',
 
     // Error messages
     'errors.translateFailed': 'Не удалось перевести текст',
@@ -488,6 +490,7 @@ const translations: LocaleData = {
     'api.visitStudio': 'Besuchen Sie Google AI Studio',
     'api.createApiKey': 'API-Schlüssel erstellen',
     'api.modelUnavailable': 'Modell ist für die aktuelle API-Version nicht verfügbar. Wählen Sie ein anderes Modell in den Einstellungen.',
+    'api.keyNotSet': 'Bitte setzen Sie Ihren Gemini API-Schlüssel, indem Sie auf das Erweiterungssymbol in der Browser-Symbolleiste klicken, dann aktualisieren Sie die Seite',
 
     // Error messages
     'errors.translateFailed': 'Text konnte nicht übersetzt werden',
@@ -680,6 +683,7 @@ const translations: LocaleData = {
     'api.visitStudio': 'Visitez Google AI Studio',
     'api.createApiKey': 'Créer une clé API',
     'api.modelUnavailable': 'Modèle non disponible pour la version API actuelle. Choisissez un autre modèle dans les paramètres.',
+    'api.keyNotSet': 'Veuillez définir votre clé API Gemini en cliquant sur l\'icône d\'extension dans la barre d\'outils du navigateur, puis actualisez la page',
 
     // Error messages
     'errors.translateFailed': 'Échec de la traduction du texte',
@@ -872,6 +876,7 @@ const translations: LocaleData = {
     'api.visitStudio': '访问Google AI Studio',
     'api.createApiKey': '创建API密钥',
     'api.modelUnavailable': '当前API版本不支持此模型。请在设置中选择其他模型。',
+    'api.keyNotSet': '请通过点击浏览器工具栏中的扩展图标来设置您的Gemini API密钥，然后刷新页面',
 
     // Error messages
     'errors.translateFailed': '翻译文本失败',

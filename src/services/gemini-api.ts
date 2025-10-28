@@ -112,13 +112,13 @@ export class GeminiService {
           maxOutputTokens: config?.maxTokens || 2048,
         }
       });
-      
+
       let fullText = '';
       
       for await (const chunk of result.stream) {
         const chunkText = chunk.text();
         fullText += chunkText;
-        
+
         yield {
           text: chunkText,
           isComplete: false

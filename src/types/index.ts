@@ -101,13 +101,6 @@ export interface SpeechConfig {
   volume?: number;
 }
 
-export interface VoiceInfo {
-  voice: SpeechSynthesisVoice;
-  name: string;
-  lang: string;
-  localService: boolean;
-}
-
 export type LanguageCode = 'auto' | 'en' | 'ru' | 'es' | 'fr' | 'de' | 'zh' | 'ja' | 'ko' | 'it' | 'pt';
 
 export interface SummarizerResult {

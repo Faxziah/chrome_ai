@@ -36,15 +36,16 @@ export class PopupIntegration {
   private async initializeServices(selectedText?: string): Promise<void> {
     try {
       const apiKey = await this.storageService.getApiKey();
+
       if (apiKey && apiKey.trim().length > 0) {
         this.geminiService = new GeminiService(apiKey);
       } else {
-        console.error('API key not found');
+        this.showApiKeyError('api-key-error');
+        return;
       }
 
       this.speechManager = new SpeechSynthesisManager();
       if (!this.speechManager.isSupported()) {
-        console.error('Speech synthesis not supported');
         this.speechManager = null;
       }
 
@@ -840,6 +841,17 @@ export class PopupIntegration {
 
   private showApiKeyError(elementId: string): void {
     const shadowRoot = this.popupUI.getShadowRoot();
+
+    if (elementId === 'api-key-error') {
+      const tabsComponent = this.popupUI.getTabsComponent();
+      if (tabsComponent) {
+        const currentTab = tabsComponent.getCurrentTab();
+        const tabId = currentTab.id;
+        this.showApiKeyError(`${tabId}-text`);
+      }
+      return;
+    }
+    
     const resultText = shadowRoot?.querySelector(`#${elementId}`) as HTMLElement;
     const tabId = elementId.replace('-text', '');
     const resultContainer = shadowRoot?.querySelector(`#${tabId}-result`) as HTMLElement;
@@ -847,6 +859,7 @@ export class PopupIntegration {
 
     if (resultContainer && resultText && errorTemplate) {
       resultContainer.hidden = false;
+      resultContainer.style.display = 'block';
       resultText.innerHTML = errorTemplate.innerHTML;
       resultText.className = 'result-text error';
       resultText.style.display = 'block';
@@ -912,10 +925,6 @@ export class PopupIntegration {
       }
       this.toastTimer = null;
     }, 3000);
-  }
-
-  public isApiKeyValid(): boolean {
-    return this.geminiService !== null;
   }
 
   public cancelCurrentOperation(): void {

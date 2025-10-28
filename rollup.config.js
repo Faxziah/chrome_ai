@@ -74,19 +74,5 @@ export default [
       commonjs(),
       typescript({ tsconfig: './tsconfig.json' })
     ]
-  },
-  {
-    input: 'test.ts',
-    output: {
-      file: 'dist/test.js',
-      format: 'iife',
-      name: 'DebugUtils',
-      sourcemap: true
-    },
-    plugins: [
-      nodeResolve({ browser: true }),
-      commonjs(),
-      typescript({ tsconfig: './tsconfig.json' })
-    ]
   }
 ];

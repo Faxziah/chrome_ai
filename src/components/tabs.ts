@@ -183,10 +183,9 @@ export class Tabs {
                 <button class="btn btn-favorite" id="btn-favorite-toggle-${tabId}" data-is-favorite="false" style="display:none;">${t('common.addToFavorites')}</button>
               </div>
             </div>
-            <div class="api-key-error-template" id="api-key-error-summarize" style="display: none;">
+            <div class="api-key-error-template" id="api-key-error-summary" style="display: none;">
               <div class="api-key-error">
-                <p>${t('api.missingKey')}</p>
-                <p><a href="http://aistudio.google.com/app/api-keys?hl=ru" target="_blank" rel="noopener noreferrer">${t('api.visitStudio')}</a> ${t('api.createApiKey')}</p>
+                <p>${t('api.keyNotSet')}</p>
               </div>
             </div>
           </div>
@@ -209,8 +208,7 @@ export class Tabs {
             </div>
             <div class="api-key-error-template" id="api-key-error-discuss" style="display: none;">
               <div class="api-key-error">
-                <p>${t('api.missingKey')}</p>
-                <p><a href="http://aistudio.google.com/app/api-keys?hl=ru" target="_blank" rel="noopener noreferrer">${t('api.visitStudio')}</a> ${t('api.createApiKey')}</p>
+                <p>${t('api.keyNotSet')}</p>
               </div>
             </div>
           </div>
@@ -239,8 +237,7 @@ export class Tabs {
             </div>
             <div class="api-key-error-template" id="api-key-error-rephrase" style="display: none;">
               <div class="api-key-error">
-                <p>${t('api.missingKey')}</p>
-                <p><a href="http://aistudio.google.com/app/api-keys?hl=ru" target="_blank" rel="noopener noreferrer">${t('api.visitStudio')}</a> ${t('api.createApiKey')}</p>
+                <p>${t('api.keyNotSet')}</p>
               </div>
             </div>
           </div>
@@ -281,8 +278,7 @@ export class Tabs {
             </div>
             <div class="api-key-error-template" id="api-key-error-translate" style="display: none;">
               <div class="api-key-error">
-                <p>${t('api.missingKey')}</p>
-                <p><a href="http://aistudio.google.com/app/api-keys?hl=ru" target="_blank" rel="noopener noreferrer">${t('api.visitStudio')}</a> ${t('api.createApiKey')}</p>
+                <p>${t('api.keyNotSet')}</p>
               </div>
             </div>
           </div>
@@ -293,6 +289,14 @@ export class Tabs {
           <div class="tab-content">
             <button class="btn btn-primary" id="btn-highlight">${t('common.highlightKeySentences')}</button>
             <button class="btn btn-secondary" id="btn-clear-highlight" style="display:none;">${t('common.clearHighlight')}</button>
+            <div id="highlight-result" class="result-container" style="display: none;">
+              <div id="highlight-text" class="result-text"></div>
+            </div>
+            <div class="api-key-error-template" id="api-key-error-highlight" style="display: none;">
+              <div class="api-key-error">
+                <p>${t('api.keyNotSet')}</p>
+              </div>
+            </div>
           </div>
         `;
 
