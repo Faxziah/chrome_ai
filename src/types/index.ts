@@ -109,3 +109,9 @@ export interface SummarizerResult {
   summaryLength: number;
   compressionRatio: number;
 }
+
+export const DEFAULT_GEMINI_MODEL = 'gemini-2.5-flash-lite';
+
+export const DEFAULT_TEMPERATURE = 0.7;
+export const DEFAULT_TEMPERATURE_FOR_TRANSLATIONS = 0.5;
+export const DEFAULT_MAX_TOKENS = 2048;

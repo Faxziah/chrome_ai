@@ -1,7 +1,5 @@
-import { GeminiService } from '../services/gemini-api';
-import { HistoryService } from '../services/history';
-import { StorageService } from '../services/storage';
-import { TranslatorConfig, TranslatorResult, LanguageCode } from '../types';
+import { GeminiService, HistoryService, StorageService } from '../services';
+import { TranslatorConfig, TranslatorResult, LanguageCode, DEFAULT_MAX_TOKENS, DEFAULT_TEMPERATURE_FOR_TRANSLATIONS } from '../types';
 
 export class Translator {
   private geminiService: GeminiService;
@@ -71,10 +69,10 @@ export class Translator {
       // Load saved API configuration
       const apiConfig = await this.storageService.getApiConfig();
       
-      const response = await this.geminiService.generateContent(prompt, {
-        model: apiConfig?.model || 'gemini-2.5-flash',
-        temperature: apiConfig?.temperature || 0.5,
-        maxTokens: apiConfig?.maxTokens || 2048
+      const response = await this.geminiService.generateText(prompt, {
+        ...GeminiService.getApiConfig(apiConfig),
+        temperature: apiConfig?.temperature || DEFAULT_TEMPERATURE_FOR_TRANSLATIONS,
+        maxTokens: apiConfig?.maxTokens || DEFAULT_MAX_TOKENS
       });
 
       const translatedText = response.text.trim();
@@ -148,9 +146,9 @@ export class Translator {
       const apiConfig = await this.storageService.getApiConfig();
       
       for await (const chunk of this.geminiService.streamContent(prompt, {
-        model: apiConfig?.model || 'gemini-2.5-flash',
-        temperature: apiConfig?.temperature || 0.5,
-        maxTokens: apiConfig?.maxTokens || 2048
+        ...GeminiService.getApiConfig(apiConfig),
+        temperature: apiConfig?.temperature || DEFAULT_TEMPERATURE_FOR_TRANSLATIONS,
+        maxTokens: apiConfig?.maxTokens || DEFAULT_MAX_TOKENS
       })) {
         if (!chunk.isComplete) {
           fullTranslatedText += chunk.text;

@@ -1,7 +1,7 @@
 import { GeminiService } from '../services/gemini-api';
 import { StorageService } from '../services/storage';
 import { FavoritesService } from '../services/favorites';
-import { FavoriteItem } from '../types';
+import { FavoriteItem, DEFAULT_TEMPERATURE, DEFAULT_MAX_TOKENS } from '../types';
 
 export interface ChatMessage {
   id: string;
@@ -40,8 +40,8 @@ export class Chat {
     this.config = {
       systemPrompt: 'You are a helpful AI assistant that helps with text analysis and summarization.',
       maxHistory: 20,
-      temperature: 0.7,
-      maxTokens: 2048,
+      temperature: DEFAULT_TEMPERATURE,
+      maxTokens: DEFAULT_MAX_TOKENS,
       ...config
     };
   }
@@ -157,7 +157,7 @@ export class Chat {
       const apiConfig = await this.storageService.getApiConfig();
       
       for await (const chunk of this.geminiService.streamContent(prompt, {
-        model: apiConfig?.model || 'gemini-2.5-flash',
+        ...GeminiService.getApiConfig(apiConfig),
         temperature: apiConfig?.temperature || this.config.temperature,
         maxTokens: apiConfig?.maxTokens || this.config.maxTokens
       })) {

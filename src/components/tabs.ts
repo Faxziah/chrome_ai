@@ -287,7 +287,7 @@ export class Tabs {
       case 'highlight':
         return `
           <div class="tab-content">
-            <button class="btn btn-primary" id="btn-highlight">${t('common.highlightKeySentences')}</button>
+            <button class="btn btn-primary" id="btn-highlight">${t('common.highlightKeyParagraphs')}</button>
             <button class="btn btn-secondary" id="btn-clear-highlight" style="display:none;">${t('common.clearHighlight')}</button>
             <div id="highlight-result" class="result-container" style="display: none;">
               <div id="highlight-text" class="result-text"></div>

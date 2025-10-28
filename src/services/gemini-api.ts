@@ -1,7 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { ApiConfig, GeminiResponse, StreamChunk } from '../types';
+import { ApiConfig, GeminiResponse, StreamChunk, DEFAULT_GEMINI_MODEL, DEFAULT_TEMPERATURE, DEFAULT_MAX_TOKENS } from '../types';
 import { validateApiKey } from './utils';
-import { jsonrepair } from 'jsonrepair'
 
 export class GeminiService {
   private genAI: GoogleGenerativeAI | null = null;
@@ -27,24 +26,39 @@ export class GeminiService {
     }
   }
 
-  async generateContent(
+  private getModelAndConfig(prompt: string, config?: Partial<ApiConfig>) {
+    const model = this.genAI!.getGenerativeModel({ 
+      model: config?.model || DEFAULT_GEMINI_MODEL
+    });
+
+    const generationConfig = {
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+      generationConfig: {
+        temperature: config?.temperature || DEFAULT_TEMPERATURE,
+        maxOutputTokens: config?.maxTokens || DEFAULT_MAX_TOKENS,
+      }
+    };
+
+    return { model, generationConfig };
+  }
+
+  static getApiConfig(apiConfig?: Partial<ApiConfig> | null): Partial<ApiConfig> {
+    return {
+      model: apiConfig?.model || DEFAULT_GEMINI_MODEL,
+      temperature: apiConfig?.temperature || DEFAULT_TEMPERATURE,
+      maxTokens: apiConfig?.maxTokens || DEFAULT_MAX_TOKENS
+    };
+  }
+
+  async generateText(
     prompt: string, 
     config?: Partial<ApiConfig>
   ): Promise<GeminiResponse> {
     this.ensureInitialized();
 
     try {
-      const model = this.genAI!.getGenerativeModel({ 
-        model: config?.model || 'gemini-2.5-flash'
-      });
-
-      const result = await model.generateContent({
-        contents: [{ role: 'user', parts: [{ text: prompt }] }],
-        generationConfig: {
-          temperature: config?.temperature || 0.7,
-          maxOutputTokens: config?.maxTokens || 2048,
-        }
-      });
+      const { model, generationConfig } = this.getModelAndConfig(prompt, config);
+      const result = await model.generateContent(generationConfig);
 
       const response = result.response;
       const text = response.text();
@@ -101,17 +115,8 @@ export class GeminiService {
     this.ensureInitialized();
 
     try {
-      const model = this.genAI!.getGenerativeModel({ 
-        model: config?.model || 'gemini-2.5-flash'
-      });
-
-      const result = await model.generateContentStream({
-        contents: [{ role: 'user', parts: [{ text: prompt }] }],
-        generationConfig: {
-          temperature: config?.temperature || 0.7,
-          maxOutputTokens: config?.maxTokens || 2048,
-        }
-      });
+      const { model, generationConfig } = this.getModelAndConfig(prompt, config);
+      const result = await model.generateContentStream(generationConfig);
 
       let fullText = '';
       
@@ -173,7 +178,7 @@ export class GeminiService {
   async testConnection(): Promise<boolean> {
     try {
       this.ensureInitialized();
-      await this.generateContent('Test', { temperature: 0.1, maxTokens: 10 });
+      await this.generateText('Test');
       return true;
     } catch (error: any) {
       console.error('API key validation failed:', error);

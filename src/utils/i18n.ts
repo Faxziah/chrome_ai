@@ -47,7 +47,7 @@ const translations: LocaleData = {
     'common.unpin': 'Unpin popup',
     'common.close': 'Close',
     'common.drag': 'Drag popup',
-    'common.highlightKeySentences': 'Highlight Key Sentences',
+    'common.highlightKeyParagraphs': 'Highlight Key Paragraphs',
     'common.clearHighlight': 'Clear Highlight',
     'common.failedToUpdateFavorites': 'Failed to update favorites',
 
@@ -118,7 +118,7 @@ const translations: LocaleData = {
     // Options page
     'options.title': 'AI Text Tools - Settings',
     'options.languageSettings': 'Language Settings',
-    'options.interfaceLanguage': 'Interface Language:',
+    'options.interfaceLanguage': 'Language:',
     'options.selectLanguage': 'Select language for the extension interface',
     'options.saveLanguage': 'Save Language',
     'options.apiSettings': 'API Settings',
@@ -259,7 +259,7 @@ const translations: LocaleData = {
     'common.unpin': 'Открепить попап',
     'common.close': 'Закрыть',
     'common.drag': 'Перетащить попап',
-    'common.highlightKeySentences': 'Выделить ключевые предложения',
+    'common.highlightKeyParagraphs': 'Выделить ключевые абзацы',
     'common.clearHighlight': 'Очистить выделение',
     'common.failedToUpdateFavorites': 'Не удалось обновить избранное',
 
@@ -330,7 +330,7 @@ const translations: LocaleData = {
     // Options page
     'options.title': 'AI Text Tools - Настройки',
     'options.languageSettings': 'Настройки языка',
-    'options.interfaceLanguage': 'Язык интерфейса:',
+    'options.interfaceLanguage': 'Язык:',
     'options.selectLanguage': 'Выберите язык для интерфейса расширения',
     'options.saveLanguage': 'Сохранить язык',
     'options.apiSettings': 'Настройки API',
@@ -467,7 +467,7 @@ const translations: LocaleData = {
     'common.unpin': 'Unpin popup',
     'common.close': 'Close',
     'common.drag': 'Drag popup',
-    'common.highlightKeySentences': 'Schlüsselsätze hervorheben',
+    'common.highlightKeyParagraphs': 'Schlüsselabsätze hervorheben',
     'common.clearHighlight': 'Hervorhebung löschen',
     'common.failedToUpdateFavorites': 'Fehler beim Aktualisieren der Favoriten',
 
@@ -524,7 +524,7 @@ const translations: LocaleData = {
     // Options page
     'options.title': 'AI Text Tools - Einstellungen',
     'options.languageSettings': 'Spracheinstellungen',
-    'options.interfaceLanguage': 'Interface-Sprache:',
+    'options.interfaceLanguage': 'Sprache:',
     'options.selectLanguage': 'Wählen Sie die Sprache für die Erweiterungsoberfläche',
     'options.saveLanguage': 'Sprache speichern',
     'options.apiSettings': 'API-Einstellungen',
@@ -660,7 +660,7 @@ const translations: LocaleData = {
     'common.unpin': 'Unpin popup',
     'common.close': 'Close',
     'common.drag': 'Drag popup',
-    'common.highlightKeySentences': 'Surligner les phrases clés',
+    'common.highlightKeyParagraphs': 'Surligner les paragraphes clés',
     'common.clearHighlight': 'Effacer le surlignage',
     'common.failedToUpdateFavorites': 'Échec de la mise à jour des favoris',
 
@@ -717,7 +717,7 @@ const translations: LocaleData = {
     // Options page
     'options.title': 'AI Text Tools - Paramètres',
     'options.languageSettings': 'Paramètres de langue',
-    'options.interfaceLanguage': 'Langue de l\'interface:',
+    'options.interfaceLanguage': 'Langue:',
     'options.selectLanguage': 'Sélectionnez la langue pour l\'interface de l\'extension',
     'options.saveLanguage': 'Enregistrer la langue',
     'options.apiSettings': 'Paramètres API',
@@ -853,7 +853,7 @@ const translations: LocaleData = {
     'common.unpin': 'Unpin popup',
     'common.close': 'Close',
     'common.drag': 'Drag popup',
-    'common.highlightKeySentences': '高亮关键句子',
+    'common.highlightKeyParagraphs': '高亮关键段落',
     'common.clearHighlight': '清除高亮',
     'common.failedToUpdateFavorites': '更新收藏夹失败',
 
@@ -910,7 +910,7 @@ const translations: LocaleData = {
     // Options page
     'options.title': 'AI文本工具 - 设置',
     'options.languageSettings': '语言设置',
-    'options.interfaceLanguage': '界面语言：',
+    'options.interfaceLanguage': '语言：',
     'options.selectLanguage': '选择扩展界面语言',
     'options.saveLanguage': '保存语言',
     'options.apiSettings': 'API设置',

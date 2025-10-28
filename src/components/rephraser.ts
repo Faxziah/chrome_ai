@@ -1,7 +1,7 @@
 import { GeminiService } from '../services/gemini-api';
 import { HistoryService } from '../services/history';
 import { StorageService } from '../services/storage';
-import { RephraserConfig, RephraserResult } from '../types';
+import { RephraserConfig, RephraserResult, DEFAULT_TEMPERATURE, DEFAULT_MAX_TOKENS } from '../types';
 
 export class Rephraser {
   private geminiService: GeminiService;
@@ -64,10 +64,10 @@ export class Rephraser {
       // Load saved API configuration
       const apiConfig = await this.storageService.getApiConfig();
       
-      const response = await this.geminiService.generateContent(prompt, {
-        model: apiConfig?.model || 'gemini-2.5-flash',
-        temperature: apiConfig?.temperature || 0.7,
-        maxTokens: apiConfig?.maxTokens || 2048
+      const response = await this.geminiService.generateText(prompt, {
+        ...GeminiService.getApiConfig(apiConfig),
+        temperature: apiConfig?.temperature || DEFAULT_TEMPERATURE,
+        maxTokens: apiConfig?.maxTokens || DEFAULT_MAX_TOKENS
       });
 
       const rephrasedText = response.text.trim();
@@ -169,9 +169,9 @@ export class Rephraser {
       const apiConfig = await this.storageService.getApiConfig();
       
       for await (const chunk of this.geminiService.streamContent(prompt, {
-        model: apiConfig?.model || 'gemini-2.5-flash',
-        temperature: apiConfig?.temperature || 0.7,
-        maxTokens: apiConfig?.maxTokens || 2048
+        ...GeminiService.getApiConfig(apiConfig),
+        temperature: apiConfig?.temperature || DEFAULT_TEMPERATURE,
+        maxTokens: apiConfig?.maxTokens || DEFAULT_MAX_TOKENS
       })) {
         if (!chunk.isComplete) {
           fullRephrasedText += chunk.text;

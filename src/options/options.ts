@@ -1,5 +1,6 @@
 import { StorageService, GeminiService } from '../services';
 import { t, setLocale, getLocale } from '../utils/i18n';
+import { DEFAULT_GEMINI_MODEL, DEFAULT_TEMPERATURE, DEFAULT_MAX_TOKENS } from '../types';
 
 class OptionsPage {
   private readonly storageService: StorageService;
@@ -237,9 +238,9 @@ class OptionsPage {
       const modelSelect = document.getElementById('gemini-model') as HTMLSelectElement;
       
       const config = {
-        model: modelSelect?.value || 'gemini-2.5-flash',
-        temperature: 0.7,
-        maxTokens: 2048
+        model: modelSelect?.value || DEFAULT_GEMINI_MODEL,
+        temperature: DEFAULT_TEMPERATURE,
+        maxTokens: DEFAULT_MAX_TOKENS
       };
       
       const success = await this.storageService.setApiConfig(config);
@@ -257,9 +258,9 @@ class OptionsPage {
   private async resetGeminiConfig(): Promise<void> {
     try {
       const defaultConfig = {
-        model: 'gemini-2.5-flash',
-        temperature: 0.7,
-        maxTokens: 2048
+        model: DEFAULT_GEMINI_MODEL,
+        temperature: DEFAULT_TEMPERATURE,
+        maxTokens: DEFAULT_MAX_TOKENS
       };
       
       const success = await this.storageService.setApiConfig(defaultConfig);

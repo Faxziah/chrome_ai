@@ -416,7 +416,7 @@ export class PopupIntegration {
           button.disabled = false;
           this.showToast(t('errors.highlightFailed'), 'error');
         } finally {
-          button.textContent = t('common.highlightKeySentences');
+          button.textContent = t('common.highlightKeyParagraphs');
         }
       }
     } finally {

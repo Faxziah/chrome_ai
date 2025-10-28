@@ -1,7 +1,7 @@
 import { GeminiService } from '../services/gemini-api';
 import { HistoryService } from '../services/history';
 import { StorageService } from '../services/storage';
-import { GeminiResponse } from '../types';
+import { GeminiResponse, DEFAULT_MAX_TOKENS } from '../types';
 
 export interface SummarizerConfig {
   maxLength?: number;
@@ -102,9 +102,9 @@ Summary:`;
       let fullSummary = '';
       
       for await (const chunk of this.geminiService.streamContent(prompt, {
-        model: apiConfig?.model || 'gemini-2.5-flash',
+        ...GeminiService.getApiConfig(apiConfig),
         temperature: apiConfig?.temperature || 0.3,
-        maxTokens: apiConfig?.maxTokens || Math.min(2048, maxLength * 2)
+        maxTokens: apiConfig?.maxTokens || Math.min(DEFAULT_MAX_TOKENS, maxLength * 2)
       })) {
         if (!chunk.isComplete) {
           fullSummary += chunk.text;
