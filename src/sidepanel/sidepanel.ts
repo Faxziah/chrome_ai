@@ -633,7 +633,7 @@ class SidePanelApp {
           <div class="modal-body">
             <div class="detail-section">
               <h4>${t('common.originalText')}</h4>
-              <div class="detail-content">${escapeHtml(item.prompt)}</div>
+              <div class="detail-content">${escapeHtml(item.originalText || item.prompt)}</div>
             </div>
             <div class="detail-section">
               <h4>${t('common.result')}</h4>
