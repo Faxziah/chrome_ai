@@ -1,5 +1,6 @@
 import { TabConfig, TabChangeEvent } from '../types';
 import { t } from '../utils/i18n';
+import { HighlightState } from '../content/highlight-state';
 
 const LANGUAGES = [
   { code: 'en', name: 'English' },
@@ -83,10 +84,12 @@ export class Tabs {
   private tabs: TabConfig[];
   private rootElement: HTMLElement | null = null;
   private eventTarget: EventTarget;
+  private isTextHighlighted: boolean = false;
 
   constructor(tabs: TabConfig[]) {
     this.tabs = tabs;
     this.eventTarget = new EventTarget();
+    this.isTextHighlighted = HighlightState.getHighlightState();
   }
 
   render(): string {
@@ -289,6 +292,7 @@ export class Tabs {
         return `
           <div class="tab-content">
             <button class="btn btn-primary" id="btn-highlight">${t('common.highlightKeySentences')}</button>
+            <button class="btn btn-secondary" id="btn-clear-highlight" style="display:none;">${t('common.clearHighlight')}</button>
           </div>
         `;
 
@@ -316,6 +320,9 @@ export class Tabs {
         this.selectTab(index, false);
       });
     });
+
+    // Update clear button visibility after DOM is ready
+    this.updateHighlightButtonsVisibility();
 
     // Keyboard navigation
     this.rootElement.addEventListener('keydown', (event: KeyboardEvent) => {
@@ -434,5 +441,27 @@ export class Tabs {
 
   removeEventListener(type: string, listener: EventListener): void {
     this.eventTarget.removeEventListener(type, listener);
+  }
+
+  setTextHighlighted(highlighted: boolean): void {
+    this.isTextHighlighted = highlighted;
+    HighlightState.setHighlightState(highlighted);
+    this.updateHighlightButtonsVisibility();
+  }
+
+  public updateHighlightButtonsVisibility(): void {
+    if (!this.rootElement) return;
+
+    const shadowRoot = this.rootElement.getRootNode() as ShadowRoot;
+    const clearButton = shadowRoot.querySelector('#btn-clear-highlight') as HTMLElement;
+    const highlightButton = shadowRoot.querySelector('#btn-highlight') as HTMLButtonElement;
+
+    if (this.isTextHighlighted) {
+      highlightButton.disabled = true;
+      clearButton.style.display = 'block';
+    } else {
+      highlightButton.disabled = false;
+      clearButton.style.display = 'none';
+    }
   }
 }

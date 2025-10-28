@@ -18,6 +18,7 @@ const translations: LocaleData = {
     'common.itemNotFound': 'Item not found',
     'common.errorLoadingDetails': 'Error loading details',
     'common.translate': 'Translate',
+    'common.summarize': 'Summarize',
     'common.rephrase': 'Rephrase',
     'common.selectedText': 'Selected text will appear here',
     'common.noTextSelected': 'No text selected',
@@ -39,7 +40,6 @@ const translations: LocaleData = {
     'common.miniD': 'D',
     'common.miniH': 'H',
     'common.highlight': 'Highlight',
-    'common.highlightCompleted': 'Highlighting completed',
     'common.processing': 'Processing...',
     'common.history': 'History',
     'common.favorites': 'Favorites',
@@ -48,6 +48,7 @@ const translations: LocaleData = {
     'common.close': 'Close',
     'common.drag': 'Drag popup',
     'common.highlightKeySentences': 'Highlight Key Sentences',
+    'common.clearHighlight': 'Clear Highlight',
     'common.failedToUpdateFavorites': 'Failed to update favorites',
 
     // Side Panel
@@ -86,9 +87,11 @@ const translations: LocaleData = {
     'errors.rephraseFailed': 'Failed to rephrase text',
     'errors.summarizeFailed': 'Failed to summarize text',
     'errors.highlightFailed': 'Failed to highlight text',
+    'errors.clearHighlightFailed': 'Failed to clear highlights',
     'errors.noTextFound': 'No text found on page to highlight',
     'errors.noKeywordsFound': 'No keywords found to highlight',
     'errors.emptyResponse': 'Empty response from AI',
+    'errors.withReason': 'Reason: {{reason}}',
 
     // Translation
     'translate.autoDetect': 'Auto-detect',
@@ -226,6 +229,7 @@ const translations: LocaleData = {
     'common.itemNotFound': 'Элемент не найден',
     'common.errorLoadingDetails': 'Ошибка загрузки деталей',
     'common.translate': 'Перевести',
+    'common.summarize': 'Резюмировать',
     'common.rephrase': 'Перефразировать',
     'common.selectedText': 'Выделенный текст появится здесь',
     'common.noTextSelected': 'Текст не выбран',
@@ -247,8 +251,7 @@ const translations: LocaleData = {
     'common.miniD': 'О',
     'common.miniH': 'В',
     'common.highlight': 'Выделение',
-    'common.highlightCompleted': 'Выделение завершено',
-    'common.processing': 'Обработка...',
+    'common.processing': 'Выделение...',
     'common.history': 'История',
     'common.favorites': 'Избранное',
     'common.pin': 'Закрепить попап',
@@ -256,6 +259,7 @@ const translations: LocaleData = {
     'common.close': 'Закрыть',
     'common.drag': 'Перетащить попап',
     'common.highlightKeySentences': 'Выделить ключевые предложения',
+    'common.clearHighlight': 'Очистить выделение',
     'common.failedToUpdateFavorites': 'Не удалось обновить избранное',
 
     // Side Panel
@@ -293,10 +297,12 @@ const translations: LocaleData = {
     'errors.translateFailed': 'Не удалось перевести текст',
     'errors.rephraseFailed': 'Не удалось перефразировать текст',
     'errors.summarizeFailed': 'Не удалось резюмировать текст',
-    'errors.highlightFailed': 'Не удалось подсветить текст',
+    'errors.highlightFailed': 'Не удалось выдалить текст',
+    'errors.clearHighlightFailed': 'Не удалось очистить выделение',
     'errors.noTextFound': 'На странице не найдено текста для подсветки',
     'errors.noKeywordsFound': 'Не найдено ключевых слов для подсветки',
     'errors.emptyResponse': 'Некорректный ответ от ИИ',
+    'errors.withReason': 'Причина: {{reason}}',
 
     // Translation
     'translate.autoDetect': 'Автоопределение',
@@ -430,6 +436,7 @@ const translations: LocaleData = {
     'common.copy': '📋 Kopieren',
     'common.view': 'Anzeigen',
     'common.translate': 'Übersetzen',
+    'common.summarize': 'Zusammenfassen',
     'common.rephrase': 'Umschreiben',
     'common.selectedText': 'Ausgewählter Text wird hier angezeigt',
     'common.noTextSelected': 'Kein Text ausgewählt',
@@ -451,7 +458,6 @@ const translations: LocaleData = {
     'common.miniD': 'D',
     'common.miniH': 'H',
     'common.highlight': 'Hervorheben',
-    'common.highlightCompleted': 'Hervorhebung abgeschlossen',
     'common.processing': 'Verarbeitung...',
     'common.history': 'History',
     'common.favorites': 'Favorites',
@@ -460,6 +466,7 @@ const translations: LocaleData = {
     'common.close': 'Close',
     'common.drag': 'Drag popup',
     'common.highlightKeySentences': 'Schlüsselsätze hervorheben',
+    'common.clearHighlight': 'Hervorhebung löschen',
     'common.failedToUpdateFavorites': 'Fehler beim Aktualisieren der Favoriten',
 
     // Side Panel
@@ -485,7 +492,11 @@ const translations: LocaleData = {
     // Error messages
     'errors.translateFailed': 'Text konnte nicht übersetzt werden',
     'errors.rephraseFailed': 'Text konnte nicht umgeschrieben werden',
+    'errors.highlightFailed': 'Hervorhebung fehlgeschlagen',
+    'errors.clearHighlightFailed': 'Hervorhebung löschen fehlgeschlagen',
     'errors.summarizeFailed': 'Text konnte nicht zusammengefasst werden',
+    'errors.emptyResponse': 'Leere Antwort von der KI',
+    'errors.withReason': 'Grund: {{reason}}',
 
     // Translation
     'translate.autoDetect': 'Auto-Erkennung',
@@ -617,6 +628,7 @@ const translations: LocaleData = {
     'common.copy': '📋 Copier',
     'common.view': 'Voir',
     'common.translate': 'Traduire',
+    'common.summarize': 'Résumer',
     'common.rephrase': 'Reformuler',
     'common.selectedText': 'Le texte sélectionné apparaîtra ici',
     'common.noTextSelected': 'Aucun texte sélectionné',
@@ -638,7 +650,6 @@ const translations: LocaleData = {
     'common.miniD': 'D',
     'common.miniH': 'S',
     'common.highlight': 'Surligner',
-    'common.highlightCompleted': 'Surlignage terminé',
     'common.processing': 'Traitement...',
     'common.history': 'History',
     'common.favorites': 'Favorites',
@@ -647,6 +658,7 @@ const translations: LocaleData = {
     'common.close': 'Close',
     'common.drag': 'Drag popup',
     'common.highlightKeySentences': 'Surligner les phrases clés',
+    'common.clearHighlight': 'Effacer le surlignage',
     'common.failedToUpdateFavorites': 'Échec de la mise à jour des favoris',
 
     // Side Panel
@@ -672,7 +684,11 @@ const translations: LocaleData = {
     // Error messages
     'errors.translateFailed': 'Échec de la traduction du texte',
     'errors.rephraseFailed': 'Échec de la reformulation du texte',
+    'errors.highlightFailed': 'Échec de la surlignage',
+    'errors.clearHighlightFailed': 'Échec de l\'effacement du surlignage',
     'errors.summarizeFailed': 'Échec du résumé du texte',
+    'errors.emptyResponse': 'Réponse vide de l\'IA',
+    'errors.withReason': 'Raison : {{reason}}',
 
     // Translation
     'translate.autoDetect': 'Détection automatique',
@@ -804,6 +820,7 @@ const translations: LocaleData = {
     'common.copy': '📋 复制',
     'common.view': '查看',
     'common.translate': '翻译',
+    'common.summarize': '总结',
     'common.rephrase': '改写',
     'common.selectedText': '选中的文本将在此显示',
     'common.noTextSelected': '未选择文本',
@@ -825,7 +842,6 @@ const translations: LocaleData = {
     'common.miniD': '讨',
     'common.miniH': '高',
     'common.highlight': '高亮',
-    'common.highlightCompleted': '高亮完成',
     'common.processing': '处理中...',
     'common.history': 'History',
     'common.favorites': 'Favorites',
@@ -834,6 +850,7 @@ const translations: LocaleData = {
     'common.close': 'Close',
     'common.drag': 'Drag popup',
     'common.highlightKeySentences': '高亮关键句子',
+    'common.clearHighlight': '清除高亮',
     'common.failedToUpdateFavorites': '更新收藏夹失败',
 
     // Side Panel
@@ -859,7 +876,11 @@ const translations: LocaleData = {
     // Error messages
     'errors.translateFailed': '翻译文本失败',
     'errors.rephraseFailed': '改写文本失败',
+    'errors.highlightFailed': '高亮失败',
+    'errors.clearHighlightFailed': '清除高亮失败',
     'errors.summarizeFailed': '总结文本失败',
+    'errors.emptyResponse': 'AI返回空响应',
+    'errors.withReason': '原因：{{reason}}',
 
     // Translation
     'translate.autoDetect': '自动检测',

@@ -3,6 +3,7 @@ import {GeminiService, StorageService, FavoritesService} from '../services';
 import {SpeechSynthesisManager} from './speech-utils';
 import {RephraseHandler, TranslateHandler, ClipboardHandler, SpeechHandler, SummarizeHandler, DiscussHandler} from './handlers';
 import {t} from '../utils/i18n';
+import {Tabs} from "../components/tabs";
 
 export class PopupIntegration {
   private popupUI: PopupUI;
@@ -111,6 +112,8 @@ export class PopupIntegration {
         await this.handleSendChatClick(event);
       } else if (buttonId === 'btn-highlight') {
         await this.handleHighlightClick(event);
+      } else if (buttonId === 'btn-clear-highlight') {
+        await this.handleClearHighlightClick(event);
       }
     });
 
@@ -393,26 +396,51 @@ export class PopupIntegration {
       const shadowRoot = this.popupUI.getShadowRoot();
       const button = shadowRoot?.querySelector('#btn-highlight') as HTMLButtonElement;
 
-      if (button) {
+    if (button) {
         button.disabled = true;
         button.textContent = t('common.processing');
 
         try {
           // Send message to service worker to highlight keywords
           const response = await chrome.runtime.sendMessage({action: 'HIGHLIGHT_KEYWORDS'});
-          if (!response?.success) {
+
+          if (response?.success) {
+            const tabsComponent = this.popupUI.getTabsComponent() as Tabs;
+            tabsComponent.setTextHighlighted(true);
+          } else {
+            button.disabled = false;
             this.showToast(t('errors.highlightFailed'), 'error');
           }
         } catch (error) {
+          button.disabled = false;
           this.showToast(t('errors.highlightFailed'), 'error');
         } finally {
-          button.disabled = false;
           button.textContent = t('common.highlightKeySentences');
         }
       }
     } finally {
       this.isProcessing = false;
       this.abortController = null;
+    }
+  }
+
+  private async handleClearHighlightClick(event: Event): Promise<void> {
+    event.preventDefault();
+    event.stopPropagation();
+
+    try {
+
+      // Send message to service worker to clear highlights
+      const response = await chrome.runtime.sendMessage({action: 'CLEAR_HIGHLIGHTS'});
+      if (response?.success) {
+        // Update highlight state on success
+        const tabsComponent = this.popupUI.getTabsComponent() as Tabs;
+        tabsComponent.setTextHighlighted(false);
+      } else {
+        this.showToast(t('errors.clearHighlightFailed'), 'error');
+      }
+    } catch (error) {
+      this.showToast(t('errors.clearHighlightFailed'), 'error');
     }
   }
 

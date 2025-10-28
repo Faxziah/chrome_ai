@@ -158,9 +158,13 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   (async () => {
     try {
       if (message.action === ActionType.HIGHLIGHT_KEYWORDS) {
-        await highlightManager.initialize();
-        await highlightManager.highlightKeywords();
-        sendResponse({ success: true });
+        try {
+          await highlightManager.initialize();
+          await highlightManager.highlightKeywords();
+          sendResponse({ success: true });
+        } catch (error) {
+          sendResponse({ success: false, error: error instanceof Error ? error.message : 'Unknown error' });
+        }
       } else if (message.action === ActionType.CLEAR_HIGHLIGHTS) {
         highlightManager.clearHighlights();
         sendResponse({ success: true });

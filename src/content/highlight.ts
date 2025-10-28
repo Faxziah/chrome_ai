@@ -2,6 +2,7 @@ import { GeminiService } from '../services';
 import { StorageService } from '../services';
 import { jsonrepair } from 'jsonrepair';
 import { t } from '../utils/i18n';
+import { HighlightState } from './highlight-state';
 
 export interface HighlightData {
   sentences: string[];
@@ -38,7 +39,6 @@ export class HighlightManager {
   private storageService: StorageService;
   private highlightedElements: Set<HTMLElement> = new Set();
   private originalTexts: Map<HTMLElement, string> = new Map();
-  private clearButton: HTMLElement | null = null;
 
   constructor() {
     this.geminiService = new GeminiService();
@@ -76,32 +76,25 @@ export class HighlightManager {
   }
 
   async highlightKeywords(): Promise<void> {
-    try {
-      if (!this.geminiService.isInitialized()) {
-        this.showHighlightError(t('api.missingKey'));
-        return;
-      }
-
-      const pageText = this.extractPageText();
-      if (!pageText.trim()) {
-        this.showHighlightError(t('errors.noTextFound'));
-        return;
-      }
-
-      const highlightData = await this.getKeywordsFromGemini(pageText);
-
-      if (highlightData.sentences.length === 0) {
-        this.showHighlightError(t('errors.noKeywordsFound'));
-        return;
-      }
-
-      this.applyHighlights(highlightData);
-      this.showClearButton();
-    } catch (error) {
-      console.error('Error highlighting keywords:', error);
-      const errorMessage = error instanceof Error ? error.message : t('errors.highlightFailed');
-      this.showHighlightError(errorMessage);
+    if (!this.geminiService.isInitialized()) {
+      this.showHighlightError(t('api.missingKey'));
+      return;
     }
+
+    const pageText = this.extractPageText();
+    if (!pageText.trim()) {
+      this.showHighlightError(t('errors.noTextFound'));
+      return;
+    }
+
+    const highlightData = await this.getKeywordsFromGemini(pageText);
+
+    if (highlightData.sentences.length === 0) {
+      throw new Error(t('errors.noKeywordsFound'));
+    }
+
+    this.applyHighlights(highlightData);
+    HighlightState.setHighlightState(true);
   }
 
   private extractPageText(): string {
@@ -207,11 +200,9 @@ Text: ${text.substring(0, 10000)}`;
           continue;
         }
 
-
         return { sentences: data.sentences || [] }
       } catch (error) {
         if (attempt === maxAttempts) {
-          console.error('Error parsing response:', error);
           throw error;
         }
 
@@ -250,8 +241,8 @@ Text: ${text.substring(0, 10000)}`;
           htmlElement.classList.add('ai-highlight');
           this.highlightedElements.add(element as HTMLElement);
         }
+        });
       });
-    });
   }
 
   private normalizeText(text: string): string {
@@ -276,39 +267,12 @@ Text: ${text.substring(0, 10000)}`;
 
   clearHighlights(): void {
     this.highlightedElements.forEach(element => {
-      const parent = element.parentNode;
-      if (parent) {
-        const textNode = document.createTextNode(element.textContent || '');
-        parent.replaceChild(textNode, element);
-        parent.normalize();
-      }
+      element.classList.remove('ai-highlight');
     });
-    
+
     this.highlightedElements.clear();
     this.originalTexts.clear();
-    this.hideClearButton();
-  }
-
-  private showClearButton(): void {
-    if (this.clearButton) return;
-    
-    this.clearButton = document.createElement('button');
-    this.clearButton.className = 'ai-highlight-clear-btn';
-    this.clearButton.textContent = t('highlight.clearButton');
-    this.clearButton.title = t('highlight.clearButtonTitle');
-    
-    this.clearButton.addEventListener('click', () => {
-      this.clearHighlights();
-    });
-    
-    document.body.appendChild(this.clearButton);
-  }
-
-  private hideClearButton(): void {
-    if (this.clearButton) {
-      this.clearButton.remove();
-      this.clearButton = null;
-    }
+    HighlightState.setHighlightState(false);
   }
 
   private showHighlightError(message: string): void {

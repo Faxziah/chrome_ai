@@ -81,7 +81,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       if (tabs[0]?.id) {
         chrome.tabs.sendMessage(tabs[0].id, { action: ActionType.HIGHLIGHT_KEYWORDS })
           .then(response => {
-            sendResponse({ success: true, response });
+            sendResponse(response);
           })
           .catch(error => {
             console.error('Error highlighting keywords:', error);
@@ -90,5 +90,20 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       }
     });
     return true; // Keep the message channel open for async response
+  } else if (message.action === ActionType.CLEAR_HIGHLIGHTS) {
+    // Forward the clear highlights request to content script
+    chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+      if (tabs[0]?.id) {
+        chrome.tabs.sendMessage(tabs[0].id, {action: ActionType.CLEAR_HIGHLIGHTS})
+          .then(response => {
+            sendResponse(response);
+          })
+          .catch(error => {
+            console.error('Error clearing highlights:', error);
+            sendResponse({success: false, error: error.message});
+          });
+      }
+    });
+    return true; // Keep the message channel open for async response\
   }
 });
