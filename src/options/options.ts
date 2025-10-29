@@ -375,16 +375,16 @@ class OptionsPage {
       }
     });
     
-    // Update language section
-    const languageSection = document.querySelector('.section h2');
-    if (languageSection) {
-      languageSection.textContent = '🌐 ' + t('options.languageSettings');
-    }
-    
     // Update API section
-    const apiSection = document.querySelectorAll('.section h2')[1];
+    const apiSection = document.querySelectorAll('.section h2')[0];
     if (apiSection) {
       apiSection.textContent = '🔑 ' + t('options.apiSettings');
+    }
+
+    // Update language section
+    const languageSection = document.querySelectorAll('.section h2')[1];
+    if (languageSection) {
+      languageSection.textContent = '🌐 ' + t('options.languageSettings');
     }
     
     // Update Mini Popup section
