@@ -77,23 +77,18 @@ AI Text Tools transforms how users interact with web content by providing instan
 
 ### Text Processing Workflow
 1. **Select any text** on a webpage
-2. **Right-click** to access context menu options:
+2. Access context menu options:
    - Summarize text
    - Rephrase text
    - Translate text
    - Discuss with AI
+   - Highlight key paragraphs
 3. **View results** in the popup interface
-4. **Save to favorites** or history for future reference
+4. **Save to favorites** or view history for future reference
 
 ### Keyboard Shortcuts
-- `Ctrl+Shift+H` (or `Cmd+Shift+H` on Mac) - Highlight keywords
-- `Ctrl+Shift+C` (or `Cmd+Shift+C` on Mac) - Clear highlights
-
-### Chat Interface
-1. Open the extension popup
-2. Navigate to the "Chat" tab
-3. Type your request and receive AI assistance
-4. View conversation history and manage interactions
+- `Ctrl+Shift+K` (or `Cmd+Shift+K` on Mac) - Highlight keywords
+- `Ctrl+Shift+L` (or `Cmd+Shift+L` on Mac) - Clear highlights
 
 ## 🏗️ Technical Architecture
 
@@ -132,7 +127,6 @@ src/
 - **Rollup** - Efficient module bundling and optimization
 - **Material Design** - Modern, accessible UI framework
 - **Web Speech API** - Cross-platform text-to-speech functionality
-- **Vitest** - Comprehensive testing framework
 
 ## 🔧 Development
 
@@ -140,60 +134,6 @@ src/
 - Node.js 18+ 
 - npm or yarn
 - Google Chrome browser
-
-### Setup
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/chrome-ai-text-tools.git
-cd chrome-ai-text-tools
-
-# Install dependencies
-npm install
-
-# Build the extension
-npm run build
-
-# Run in development mode
-npm run dev
-```
-
-### Testing
-```bash
-# Run all tests
-npm test
-
-# Run tests once
-npm run test:run
-
-# Run tests with UI
-npm run test:ui
-
-# Generate coverage report
-npm run test:coverage
-```
-
-### Building for Production
-```bash
-# Clean previous builds
-npm run clean
-
-# Build optimized version
-npm run build
-```
-
-## 🧪 Testing & Quality Assurance
-
-### Test Coverage
-- **Unit Tests** - Comprehensive component testing
-- **Integration Tests** - API and service integration testing
-- **E2E Tests** - End-to-end user workflow testing
-- **Coverage Target** - 80%+ code coverage
-
-### Quality Standards
-- **TypeScript** - Strict type checking enabled
-- **ESLint** - Code quality and consistency
-- **Prettier** - Code formatting standards
-- **Chrome Extension Standards** - Manifest V3 compliance
 
 ## 🔐 Security & Privacy
 
@@ -211,34 +151,11 @@ npm run build
 ## 🌍 Internationalization
 
 ### Supported Languages
-- English (en) - Default
-- German (de) - Deutsch
-- French (fr) - Français  
-- Chinese (zh) - 中文
-- Russian (ru) - Русский
-
-### Localization Features
-- **Dynamic Language Switching** - Change interface language without restart
-- **Context-Aware Translation** - AI-powered translation with cultural context
-- **RTL Support** - Right-to-left language support ready
-- **Cultural Adaptation** - Region-specific formatting and conventions
-
-## 📊 Performance Metrics
-
-### Optimization Achievements
-- **Bundle Size** - Optimized to under 2MB total
-- **Load Time** - Sub-100ms extension initialization
-- **Memory Usage** - Minimal memory footprint
-- **API Efficiency** - Intelligent caching and request optimization
-
-### Browser Compatibility
-- **Chrome 88+** - Full feature support
-- **Chromium-based Browsers** - Edge, Brave, Opera compatibility
-- **Cross-Platform** - Windows, macOS, Linux support
-
-## 🏆 Google Chrome Built-in AI Challenge 2025
-
-This project is specifically designed and submitted for the **Google Chrome Built-in AI Challenge 2025**, showcasing innovative AI integration in browser extensions.
+- English (en)
+- German (de)
+- French (fr)
+- Chinese (zh)
+- Russian (ru)
 
 ### Challenge Alignment
 - ✅ **AI Innovation** - Advanced Gemini API integration with streaming responses
@@ -252,50 +169,6 @@ This project is specifically designed and submitted for the **Google Chrome Buil
 - **Seamless integration** with existing browsing workflows
 - **Multi-modal AI interaction** (text, speech, visual)
 - **Enterprise-ready** security and privacy standards
-
-## 📈 Future Roadmap
-
-### Planned Features
-- **Voice Input** - Speech-to-text for hands-free operation
-- **Team Collaboration** - Shared highlights and annotations
-- **Advanced Analytics** - Reading pattern insights
-- **API Integration** - Third-party service connections
-- **Mobile Support** - Companion mobile app
-
-### Community Contributions
-- **Open Source** - Community-driven development
-- **Plugin System** - Extensible architecture for custom features
-- **Documentation** - Comprehensive developer resources
-- **Tutorials** - Step-by-step usage guides
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🤝 Contributing
-
-We welcome contributions from the community! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📞 Support & Community
-
-- **Documentation** - [Wiki](https://github.com/yourusername/chrome-ai-text-tools/wiki)
-- **Issues** - [GitHub Issues](https://github.com/yourusername/chrome-ai-text-tools/issues)
-- **Discussions** - [GitHub Discussions](https://github.com/yourusername/chrome-ai-text-tools/discussions)
-- **Email** - support@ai-text-tools.com
-
-## 🙏 Acknowledgments
-
-- **Google** - For the Gemini AI API and Chrome extension platform
-- **Open Source Community** - For the amazing tools and libraries
-- **Contributors** - Everyone who has helped improve this project
-
----
 
 **Built with ❤️ for the Google Chrome Built-in AI Challenge 2025**
 
