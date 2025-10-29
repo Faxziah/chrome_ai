@@ -1,5 +1,9 @@
 # AI Text Tools - Chrome Extension
 
+<p align="center">
+  <img src="icons/icon128.png" alt="Extension Icon" width="96" height="96" />
+</p>
+
 ![Chrome Extension](https://img.shields.io/badge/Chrome-Extension-blue?logo=google-chrome)
 ![Manifest V3](https://img.shields.io/badge/Manifest-V3-green)
 ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)
@@ -7,6 +11,10 @@
 ![License](https://img.shields.io/badge/License-MIT-green)
 
 **An intelligent Chrome extension that leverages Google's Gemini AI to enhance text processing capabilities directly in your browser.**
+
+<p align="center">
+  <img src="screenshots/1_summarize.png" alt="Summarize Screenshot" width="900" />
+</p>
 
 ## 🎯 Overview
 
