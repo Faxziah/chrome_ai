@@ -8,7 +8,6 @@
 ![Manifest V3](https://img.shields.io/badge/Manifest-V3-green)
 ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)
 ![Gemini AI](https://img.shields.io/badge/AI-Gemini-orange?logo=google)
-![License](https://img.shields.io/badge/License-MIT-green)
 
 **An intelligent Chrome extension that leverages Google's Gemini AI to enhance text processing capabilities directly in your browser.**
 
@@ -18,7 +17,7 @@
 
 ## 🎯 Overview
 
-AI Text Tools transforms how users interact with web content by providing instant AI-powered text analysis, summarization, translation, and intelligent highlighting. Built for the Google Chrome Built-in AI Challenge 2025, this extension demonstrates the power of integrating advanced AI capabilities into everyday browsing experiences.
+AI Text Tools transforms how users interact with web content by providing instant AI-powered text analysis, summarization, translation, and intelligent highlighting. This extension demonstrates the power of integrating advanced AI capabilities into everyday browsing experiences.
 
 ## ✨ Key Features
 
@@ -81,89 +80,54 @@ AI Text Tools transforms how users interact with web content by providing instan
    - Configure AI model settings (temperature, max tokens)
    - Click "Save" to activate the extension
 
-## 🧪 Testing Instructions for Judges
+## 🧪 Development & Testing
 
-This extension is ready for testing and evaluation. Follow these steps to install and test the application:
+### Quick Installation
 
-### Quick Installation (5 minutes)
-
-1. **Download the project**
-   - Clone the repository: `git clone https://github.com/Faxziah/chrome_ai.git`
-   - Or download as ZIP from GitHub and extract it
-
-2. **Build the extension** (if not already built)
+1. **Clone the repository**
    ```bash
+   git clone https://github.com/Faxziah/chrome_ai.git
    cd chrome_ai
+   ```
+
+2. **Install dependencies**
+   ```bash
    npm install
+   ```
+
+3. **Build the extension**
+   ```bash
    npm run build
    ```
 
-3. **Load in Chrome Developer Mode**
+4. **Load in Chrome Developer Mode**
    - Open Google Chrome
    - Navigate to `chrome://extensions/`
    - Enable **"Developer mode"** (toggle in top right corner)
    - Click **"Load unpacked"**
-   - Select the `chrome_ai` folder (the folder containing `manifest.json`)
+   - Select the project folder (the folder containing `manifest.json`)
    - Extension will appear in your Chrome toolbar
 
-4. **Get API Key** (Required for functionality)
+5. **Configure API Key** (Required for functionality)
    - Visit [Google AI Studio](https://aistudio.google.com/app/apikey) (free)
    - Sign in with Google account
    - Click "Create API Key"
    - Copy the API key
+   - Click the extension icon → Go to **"Settings"** tab
+   - Paste your Gemini API key and click **"Save"**
 
-5. **Configure the Extension**
-   - Click the extension icon in Chrome toolbar
-   - Go to **"Settings"** tab
-   - Paste your Gemini API key
-   - Click **"Save"**
-   - Extension is now ready to use!
+### Testing Features
 
-### Testing the Application
+The extension works on **any webpage**. Test all features:
 
-The extension works on **any webpage**. Here's how to test all features:
-
-1. **Text Summarization**
-   - Visit any article or webpage (e.g., news site, blog)
-   - Select a paragraph of text
-   - Right-click → "Summarize text"
-   - View the AI-generated summary in the popup
-
-2. **Text Rephrasing**
-   - Select text on a webpage
-   - Right-click → "Rephrase text"
-   - Choose tone: casual, formal, professional, friendly, or academic
-   - See the rephrased version instantly
-
-3. **Translation**
-   - Select text in any language
-   - Right-click → "Translate text"
-   - Select target language
-   - View translated text with formatting preserved
-
-4. **AI Chat**
-   - Select text on a webpage
-   - Right-click → "Discuss with AI"
-   - Chat naturally about the selected text
-   - Ask questions, get insights
-
-5. **AI Highlighting**
-   - Press `Ctrl+Shift+K` (Windows/Linux) or `Cmd+Shift+K` (Mac)
-   - AI automatically highlights key sentences and keywords
-   - Press `Ctrl+Shift+L` to clear highlights
-
-6. **Additional Features**
-   - Click extension icon → View history of all AI interactions
-   - Save favorite results for quick access
-   - Use text-to-speech to hear AI responses
-   - Change interface language (English, German, French, Chinese, Russian)
-
-### Test Credentials (if needed)
-
-If you encounter any issues or need a test API key for evaluation:
-- The extension requires a valid Google Gemini API key
-- API keys are free and can be obtained in 2 minutes at [aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey)
-- No login credentials needed - the extension is fully functional once API key is configured
+- **Text Summarization** - Select text → Right-click → "Summarize text"
+- **Text Rephrasing** - Select text → Right-click → "Rephrase text" → Choose tone
+- **Translation** - Select text → Right-click → "Translate text" → Select language
+- **AI Chat** - Select text → Right-click → "Discuss with AI"
+- **AI Highlighting** - Press `Ctrl+Shift+K` (Windows/Linux) or `Cmd+Shift+K` (Mac)
+- **History & Favorites** - Click extension icon to view and manage all interactions
+- **Text-to-Speech** - Use audio playback for AI responses
+- **Multi-Language UI** - Change interface language in Settings
 
 ### Troubleshooting
 
@@ -171,8 +135,6 @@ If you encounter any issues or need a test API key for evaluation:
 - **API errors?** Verify your API key is correct in Settings
 - **Features not working?** Ensure you've built the extension with `npm run build`
 - **Build issues?** Check Node.js version (requires 18+)
-
-The extension is fully functional and ready for evaluation. All code is open source and available in this repository.
 
 ## 📖 Usage Guide
 
@@ -258,23 +220,17 @@ src/
 - Chinese (zh)
 - Russian (ru)
 
-### Challenge Alignment
-- ✅ **AI Innovation** - Advanced Gemini API integration with streaming responses
-- ✅ **User Experience** - Intuitive, accessible interface design
-- ✅ **Performance** - Optimized for speed and efficiency
-- ✅ **Accessibility** - Multi-language support and keyboard navigation
-- ✅ **Technical Excellence** - Modern architecture with comprehensive testing
+### Key Highlights
+- **AI Innovation** - Advanced Gemini API integration with streaming responses
+- **User Experience** - Intuitive, accessible interface design
+- **Performance** - Optimized for speed and efficiency
+- **Accessibility** - Multi-language support and keyboard navigation
+- **Technical Excellence** - Modern architecture with TypeScript and Manifest V3
 
-### Unique Value Proposition
-- **First-of-its-kind** AI-powered webpage highlighting
-- **Seamless integration** with existing browsing workflows
-- **Multi-modal AI interaction** (text, speech, visual)
-- **Enterprise-ready** security and privacy standards
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-**Built with ❤️ for the Google Chrome Built-in AI Challenge 2025**
+### Unique Features
+- **AI-powered webpage highlighting** - Intelligent keyword and sentence detection
+- **Seamless integration** - Works on any website with context menu and keyboard shortcuts
+- **Multi-modal interaction** - Text processing, speech synthesis, and visual highlighting
+- **Privacy-focused** - All data stored locally, no external tracking
 
 *Transforming web browsing through intelligent AI integration*
