@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "AI Text Tools - Summarizer, Rephraser & Translator",
+  "name": "AI Text Tools - Summarize, Rephrase, Translate, Discuss & Highlight",
   "version": "1.0.0",
-  "description": "AI-powered text summarization, rephrasing, translation, and keyword highlighting using Gemini API. Select text to get instant AI assistance.",
+  "description": "AI-powered text summarization, rephrasing, translation, and highlighting using Gemini API. Select text to get instant AI assistance.",
   "permissions": [
     "storage",
     "activeTab",
